@@ -15,10 +15,10 @@
 | Integrante 5 | 2025-0005 | Micro, Pago, Ubicación |
 | Integrante 6 | 2025-0006 | Conductor, Parada, Notificación |
 
-**Materia:** Programación Orientada a Objetos  
-**Docente:** Nombre del docente  
-**Universidad:** TecnoUPSA  
-**Semestre:** 1er semestre 2025  
+**Materia:** Estructura de Datos  
+**Docente:** Karem Infantas 
+**Universidad:** Univesidad Privada De Santa Cruz De La Sierra 
+**Semestre:** 3er semestre 2026  
 
 ---
 
@@ -105,10 +105,10 @@ El sistema está desarrollado bajo el paradigma de **Programación Orientada a O
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/usuario/smartmicro.git
+git clone https://github.com/HectorMarquez2705/proyecto_estructura_de_Datos.git
 
 # 2. Entrar a la carpeta
-cd smartmicro
+cd PROYECTO ESTRUCTURA
 
 # 3. Instalar dependencias y ejecutar
 # (agregar comandos según el lenguaje elegido)
