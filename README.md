@@ -1,165 +1,72 @@
-# 🚍 SmartMicro
+# miMicro S.R.L. - Transporte Inteligente SCZ 🚍
 
-> Aplicación inteligente para visualizar rutas, ubicación en tiempo real y tiempos de llegada del transporte público en Santa Cruz, Bolivia.
-
----
-
-## 👥 Integrantes
-
-| Nombre completo | Carnet / ID | Clases asignadas |
-|----------------|-------------|-----------------|
-| Integrante 1 | 2025-0001 | Usuario, Pago, Notificación |
-| Integrante 2 | 2025-0002 | Micro, Conductor, Ruta |
-| Integrante 3 | 2025-0003 | Viaje, Parada, Ubicación |
-| Integrante 4 | 2025-0004 | Usuario, Ruta, Viaje |
-| Integrante 5 | 2025-0005 | Micro, Pago, Ubicación |
-| Integrante 6 | 2025-0006 | Conductor, Parada, Notificación |
-
-**Materia:** Estructura de Datos  
-**Docente:** Karem Infantas 
-**Universidad:** Univesidad Privada De Santa Cruz De La Sierra 
-**Semestre:** 3er semestre 2026  
+> [cite_start]Plataforma móvil de dos lados que digitaliza el transporte público informal en Santa Cruz de la Sierra mediante tecnología *crowdsourcing* y monitoreo en tiempo real[cite: 33, 73].
 
 ---
 
-## 📋 Descripción
+## 👥 Equipo de Desarrollo e Integrantes
 
-SmartMicro es una aplicación móvil/web diseñada para mejorar la experiencia del transporte público en Santa Cruz, Bolivia. Permite a los usuarios visualizar rutas de micros, consultar tiempos de llegada en tiempo real, seguir la ubicación de los vehículos y optimizar sus desplazamientos diarios.
+[cite_start]Este proyecto es desarrollado para la materia de **Estructura de Datos** (3er semestre 2026) en la **Universidad Privada de Santa Cruz de la Sierra (UPSA)**[cite: 1, 13].
 
-El objetivo principal es reducir la incertidumbre y el tiempo de espera, brindando información precisa y accesible tanto para pasajeros como para conductores.
-
----
-
-## ❗ Problema que Resuelve
-
-El sistema de micros en Santa Cruz presenta varias dificultades:
-
-- Falta de información en tiempo real
-- Incertidumbre sobre rutas y tiempos de llegada
-- Dificultad para planificar viajes
-- Desorganización en paradas y recorridos
-
-SmartMicro busca digitalizar y optimizar este sistema.
+| Nombre completo | Registro | Responsabilidad Técnica / Clases |
+| :--- | :--- | :--- |
+| **Hector Marquez** | 2025111291 | Analizador de Flujo, `main.cpp`, Reporte de seguridad, encriptación |
+| **Bruno Parada** | 2025113242 | Gestor De Pagos, Persona, Tarjeta de Transporte |
+| **Cristhian Arze** | 2025114451 | Grafo de Paradas, Optimizador de Ruta, Ruta |
+| **Javier Caye** | 2025111797 | Gestor de GPS, Parada, Pila-Historial |
+| **Roberto Gutierrez** | 2025111916 | Lista de Pasajeros, Micro, Sensor de Puerta |
+| **Samuel Carrasco** | 2025211490 | Cola de Espera, Notificación de Alerta, Tiempo Estimado |
 
 ---
 
-## 🚀 Características principales
-
-- 📍 Ubicación en tiempo real de los micros
-- 🗺️ Consulta de rutas disponibles
-- ⏱️ Estimación de tiempos de llegada
-- 🛑 Visualización de paradas cercanas
-- 🔔 Notificaciones importantes para usuarios
-- 💳 Integración de pagos digitales *(en desarrollo futuro)*
+## ❗ El Problema Identificado
+[cite_start]El transporte público en Santa Cruz de la Sierra presenta deficiencias críticas que afectan a miles de usuarios diariamente[cite: 36]:
+* [cite_start]**Incertidumbre total:** El usuario desconoce cuándo llegará la siguiente unidad o si tiene espacio disponible[cite: 38].
+* [cite_start]**Cambios de ruta:** Los conductores alteran recorridos por tráfico o decisiones propias sin aviso previo[cite: 39].
+* [cite_start]**Pagos ineficientes:** El uso de efectivo genera conflictos por cambio y riesgos de robo[cite: 41].
+* [cite_start]**Vacío tecnológico:** Aplicaciones globales como Google Maps no cubren adecuadamente las rutas informales locales[cite: 46].
 
 ---
 
-## 👤 Usuarios del Sistema
+## 🚀 Solución: miMicro
+[cite_start]miMicro adopta un enfoque incremental basado en tres pilares metodológicos[cite: 57]:
 
-| Tipo | Descripción |
-|------|-------------|
-| **Pasajero** | Consulta rutas, tiempos y ubicación de micros |
-| **Conductor** | Actualiza su ubicación y estado en tiempo real |
-| **Administrador** | Gestiona rutas, micros y datos del sistema |
+### 1. Crowdsourcing Pasivo
+[cite_start]Inspirado en modelos como Waze, utiliza la ubicación GPS anonimizada de los pasajeros para inferir la posición de los vehículos, velocidad del tráfico y nivel de ocupación sin depender inicialmente de hardware en los micros[cite: 58, 60, 136].
 
----
+### 2. Monitoreo Inteligente
+* [cite_start]**Cálculo de ETA:** Algoritmos que cruzan la distancia actual con la velocidad promedio y factores de tráfico[cite: 156].
+* [cite_start]**Gestión de Ocupación:** Clasificación del estado de carga del vehículo (Vacío, Medio, Lleno) basada en reportes de la comunidad[cite: 158].
 
-## 🧱 Arquitectura del Sistema (POO)
-
-El sistema está desarrollado bajo el paradigma de **Programación Orientada a Objetos**, estructurado en las siguientes clases:
-
-| Clase | Responsabilidad |
-|-------|----------------|
-| `Usuario` | Gestión de datos y acceso del pasajero |
-| `Conductor` | Información y estado del conductor |
-| `Micro` | Datos del vehículo y su recorrido |
-| `Ruta` | Definición del trayecto y paradas |
-| `Parada` | Puntos de ascenso y descenso |
-| `Viaje` | Registro de trayectos realizados |
-| `Pago` | Gestión de transacciones |
-| `Ubicación` | Coordenadas GPS en tiempo real |
-| `Notificación` | Alertas y avisos al usuario |
-
-### 🔗 Relaciones entre clases
-
-- Un `Usuario` puede consultar múltiples `Viajes`
-- Un `Micro` pertenece a una `Ruta`
-- Una `Ruta` contiene varias `Paradas`
-- Un `Viaje` utiliza datos de `Ubicación` en tiempo real
-- Un `Usuario` puede realizar `Pagos`
-- El sistema envía `Notificaciones` a los usuarios
+### 3. Estrategia por Fases
+* [cite_start]**Fase 1 (Beta):** Lanzamiento en universidades y tracking por usuarios[cite: 70].
+* [cite_start]**Fase 2 (Expansión):** Integración con choferes y cobertura del 60% de rutas principales[cite: 70].
+* [cite_start]**Fase 3 (Monetización):** Implementación de pagos QR y venta de datos de movilidad al municipio[cite: 70, 126].
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## 🛠️ Arquitectura y Estructuras de Datos
+[cite_start]El sistema organiza la información a través de entidades relacionales diseñadas para la escalabilidad[cite: 114]:
 
-- **Lenguaje:** C++ / Java / Kotlin *(por definir según implementación)*
-- **Base de datos:** MySQL / Firebase
-- **APIs externas:** Google Maps API *(geolocalización)*
+* [cite_start]**Usuario:** Control de acceso por roles (Pasajero, Operador, Administrador)[cite: 83, 116].
+* [cite_start]**Ruta:** Base de datos de trayectos oficiales con coordenadas geográficas[cite: 118].
+* [cite_start]**Vehículo:** Registro de unidades vinculadas a operadores y rutas específicas[cite: 120].
+* [cite_start]**Posición en Tiempo Real:** Registro constante de coordenadas y fuente del dato (chofer/usuario)[cite: 122].
 
 ---
 
-## ⚙️ Instalación y ejecución
+## ⚙️ Instalación y Ejecución
 
-> *(Esta sección se completará una vez definida la tecnología de implementación)*
+Para configurar el entorno de desarrollo local y acceder al repositorio:
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/HectorMarquez2705/proyecto_estructura_de_Datos.git
+git clone [https://github.com/HectorMarquez2705/proyecto_estructura_de_Datos.git](https://github.com/HectorMarquez2705/proyecto_estructura_de_Datos.git)
 
-# 2. Entrar a la carpeta
-cd PROYECTO ESTRUCTURA
+# 2. Entrar a la carpeta del proyecto
+cd "PROYECTO ESTRUCTURA"
 
-# 3. Instalar dependencias y ejecutar
-# (agregar comandos según el lenguaje elegido)
-```
-
----
-
-## 📁 Estructura del proyecto
-
-```
-smartmicro/
-│
-├── src/
-│   ├── models/        # Clases del sistema (Usuario, Micro, Ruta, etc.)
-│   ├── controllers/   # Lógica de negocio
-│   └── views/         # Interfaz de usuario
-│
-├── database/          # Scripts y esquemas de base de datos
-├── docs/              # Documentación, diagramas UML
-├── tests/             # Pruebas unitarias
-├── README.md
-└── .gitignore
-```
-
----
-
-## 🔮 Futuras Mejoras
-
-- Integración con pagos QR
-- Sistema de calificación de conductores
-- Inteligencia artificial para predicción de tiempos
-- Optimización de rutas en tiempo real
-
----
-
-## 📊 Impacto Esperado
-
-- Reducción del tiempo de espera en paradas
-- Mejor organización del transporte público
-- Mayor comodidad para los usuarios
-- Modernización del sistema de micros en Santa Cruz
-
----
-
-## 📌 Estado del Proyecto
-
-🟡 **En desarrollo** — Fase académica (TecnoUPSA)
-
----
-
-## 📝 Licencia
-
-Este proyecto fue desarrollado con fines académicos para la materia de **Programación Orientada a Objetos** en TecnoUPSA.  
-© 2025 — Todos los derechos reservados a los autores.
+# 3. Compilación (Ejemplo para C++)
+# El proyecto utiliza estructuras de datos como Pilas, Colas y Grafos
+g++ main.cpp -o miMicro
+./miMicro
