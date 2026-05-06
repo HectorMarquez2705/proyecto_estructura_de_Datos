@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name":   "miMicro",
+    "slug":   "mimicro",
+    "version":"1.0.0",
+    "orientation": "portrait",
+    "icon":   "./assets/icon.png",
+    "splash": {
+      "image":           "./assets/splash.png",
+      "resizeMode":      "contain",
+      "backgroundColor": "#1565C0"
+    },
+    "ios":     { "supportsTablet": true, "bundleIdentifier": "bo.mimicro.app" },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1565C0"
+      },
+      "package": "bo.mimicro.app",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "web": { "favicon": "./assets/favicon.png", "bundler": "metro" },
+    "plugins": [
+      ["expo-location", { "locationAlwaysAndWhenInUsePermission": "miMicro necesita tu ubicacion para mostrar micros cercanos." }]
+    ]
+  }
+}
