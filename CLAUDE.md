@@ -108,7 +108,7 @@ Each `MODULO_*/` folder mirrors the C++ directory structure. Every module has `m
 |---|---|---|
 | MODULO_HECTOR | — | Config, middleware, JWT, bcrypt, security logs |
 | MODULO_BRUNO | `/auth`, `/tarjeta` | Auth, users, transport card, payments, profile |
-| MODULO_CRISTHIAN | `/rutas` | Routes, stops, Dijkstra shortest path |
+| MODULO_CRISTHIAN | `/rutas`, `/routing` | Routes, stops, ruta_path-based Dijkstra trip planner |
 | MODULO_JAVIER | `/gps` | GPS positions (Redis TTL 30s), history stack |
 | MODULO_ROBERTO | `/micros`, `/lineas` | Líneas de micro, vehicle state, occupancy, passenger list |
 | MODULO_SAMUEL | `/notificaciones`, `/eta` | Wait queue, ETA calculation, alerts |
@@ -125,6 +125,19 @@ Migration for existing databases:
 ```bash
 psql -U postgres -d mimicro_db -f mimicro-app/backend/database/migration_lineas.sql
 ```
+
+### Trip planner endpoint (MODULO_CRISTHIAN)
+- `POST /routing/planificar` — Dijkstra over `ruta_path` waypoints. Body: `{origen_lat, origen_lng, destino_lat, destino_lng}`. Returns `{encontrado, tiempo_total_seg, tramos}`.
+
+Each tramo has `tipo: "caminar" | "micro"`. Micro tramos include `ruta_segmento: [{lat,lng}]` (the actual polyline slice of the line). Walking tramos include `desde_lat/lng` + `hasta_lat/lng`. Micro tramos are also enriched with `micro_cercano` from Redis (nearest active bus + ETA).
+
+Algorithm (`MODULO_CRISTHIAN/routing/planificador.py`):
+- Graph nodes: `"origen"`, `"destino"` (virtual) + `(linea_id, wp_idx)` per waypoint
+- Intra-line edges: forward only `(lid, i) → (lid, i+1)` at bus speed (20 km/h)
+- Transfer edges: ≤ `MAX_TRANSFER_M = 200 m` between different lines, at walking speed + 5 min wait
+- Origin → all waypoints: unlimited walking + 5 min wait
+- All waypoints → destination: unlimited walking
+- `itertools.count()` tie-breaking prevents Python TypeError comparing mixed node types in the heap
 
 ### Auth endpoints (MODULO_BRUNO)
 - `POST /auth/login` — returns JWT + rol + nombre
@@ -171,6 +184,7 @@ If the module isn't compiled, pure-Python fallbacks handle all logic so the app 
 - Chofer app → `gps_update` event → server writes to Redis (`gps:micro:{id}`, TTL 30s) + emits `micro_moved` to room `ruta:{rutaId}`
 - Pasajero subscribes by emitting `join_ruta` → receives live marker updates
 - `gps_stop` event cleans Redis key and emits `micro_offline`
+- Trip planner: pasajero emits `join_linea` / `leave_linea` for each micro line in the planned route, receiving the same `micro_moved` / `micro_offline` events filtered by line
 
 ### Auth flow
 JWT (python-jose) + bcrypt (direct, no passlib). `requiere_rol("admin")` dependency guards admin endpoints. Admin account only exists via `seed.sql` (never via `/auth/register`).
@@ -199,7 +213,7 @@ Each page folder has 3 files: `index.html`, `script.js`, `styles.css`. All pages
 
 ### Shared JS modules (loaded in order on every page)
 1. `auth.js` — `Auth.initPage(rolRequerido)` checks JWT, redirects if not authenticated/wrong role. Also calls `Layout.init(rol)`. Exposes `Auth.getToken()`, `Auth.getUser()`, `Auth.logout()`, `escapeHtml(str)`.
-2. `api.js` — `Api.get/post/patch/delete(url, body)` — all calls automatically add `Authorization: Bearer <token>` header.
+2. `api.js` — `Api.get/post/patch/del(url, body)` — all calls automatically add `Authorization: Bearer <token>` header. **Note:** DELETE method is `Api.del()`, NOT `Api.delete()` — calling `Api.delete()` throws TypeError.
 3. `socket.js` — exports singleton `socket` (Socket.IO connection).
 4. `layout.js` — `Layout.init(rol)` injects sidebar+topbar HTML for admin/pasajero/chofer roles. Sidebar footer has a clickable link to `/perfil/`. Admin links: Usuarios, Líneas de Micro, Reportes (Rutas and Micros removed).
 

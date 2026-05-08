@@ -142,7 +142,7 @@
   <p class="meta">
     <strong>Materia:</strong> Estructuras de Datos &nbsp;|&nbsp; <strong>Semestre:</strong> 3er semestre 2026<br>
     <strong>Universidad:</strong> UPSA — Universidad Privada de Santa Cruz de la Sierra<br>
-    <strong>Versión:</strong> 1.2 Prototipo &nbsp;|&nbsp; <strong>Fecha:</strong> Mayo 2026
+    <strong>Versión:</strong> 1.3 Prototipo &nbsp;|&nbsp; <strong>Fecha:</strong> Mayo 2026
   </p>
   <br>
   <div>
@@ -177,7 +177,7 @@
     <li>Frontend — Pantallas por Rol
       <ol>
         <li>Autenticación: Login y Registro</li>
-        <li>Pasajero: Mapa, ETA, Tarjeta, Historial, Notificaciones</li>
+        <li>Pasajero: Mapa + Planificador de Ruta, ETA, Tarjeta, Historial, Notificaciones</li>
         <li>Chofer: Ruta Activa, Ocupación, Desvío</li>
         <li>Administrador: Usuarios, Líneas de Micro, Reportes</li>
         <li>Perfil de Usuario (todos los roles)</li>
@@ -185,7 +185,8 @@
     </li>
     <li>Diagrama de Flujo del Sistema</li>
     <li>Variables de Entorno y Configuración</li>
-    <li>Código Fuente de Archivos Clave (main.py, setup.py, global.css)</li>
+    <li>Código Fuente de Archivos Clave (main.py, setup.py, módulos compartidos)</li>
+    <li>Algoritmo de Planificación de Ruta (Dijkstra sobre ruta_path)</li>
     <li>Guía Completa para Recrear el Proyecto</li>
   </ol>
 </div>
@@ -941,14 +942,22 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 <div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/tarjeta/{usuario_id}/cobrar</strong> <span class="badge badge-blue">Auth</span><br><small>Body: {monto, descripcion} → {ok, saldo_nuevo}</small></div></div>
 <div class="endpoint"><span class="method-tag" style="background:#f3e5f5;color:#6a1b9a;">GET</span><div><strong>/tarjeta/{usuario_id}/historial</strong> <span class="badge badge-blue">Auth</span><br><small>→ {transacciones: [{id, monto, tipo, descripcion, created_at}]}</small></div></div>
 
-<h3>MODULO_CRISTHIAN — /rutas</h3>
+<h3>MODULO_CRISTHIAN — /rutas y /routing</h3>
 <div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas</strong><br><small>→ [{id, nombre, descripcion, activa}]</small></div></div>
 <div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas/{id}</strong><br><small>→ {id, nombre, descripcion, activa}</small></div></div>
 <div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas/{id}/paradas</strong><br><small>→ [{id, nombre, lat, lng, orden_en_ruta}]</small></div></div>
 <div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/rutas</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {nombre, descripcion} → {id, nombre, ...}</small></div></div>
 <div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/rutas/{id}</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {nombre, descripcion} → ruta actualizada</small></div></div>
 <div class="endpoint"><span class="method-tag DELETE">DELETE</span><div><strong>/rutas/{id}</strong> <span class="badge badge-purple">Admin</span><br><small>→ {ok: true} — desactivación lógica (activa=false)</small></div></div>
-<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas/{id}/optima?origen=X&amp;destino=Y</strong><br><small>→ {encontrado, camino:[paradaId,...], distanciaTotal} — Dijkstra C++</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/routing/planificar</strong><br><small>Body: {origen_lat, origen_lng, destino_lat, destino_lng} → {encontrado, tiempo_total_seg, tramos}. Dijkstra sobre waypoints reales del ruta_path de cada línea. Enriquece cada tramo micro con el micro activo más cercano desde Redis.</small></div></div>
+<div style="margin-top:8px; padding:10px; background:#e8f5e9; border-radius:6px; font-size:12px;">
+  <strong>Estructura de respuesta /routing/planificar:</strong><br>
+  <span class="inline-code">tramos[].tipo</span>: <code>"caminar"</code> | <code>"micro"</code><br>
+  <span class="inline-code">tramos[].ruta_segmento</span>: <code>[{lat, lng}, ...]</code> (solo tramos micro — el segmento real de la polilínea de la línea)<br>
+  <span class="inline-code">tramos[].desde_lat/lng</span>, <span class="inline-code">hasta_lat/lng</span>: coordenadas de inicio/fin de cada tramo<br>
+  <span class="inline-code">tramos[].micro_cercano</span>: <code>{micro_id, lat, lng, distancia_m, eta_seg}</code> o <code>null</code> si no hay micro activo en Redis<br>
+  <span class="inline-code">tramos[].linea_nombre</span>, <span class="inline-code">linea_id</span>: identificación de la línea (solo tramos micro)
+</div>
 
 <h3>MODULO_JAVIER — /gps</h3>
 <div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/gps/{micro_id}</strong><br><small>→ {microId, lat, lng, velocidad, timestamp} o 404 si no activo</small></div></div>
@@ -959,7 +968,9 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
   <span class="inline-code">gps_update</span> {microId, lat, lng, velocidad} → guarda Redis, emite <span class="inline-code">micro_moved</span><br>
   <span class="inline-code">gps_stop</span> {microId} → borra Redis, emite <span class="inline-code">micro_offline</span><br>
   <span class="inline-code">join_ruta</span> {rutaId} → suscribe a sala ruta:{rutaId}<br>
-  <span class="inline-code">leave_ruta</span> {rutaId} → desuscribe
+  <span class="inline-code">leave_ruta</span> {rutaId} → desuscribe<br>
+  <span class="inline-code">join_linea</span> {lineaId} → suscribe a sala linea:{lineaId} (usado por el planificador de ruta del pasajero)<br>
+  <span class="inline-code">leave_linea</span> {lineaId} → desuscribe de sala linea:{lineaId}
 </div>
 
 <h3>MODULO_ROBERTO — /micros y /lineas</h3>
@@ -1029,18 +1040,30 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 <p>Acceso desde <span class="inline-code">/pasajero/*</span>. Sidebar azul.</p>
 
 <div class="screen-card card-blue">
-  <h4>🗺️ Mapa en Vivo <span class="screen-tag">/pasajero/mapa</span></h4>
-  <p>Pantalla principal del pasajero. Muestra un mapa interactivo centrado en Santa Cruz (lat -17.7833, lng -63.1822) con la posición en tiempo real de todos los micros activos en la ruta seleccionada.</p>
+  <h4>🗺️ Mapa en Vivo + Planificador de Ruta <span class="screen-tag">/pasajero/mapa</span></h4>
+  <p>Pantalla principal del pasajero. Mapa interactivo centrado en Santa Cruz (lat -17.7833, lng -63.1822) con dos funcionalidades principales: ver micros en tiempo real y planificar una ruta de A a B usando las líneas existentes.</p>
+  <h4>Panel de planificación (izquierda)</h4>
   <ul>
-    <li><strong>Selector de ruta:</strong> pestañas superiores con todas las rutas disponibles</li>
-    <li><strong>Marcadores de paradas:</strong> ícono azul predeterminado de Leaflet en cada parada de la ruta</li>
-    <li><strong>Marcadores de micros:</strong> ícono dorado personalizado, se mueve en tiempo real vía Socket.IO</li>
-    <li><strong>Suscripción automática:</strong> al cambiar de ruta se desuscribe de la anterior y se suscribe a la nueva</li>
-    <li><strong>Evento micro_moved:</strong> actualiza la posición del marcador en el mapa</li>
-    <li><strong>Evento micro_offline:</strong> elimina el marcador del micro del mapa</li>
-    <li><strong>Limpieza:</strong> al desmontar el componente se llama a la función de limpieza del WebSocket</li>
+    <li><strong>Origen:</strong> se llena automáticamente con la posición GPS del pasajero al cargar la página. Botón "📍 GPS" para recargar. Modo pin "Cambiar origen" para fijar en el mapa.</li>
+    <li><strong>Destino:</strong> vacío por defecto. Modo pin "Fijar destino" para hacer clic en el mapa. Botón ✕ para limpiar.</li>
+    <li><strong>Calcular ruta óptima:</strong> botón activo solo cuando ambos puntos están fijados. Llama a <span class="inline-code">POST /routing/planificar</span>.</li>
+    <li><strong>Resultado:</strong> panel con tiempo total del viaje y lista de tramos (pasos a seguir).</li>
+    <li><strong>Tramo "Caminar":</strong> muestra distancia (m/km) y tiempo estimado a pie (5 km/h).</li>
+    <li><strong>Tramo "Micro":</strong> nombre de la línea, tiempo y km en ruta. Si hay un micro activo cercano: distancia en metros y ETA en minutos.</li>
+    <li><strong>Sin ruta encontrada:</strong> panel informativo si Dijkstra no encuentra camino.</li>
   </ul>
-  <p><strong>Servicios usados:</strong> getRutas(), getParadas(), suscribirMapa(rutaId, onMoved, onOffline)</p>
+  <h4>Mapa (derecha)</h4>
+  <ul>
+    <li><strong>Marcador origen:</strong> círculo verde con borde blanco</li>
+    <li><strong>Marcador destino:</strong> pin rojo con borde blanco</li>
+    <li><strong>Tramos caminata:</strong> polilínea gris punteada de punto a punto</li>
+    <li><strong>Tramos micro:</strong> polilínea sólida (colores distintos por línea: azul, violeta, rosa, ámbar, verde) siguiendo el <span class="inline-code">ruta_segmento</span> real de la línea. Círculos en puntos de subida y bajada.</li>
+    <li><strong>Micros activos cercanos:</strong> ícono 🚌 en su posición actual (desde Redis). Se mueve en tiempo real vía Socket.IO (<span class="inline-code">join_linea</span> / <span class="inline-code">leave_linea</span>).</li>
+    <li><strong>Evento micro_moved:</strong> actualiza la posición del marcador del micro activo.</li>
+    <li><strong>Evento micro_offline:</strong> elimina el marcador del micro del mapa.</li>
+    <li><strong>Zoom automático:</strong> al calcular ruta, el mapa ajusta la vista para incluir todos los puntos.</li>
+  </ul>
+  <p><strong>APIs:</strong> POST /routing/planificar. Socket.IO: join_linea, leave_linea, micro_moved, micro_offline.</p>
 </div>
 
 <div class="screen-card card-blue">
@@ -1419,7 +1442,7 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 <!-- ══════════════════ 10. CÓDIGO FUENTE CLAVE ══════════════════ -->
 <div class="section page-break">
 <h2>10. Código Fuente de Archivos Clave</h2>
-<p>Esta sección contiene el código fuente completo de los archivos de configuración y entrada que no se generan automáticamente — son imprescindibles para que el proyecto funcione.</p>
+<p>Esta sección contiene el código fuente de los archivos de configuración y entrada más importantes del proyecto.</p>
 
 <h3>backend/main.py — Punto de entrada del servidor</h3>
 <p>Instancia FastAPI, registra todos los routers, monta Socket.IO y gestiona el ciclo de vida (DB + Redis).</p>
@@ -1440,8 +1463,10 @@ from MODULO_HECTOR.config.socket_config import sio
 from MODULO_BRUNO.routes.authRoutes import router as auth_router
 from MODULO_BRUNO.routes.pagosRoutes import router as pagos_router
 from MODULO_CRISTHIAN.routes.rutasRoutes import router as rutas_router
+from MODULO_CRISTHIAN.routes.routingRoutes import router as routing_router
 from MODULO_JAVIER.routes.gpsRoutes import router as gps_router
 from MODULO_ROBERTO.routes.microsRoutes import router as micros_router
+from MODULO_ROBERTO.routes.lineasRoutes import router as lineas_router
 from MODULO_SAMUEL.routes.notifRoutes import router as notif_router
 from MODULO_SAMUEL.routes.etaRoutes import router as eta_router
 
@@ -1466,13 +1491,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router,   prefix="/auth",           tags=["auth"])
-app.include_router(pagos_router,  prefix="/tarjeta",        tags=["pagos"])
-app.include_router(rutas_router,  prefix="/rutas",          tags=["rutas"])
-app.include_router(gps_router,    prefix="/gps",            tags=["gps"])
-app.include_router(micros_router, prefix="/micros",         tags=["micros"])
-app.include_router(notif_router,  prefix="/notificaciones", tags=["notificaciones"])
-app.include_router(eta_router,    prefix="/eta",            tags=["eta"])
+app.include_router(auth_router,    prefix="/auth",           tags=["auth"])
+app.include_router(pagos_router,   prefix="/tarjeta",        tags=["pagos"])
+app.include_router(rutas_router,   prefix="/rutas",          tags=["rutas"])
+app.include_router(routing_router, prefix="/routing",        tags=["routing"])
+app.include_router(gps_router,     prefix="/gps",            tags=["gps"])
+app.include_router(micros_router,  prefix="/micros",         tags=["micros"])
+app.include_router(lineas_router,  prefix="/lineas",         tags=["lineas"])
+app.include_router(notif_router,   prefix="/notificaciones", tags=["notificaciones"])
+app.include_router(eta_router,     prefix="/eta",            tags=["eta"])
 
 
 @app.get("/", tags=["health"])
@@ -1487,51 +1514,36 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run(socket_app, host="0.0.0.0", port=int(os.getenv("PORT", "3000")))</code></pre>
 
-<h3>frontend/vite.config.js — Proxy de desarrollo</h3>
-<p>Redirige todas las llamadas API relativas al backend en puerto 3000. Incluye proxy WebSocket para Socket.IO.</p>
-<pre><code>import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+<h3>Frontend estático — sin build step</h3>
+<p>El frontend de miMicro es HTML5 + CSS3 + JavaScript puro. <strong>No usa React, Vite, ni npm</strong>. FastAPI sirve directamente los archivos desde <span class="inline-code">backend/frontend/</span> vía <span class="inline-code">StaticFiles</span> en el mismo puerto 3000.</p>
+<div class="card card-green">
+  <p><strong>Ventaja:</strong> no se necesita instalar Node.js, no hay build step, no hay bundler. Los cambios en los archivos .html/.js/.css se reflejan con un simple refresco del navegador (F5).</p>
+  <p><strong>Librerías de terceros:</strong> cargadas desde CDN en cada página que las necesita:</p>
+  <ul>
+    <li>Leaflet.js 1.9 — mapas interactivos (OpenStreetMap)</li>
+    <li>socket.io-client 4.7 — WebSocket cliente para GPS en tiempo real</li>
+  </ul>
+</div>
+<h4>Módulos compartidos (<span class="inline-code">frontend/static/shared/</span>)</h4>
+<pre><code>/* auth.js — verificación JWT y redirección por rol */
+Auth.initPage('pasajero')  // redirige si no autenticado o rol incorrecto
+Auth.getToken()            // devuelve el JWT desde localStorage
+Auth.getUser()             // devuelve {sub, rol, nombre} del payload
+escapeHtml(str)            // previene XSS en contenido dinámico
 
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 5173,
-    proxy: {
-      '/auth':           { target: 'http://localhost:3000', changeOrigin: true },
-      '/rutas':          { target: 'http://localhost:3000', changeOrigin: true },
-      '/gps':            { target: 'http://localhost:3000', changeOrigin: true },
-      '/micros':         { target: 'http://localhost:3000', changeOrigin: true },
-      '/notificaciones': { target: 'http://localhost:3000', changeOrigin: true },
-      '/eta':            { target: 'http://localhost:3000', changeOrigin: true },
-      '/tarjeta':        { target: 'http://localhost:3000', changeOrigin: true },
-      '/socket.io':      { target: 'http://localhost:3000', changeOrigin: true, ws: true },
-    }
-  }
-})</code></pre>
+/* api.js — cliente HTTP con autenticación automática */
+Api.get('/endpoint')
+Api.post('/endpoint', { campo: valor })
+Api.patch('/endpoint', { campo: valor })
+Api.del('/endpoint')       // DELETE — NOTA: es Api.del(), NO Api.delete()
 
-<h3>frontend/package.json — Dependencias exactas</h3>
-<pre><code>{
-  "name": "mimicro-web",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev":     "vite --port 5173",
-    "build":   "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react":            "^18.3.1",
-    "react-dom":        "^18.3.1",
-    "react-router-dom": "^6.26.0",
-    "socket.io-client": "^4.7.5",
-    "react-leaflet":    "^4.2.1",
-    "leaflet":          "^1.9.4"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "vite":                 "^5.4.0"
-  }
-}</code></pre>
+/* socket.js — singleton Socket.IO */
+const socket = SocketService.connect()
+SocketService.emitirGPS(microId, lat, lng, velocidad)
+SocketService.detenerGPS(microId)
+
+/* layout.js — sidebar y topbar dinámico por rol */
+Layout.init('pasajero')    // inyecta HTML del sidebar en #app-shell</code></pre>
 
 <h3>backend/cpp_core/setup.py — Compilación del módulo C++</h3>
 <p>Permite compilar las clases C++ como módulo Python (<span class="inline-code">mimicro_core</span>) via pybind11. Se ejecuta desde <span class="inline-code">backend/cpp_core/</span>.</p>
@@ -1576,9 +1588,82 @@ pip install -e .</code></pre>
 </div>
 </div>
 
-<!-- ══════════════════ 11. INSTALACIÓN ══════════════════ -->
+<!-- ══════════════════ 11. ALGORITMO DE PLANIFICACIÓN ══════════════════ -->
 <div class="section page-break">
-<h2>11. Guía Completa para Recrear el Proyecto</h2>
+<h2>11. Algoritmo de Planificación de Ruta (Dijkstra sobre ruta_path)</h2>
+<p>Implementado en <span class="inline-code">MODULO_CRISTHIAN/routing/planificador.py</span>. Calcula la combinación de líneas más rápida para ir del punto A al punto B, usando la geometría real de cada línea (los <span class="inline-code">ruta_path</span> dibujados por el admin).</p>
+
+<h3>Modelo del grafo</h3>
+<table>
+  <tr><th>Nodo</th><th>Representa</th></tr>
+  <tr><td><span class="inline-code">"origen"</span></td><td>Punto de partida del pasajero (virtual)</td></tr>
+  <tr><td><span class="inline-code">"destino"</span></td><td>Punto de llegada del pasajero (virtual)</td></tr>
+  <tr><td><span class="inline-code">(linea_id, wp_idx)</span></td><td>Waypoint número <em>wp_idx</em> de la línea <em>linea_id</em></td></tr>
+</table>
+
+<table style="margin-top:10px;">
+  <tr><th>Tipo de arista</th><th>De → A</th><th>Costo</th></tr>
+  <tr><td>Intra-línea (micro)</td><td>(lid, i) → (lid, i+1)</td><td>distancia / 20 km/h (solo hacia adelante)</td></tr>
+  <tr><td>Transferencia (caminata)</td><td>(lid1, i) → (lid2, j) si ≤ 200 m</td><td>distancia / 5 km/h + 5 min espera</td></tr>
+  <tr><td>Origen → primera línea</td><td>"origen" → (lid, idx) cualquier waypoint</td><td>distancia / 5 km/h + 5 min espera</td></tr>
+  <tr><td>Última línea → Destino</td><td>(lid, idx) cualquier waypoint → "destino"</td><td>distancia / 5 km/h</td></tr>
+</table>
+
+<h3>Parámetros de configuración</h3>
+<table>
+  <tr><th>Constante</th><th>Valor</th><th>Descripción</th></tr>
+  <tr><td><span class="inline-code">VEL_MICRO</span></td><td>20 km/h</td><td>Velocidad promedio del micro</td></tr>
+  <tr><td><span class="inline-code">VEL_CAMINATA</span></td><td>5 km/h</td><td>Velocidad promedio a pie</td></tr>
+  <tr><td><span class="inline-code">ESPERA_MICRO</span></td><td>5 min</td><td>Tiempo de espera promedio en parada</td></tr>
+  <tr><td><span class="inline-code">MAX_TRANSFER_M</span></td><td>200 m</td><td>Distancia máxima para transferir entre líneas a pie</td></tr>
+</table>
+
+<h3>Estructura de respuesta</h3>
+<pre><code>{
+  "encontrado": true,
+  "tiempo_total_seg": 1800,
+  "tramos": [
+    {
+      "tipo": "caminar",
+      "descripcion": "Caminá hasta la Línea 79",
+      "linea_id": null, "linea_nombre": null,
+      "desde_lat": -17.7833, "desde_lng": -63.1822,
+      "hasta_lat": -17.785,  "hasta_lng": -63.184,
+      "ruta_segmento": [],
+      "distancia_m": 320,
+      "tiempo_seg": 230,
+      "micro_cercano": null
+    },
+    {
+      "tipo": "micro",
+      "descripcion": "Tomá la Línea 79",
+      "linea_id": 3, "linea_nombre": "Línea 79",
+      "desde_lat": -17.785,  "desde_lng": -63.184,
+      "hasta_lat": -17.801,  "hasta_lng": -63.190,
+      "ruta_segmento": [{"lat": -17.785, "lng": -63.184}, ...],
+      "distancia_m": 4200,
+      "tiempo_seg": 756,
+      "micro_cercano": {
+        "micro_id": "7",
+        "lat": -17.783, "lng": -63.181,
+        "distancia_m": 450,
+        "eta_seg": 81
+      }
+    },
+    ...
+  ]
+}</code></pre>
+
+<h3>Enriquecimiento con micros activos (Redis)</h3>
+<p>Después de calcular el camino, <span class="inline-code">routingRoutes.py</span> consulta Redis para cada tramo de tipo <code>micro</code>. Itera todas las claves <span class="inline-code">gps:micro:*</span>, filtra por <span class="inline-code">linea_id</span> y calcula cuál micro activo está más cerca al origen del pasajero (fórmula Haversine). Devuelve distancia y ETA estimado basado en la velocidad real del micro (o 20 km/h por defecto).</p>
+
+<h3>Detalle técnico — tie-breaking en Dijkstra</h3>
+<p>El heap de Dijkstra usa tuplas <span class="inline-code">(costo, seq, nodo)</span> donde <span class="inline-code">seq = next(itertools.count())</span>. Esto es necesario porque Python 3 no puede comparar directamente <code>str</code> con <code>tuple</code> cuando dos caminos tienen el mismo costo — el número de secuencia garantiza orden total y evita el <span class="inline-code">TypeError: '&lt;' not supported between instances of 'str' and 'tuple'</span>.</p>
+</div>
+
+<!-- ══════════════════ 12. INSTALACIÓN ══════════════════ -->
+<div class="section page-break">
+<h2>12. Guía Completa para Recrear el Proyecto</h2>
 
 <h3>Paso 1 — Requisitos de software</h3>
 <table>
@@ -1616,8 +1701,11 @@ psql -U postgres -d mimicro_db -f mimicro-app/backend/database/seed.sql</code></
 <h3>Paso 5 — Instalar dependencias e iniciar el servidor</h3>
 <pre><code>cd mimicro-app/backend
 pip install -r requirements.txt
-python -m uvicorn main:app --reload --port 3000</code></pre>
+python -m uvicorn main:socket_app --reload --port 3000</code></pre>
 <p>Si <span class="inline-code">pip</span> falla (Python mal instalado en Windows), usar: <span class="inline-code">py -3.12 -m pip install -r requirements.txt</span></p>
+<div class="card card-red" style="margin-top:8px;">
+  <strong>⚠️ Importante:</strong> el objetivo es <span class="inline-code">main:socket_app</span>, <strong>no</strong> <span class="inline-code">main:app</span>. Usar <span class="inline-code">main:app</span> hace que WebSocket devuelva error 403 y el GPS en tiempo real (Socket.IO) no funciona.
+</div>
 
 <h3>Paso 5b — Compilar módulo C++ (opcional)</h3>
 <p>Integra las clases C++ al backend vía pybind11. Si se omite, el backend usa fallbacks Python puro.</p>

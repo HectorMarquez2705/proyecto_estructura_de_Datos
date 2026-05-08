@@ -103,8 +103,10 @@ py -3.12 -m pip install -r requirements.txt
 ### Paso 5 — Arrancar el servidor
 
 ```bash
-python -m uvicorn main:app --reload --port 3000
+python -m uvicorn main:socket_app --reload --port 3000
 ```
+
+> **Importante:** el objetivo es `main:socket_app` (el wrapper ASGI de Socket.IO), **no** `main:app`. Usar `main:app` causa que WebSocket devuelva 403 y el GPS en tiempo real no funciona.
 
 Vas a ver algo como esto, lo que significa que todo está listo:
 
@@ -153,7 +155,7 @@ Una vez instalado todo, solo necesitás correr **un solo servidor**:
 
 ```bash
 cd mimicro-app/backend
-python -m uvicorn main:app --reload --port 3000
+python -m uvicorn main:socket_app --reload --port 3000
 ```
 
 Luego abrís `http://localhost:3000` en el navegador.
@@ -163,7 +165,7 @@ Luego abrís `http://localhost:3000` en el navegador.
 ## Funcionalidades por rol
 
 ### 🧑 Pasajero
-- **Mapa en vivo** — posición de los micros en tiempo real (Socket.IO + Leaflet)
+- **Mapa en vivo** — posición de los micros en tiempo real (Socket.IO + Leaflet). Incluye planificador de ruta: el pasajero fija un punto de origen y destino en el mapa (o usa su GPS), y el sistema calcula la ruta óptima usando las líneas existentes mediante algoritmo de Dijkstra sobre los waypoints reales de cada línea
 - **Tiempo de llegada (ETA)** — estimación basada en distancia y velocidad
 - **Mi Tarjeta** — saldo de la tarjeta de transporte digital y recarga
 - **Historial de viajes** — registro de todos los viajes realizados
@@ -294,6 +296,11 @@ PROYECTO_ESTRUCTURA/
 | GET | `/lineas/{id}` | Detalle de línea + micros asignados (admin) |
 | POST | `/lineas/{id}/micros` | Agregar micro a una línea (admin) |
 
+### Planificador de ruta (`/routing`)
+| Método | Ruta | Descripción |
+|---|---|---|
+| POST | `/routing/planificar` | Calcula la ruta óptima entre origen y destino usando las líneas existentes. Body: `{origen_lat, origen_lng, destino_lat, destino_lng}`. Devuelve tramos con tipo `caminar` o `micro`, incluyendo el segmento de ruta real de cada línea y el micro activo más cercano (desde Redis). |
+
 ### Notificaciones y ETA (`/notificaciones`, `/eta`)
 | Método | Ruta | Descripción |
 |---|---|---|
@@ -333,3 +340,15 @@ PROYECTO_ESTRUCTURA/
 ### El mapa no muestra los micros en tiempo real
 - Redis debe estar activo para el caché GPS
 - El chofer debe estar en la misma ruta que el pasajero (`join_ruta`)
+
+### WebSocket devuelve 403 al iniciar el servidor
+- Verificá que estás usando `main:socket_app` y **no** `main:app` en el comando uvicorn
+- `main:app` es solo FastAPI puro; Socket.IO necesita el wrapper ASGI `socket_app`
+
+### Al agregar un micro aparece "Error al cargar la línea"
+- Es el bug de re-inicialización de Leaflet — ya corregido en la versión actual
+- Si persiste, refrescá el caché del navegador (Ctrl+Shift+R)
+
+### "Error al cargar paradas" en el detalle de línea
+- La tabla `paradas_linea` puede no existir si corriste la migración antes de que se agregara
+- Solución: `psql -U postgres -d mimicro_db -f "ruta\completa\migration_lineas.sql"` (usar ruta absoluta)
