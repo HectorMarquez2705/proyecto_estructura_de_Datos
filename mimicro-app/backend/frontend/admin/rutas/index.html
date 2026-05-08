@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Rutas</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-admin">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <div class="page-header">
+      <h2 class="page-title">Gestión de Rutas</h2>
+      <button class="btn btn-primary" onclick="Modal.open('modal-ruta')">+ Nueva Ruta</button>
+    </div>
+
+    <div class="card table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Paradas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body">
+          <tr><td colspan="5" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+          <tr><td colspan="5" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal Nueva Ruta -->
+<div id="modal-ruta" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Nueva Ruta</h3>
+      <button class="modal-close" onclick="Modal.close('modal-ruta')">×</button>
+    </div>
+    <form id="form-ruta" onsubmit="crearRuta(event)">
+      <div class="form-group">
+        <label class="form-label">Nombre *</label>
+        <input id="r-nombre" class="input" required placeholder="Ej: Ruta Norte">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Origen</label>
+        <input id="r-origen" class="input" placeholder="Punto de inicio">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Destino</label>
+        <input id="r-destino" class="input" placeholder="Punto final">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <input id="r-descripcion" class="input" placeholder="Descripción opcional">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="Modal.close('modal-ruta')">Cancelar</button>
+        <button type="submit" id="btn-crear-ruta" class="btn btn-primary">Crear Ruta</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

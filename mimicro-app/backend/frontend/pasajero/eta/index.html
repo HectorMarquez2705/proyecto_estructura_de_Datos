@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Tiempo de Llegada</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-pasajero">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <div class="page-header">
+      <div><h1 class="page-title">Tiempos de llegada</h1><p class="page-sub">Seleccioná ruta y parada para ver los micros activos</p></div>
+      <button class="btn btn-primary" id="btn-refresh" onclick="cargarETA()">🔄 Actualizar</button>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="input-row">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Ruta</label>
+          <select class="form-select" id="sel-ruta">
+            <option value="">Cargando rutas…</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Parada</label>
+          <select class="form-select" id="sel-parada" disabled>
+            <option value="">Seleccioná una ruta primero</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="eta-result">
+      <div class="empty-state">
+        <div class="empty-icon">🚌</div>
+        <div class="empty-title">Esperando selección</div>
+        <div class="empty-sub">Seleccioná una ruta y una parada para ver los tiempos de llegada</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

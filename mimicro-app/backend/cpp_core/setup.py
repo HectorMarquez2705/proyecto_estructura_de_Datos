@@ -10,7 +10,7 @@ from setuptools import setup, Extension
 import pybind11
 
 cpp_root = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', '..', 'PROYECTO ESTRUCTURA')
+    os.path.join(os.path.dirname(__file__), '..', '..', '..')
 )
 
 ext = Extension(

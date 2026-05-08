@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Detalle de Línea</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-admin">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <a href="/admin/lineas/" class="btn btn-ghost btn-sm">← Volver</a>
+        <h2 class="page-title" id="linea-titulo">Cargando…</h2>
+      </div>
+      <button class="btn btn-primary" onclick="Modal.open('modal-micro')">+ Agregar Micro</button>
+    </div>
+
+    <p id="linea-desc" class="linea-desc-page"></p>
+
+    <!-- Mapa de la ruta + paradas -->
+    <div class="card map-section">
+      <div class="map-section-header">
+        <h3 class="section-title">Ruta y Paradas</h3>
+        <div class="map-mode-info">
+          <span id="modo-label" class="modo-label modo-ver">Modo: Ver</span>
+          <button id="btn-modo-parada" class="btn btn-sm btn-outline" onclick="toggleModoParada()">
+            📍 Agregar parada
+          </button>
+        </div>
+      </div>
+      <p id="map-hint" class="map-add-hint" style="display:none;">
+        Hacé clic en el mapa para colocar una nueva parada. Se abrirá un formulario para nombrarla.
+      </p>
+      <div id="map-detalle" class="map-detalle"></div>
+      <p id="map-no-ruta" class="map-no-ruta" style="display:none;">
+        Esta línea no tiene puntos de ruta definidos.
+      </p>
+    </div>
+
+    <!-- Lista de paradas -->
+    <div class="card table-wrap" style="margin-top: var(--sp-4);">
+      <div class="table-header">
+        <h3 class="section-title">Paradas de la línea</h3>
+        <span id="paradas-count" class="badge badge-green">0</span>
+      </div>
+      <table class="table" id="tabla-paradas">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Coordenadas</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="paradas-body">
+          <tr><td colspan="4" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabla de micros -->
+    <div class="card table-wrap" style="margin-top: var(--sp-4);">
+      <div class="table-header">
+        <h3 class="section-title">Micros asignados</h3>
+        <span id="micros-count" class="badge badge-blue">0</span>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Placa</th>
+            <th>Modelo</th>
+            <th>Descripción</th>
+            <th>Chofer</th>
+            <th>Estado</th>
+            <th>Ocupación</th>
+          </tr>
+        </thead>
+        <tbody id="micros-body">
+          <tr><td colspan="6" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+          <tr><td colspan="6" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Agregar Micro -->
+<div id="modal-micro" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Agregar Micro a la Línea</h3>
+      <button class="modal-close" onclick="Modal.close('modal-micro')">×</button>
+    </div>
+    <form id="form-micro" onsubmit="agregarMicro(event)">
+      <div class="form-group">
+        <label class="form-label">Placa *</label>
+        <input id="m-placa" class="input" required placeholder="Ej: ABC-1234">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Modelo *</label>
+        <input id="m-modelo" class="input" required placeholder="Ej: Mercedes-Benz OF 1721">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <input id="m-descripcion" class="input" placeholder="Ej: Color azul, carrocería Marcopolo">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Chofer asignado <span class="label-optional">(opcional)</span></label>
+        <select id="m-chofer" class="input">
+          <option value="">Sin chofer asignado</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="Modal.close('modal-micro')">Cancelar</button>
+        <button type="submit" id="btn-agregar" class="btn btn-primary">Agregar Micro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Nombrar parada nueva -->
+<div id="modal-parada" class="modal-overlay">
+  <div class="modal-card modal-card-sm">
+    <div class="modal-header">
+      <h3>Nueva Parada</h3>
+      <button class="modal-close" onclick="cancelarParada()">×</button>
+    </div>
+    <form id="form-parada" onsubmit="confirmarParada(event)">
+      <div class="form-group">
+        <label class="form-label">Nombre de la parada *</label>
+        <input id="p-nombre" class="input" required placeholder="Ej: Terminal Bimodal, 4to Anillo Av. Piraí">
+      </div>
+      <p id="p-coords" class="coords-hint"></p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="cancelarParada()">Cancelar</button>
+        <button type="submit" id="btn-guardar-parada" class="btn btn-primary">Guardar Parada</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

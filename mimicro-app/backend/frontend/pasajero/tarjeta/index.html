@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Mi Tarjeta</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-pasajero">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <div class="tarjeta-layout">
+      <!-- Columna izquierda -->
+      <div>
+        <!-- Tarjeta visual -->
+        <div class="tarjeta-card anim-fade" id="tarjeta-card">
+          <div class="tarjeta-chip">Tarjeta de Transporte</div>
+          <div class="tarjeta-numero" id="tarjeta-numero">•••• •••• •••• ••••</div>
+          <div><span class="tarjeta-bs">Bs </span><span class="tarjeta-saldo" id="tarjeta-saldo">—</span></div>
+          <div class="tarjeta-footer">
+            <div class="tarjeta-nombre" id="tarjeta-nombre">—</div>
+            <div class="tarjeta-logo">🚌</div>
+          </div>
+        </div>
+
+        <!-- QR -->
+        <div class="card" style="margin-bottom:16px; text-align:center;">
+          <div class="card-header"><span class="card-title">Código QR</span><span class="card-sub">Para validar el pasaje</span></div>
+          <div id="qr-container" style="display:flex;justify-content:center;padding:10px 0;"></div>
+        </div>
+
+        <!-- Botón recargar -->
+        <button class="btn btn-primary" id="btn-recargar" style="width:100%;padding:14px;font-size:15px;" onclick="Modal.open('modal-recarga')">
+          💰 Recargar tarjeta
+        </button>
+      </div>
+
+      <!-- Columna derecha: historial -->
+      <div class="table-wrap anim-fade" style="animation-delay:.1s">
+        <div class="table-header">
+          <div><div class="table-title">Últimas transacciones</div></div>
+        </div>
+        <div id="historial-body" style="padding:0 0 8px;">
+          <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal de recarga -->
+<div class="modal-overlay" id="modal-recarga">
+  <div class="modal anim-scale">
+    <div class="modal-header">
+      <h2 class="modal-title">💰 Recargar Tarjeta</h2>
+      <button class="modal-close" onclick="Modal.close('modal-recarga')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Monto a recargar (Bs)</label>
+        <input class="form-input" type="number" id="monto-recarga" min="5" max="500" placeholder="Ej: 50" style="font-size:20px; text-align:center; padding:14px;">
+        <span class="form-hint">Mínimo Bs 5 — Máximo Bs 500</span>
+      </div>
+      <div class="recarga-sugerencias">
+        <button class="sug-btn" onclick="setSugerencia(20)">Bs 20</button>
+        <button class="sug-btn" onclick="setSugerencia(50)">Bs 50</button>
+        <button class="sug-btn" onclick="setSugerencia(100)">Bs 100</button>
+        <button class="sug-btn" onclick="setSugerencia(200)">Bs 200</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="Modal.close('modal-recarga')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-confirm-recarga" onclick="confirmarRecarga()">💰 Confirmar recarga</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

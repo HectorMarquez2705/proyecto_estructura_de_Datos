@@ -1,0 +1,231 @@
+/* pasajero/mapa/styles.css */
+
+/* ── Layout ─────────────────────────────────────────────────────── */
+.mapa-main {
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* Mismo patrón que el viejo .mapa-screen que funcionaba */
+.planner-wrap {
+  display: flex;
+  height: calc(100vh - var(--topbar-h));
+  overflow: hidden;
+}
+
+/* ── Panel ──────────────────────────────────────────────────────── */
+.planner-panel {
+  width: 310px;
+  min-width: 280px;
+  height: 100%;
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: var(--sp-4);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  background: var(--surface-1);
+  box-sizing: border-box;
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0;
+}
+
+/* ── Origen / Destino ───────────────────────────────────────────── */
+.pin-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px currentColor;
+  flex-shrink: 0;
+  margin-top: 22px;
+}
+.pin-dot-origin { color: #16a34a; background: #16a34a; }
+.pin-dot-dest   { color: #dc2626; background: #dc2626; }
+
+.pin-connector {
+  width: 2px;
+  height: 12px;
+  background: var(--border);
+  margin-left: 6px;
+}
+
+.pin-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pin-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pin-input-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pin-input {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text-1);
+  cursor: default;
+  min-width: 0;
+}
+.pin-input::placeholder { color: var(--text-3); }
+
+.pin-btn {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+/* ── Modo pin ───────────────────────────────────────────────────── */
+.pin-mode-row {
+  display: flex;
+  gap: var(--sp-2);
+}
+.pin-mode-row .btn { flex: 1; font-size: 12px; }
+
+.pin-hint {
+  font-size: 12px;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius);
+  padding: 8px 12px;
+}
+
+/* ── Calcular ───────────────────────────────────────────────────── */
+.btn-block { width: 100%; }
+
+/* ── Resultado ──────────────────────────────────────────────────── */
+.result-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.result-tiempo {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.result-label {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+/* ── Tramos ─────────────────────────────────────────────────────── */
+.tramos-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.tramo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.tramo-walk { border-style: dashed; }
+
+.tramo-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.tramo-body { flex: 1; min-width: 0; }
+
+.tramo-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.tramo-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.tramo-route {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 4px;
+}
+
+.micro-eta {
+  font-size: 12px;
+  color: #065f46;
+  background: #d1fae5;
+  border-radius: var(--radius);
+  padding: 4px 8px;
+  margin-top: 6px;
+}
+
+/* ── Sin ruta ───────────────────────────────────────────────────── */
+.no-ruta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  background: var(--surface-2);
+  border-radius: var(--radius-lg);
+}
+
+.no-ruta-icon { font-size: 32px; }
+
+.no-ruta-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-1);
+}
+
+.no-ruta-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  margin: 0;
+}
+
+/* ── Mapa ───────────────────────────────────────────────────────── */
+#mapa-container {
+  flex: 1;
+  min-width: 0;
+  /* sin height explícito — el flex container ya lo define */
+}
+
+.leaflet-container { background: var(--surface-2); }

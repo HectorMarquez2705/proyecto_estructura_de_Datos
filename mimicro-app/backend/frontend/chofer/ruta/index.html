@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Ruta Activa</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-chofer">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <!-- Error state -->
+    <div id="no-micro-msg" style="display:none;">
+      <div class="empty-state">
+        <div class="empty-icon">🚌</div>
+        <div class="empty-title">Sin micro asignado</div>
+        <div class="empty-sub">No tenés ningún micro asignado. Contactá al administrador.</div>
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div id="chofer-content" style="display:none;">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Control de ruta</h1>
+          <p class="page-sub" id="micro-info-sub">—</p>
+        </div>
+        <div class="page-actions">
+          <div class="gps-indicator gps-inactive" id="gps-indicator">
+            <div class="gps-dot"></div>
+            <span id="gps-label">GPS inactivo</span>
+          </div>
+          <button class="btn btn-primary btn-lg" id="btn-toggle-ruta" onclick="toggleRuta()">
+            ▶️ Iniciar Ruta
+          </button>
+        </div>
+      </div>
+
+      <div class="chofer-layout">
+        <!-- Panel izquierdo -->
+        <div class="gps-panel">
+          <div class="gps-coords">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <span style="font-size:14px;font-weight:700;color:var(--text)">Posición GPS</span>
+              <div class="gps-indicator gps-inactive" id="gps-indicator-2">
+                <div class="gps-dot"></div><span id="gps-label-2">Inactivo</span>
+              </div>
+            </div>
+            <div class="gps-row"><span class="gps-row-label">Latitud</span><span class="gps-row-val" id="gps-lat">—</span></div>
+            <div class="gps-row"><span class="gps-row-label">Longitud</span><span class="gps-row-val" id="gps-lng">—</span></div>
+            <div class="gps-row"><span class="gps-row-label">Velocidad</span><span class="gps-row-val" id="gps-vel">— km/h</span></div>
+            <div class="gps-row"><span class="gps-row-label">Última actualización</span><span class="gps-row-val" id="gps-ts">—</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">Info del micro</span></div>
+            <div class="gps-row"><span class="gps-row-label">Placa</span><span class="gps-row-val" id="info-placa">—</span></div>
+            <div class="gps-row"><span class="gps-row-label">Ruta</span><span class="gps-row-val" id="info-ruta">—</span></div>
+            <div class="gps-row"><span class="gps-row-label">Capacidad</span><span class="gps-row-val" id="info-cap">—</span></div>
+            <div class="gps-row"><span class="gps-row-label">Estado</span><span class="gps-row-val" id="info-estado">—</span></div>
+          </div>
+        </div>
+
+        <!-- Mapa -->
+        <div class="map-box" style="height:500px;">
+          <div id="chofer-mapa" style="height:100%;"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

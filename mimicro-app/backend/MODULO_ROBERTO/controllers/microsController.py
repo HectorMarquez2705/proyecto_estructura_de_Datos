@@ -17,19 +17,19 @@ async def get_micro(micro_id: int) -> dict:
 
 async def crear_micro(body: dict) -> dict:
     placa     = body.get("placa", "").strip().upper()
-    chofer_id = body.get("choferId")
-    ruta_id   = body.get("rutaId")
+    chofer_id = body.get("chofer_id")
+    ruta_id   = body.get("ruta_id")
     capacidad = body.get("capacidad", 30)
-    if not placa or not chofer_id or not ruta_id:
-        raise HTTPException(status_code=400, detail="placa, choferId y rutaId son requeridos")
+    if not placa:
+        raise HTTPException(status_code=400, detail="La placa es requerida")
     micro_id = await Micro.crear(placa, chofer_id, ruta_id, capacidad)
     return {"id": micro_id, "placa": placa}
 
 
 async def patch_ocupacion(micro_id: int, body: dict) -> dict:
-    estado = body.get("ocupacion", "")
+    estado = body.get("estado", "")
     if estado not in ("vacio", "medio", "lleno"):
-        raise HTTPException(status_code=400, detail="Ocupacion invalida")
+        raise HTTPException(status_code=400, detail="Ocupacion invalida: debe ser vacio, medio o lleno")
     await Micro.actualizar_ocupacion(micro_id, estado)
     return {"mensaje": "Ocupacion actualizada", "estado": estado}
 
@@ -42,5 +42,5 @@ async def patch_estado(micro_id: int, body: dict) -> dict:
         await Micro.desactivar(micro_id)
         ListaPasajeros.limpiar_micro(micro_id)
     else:
-        raise HTTPException(status_code=400, detail="Estado invalido")
+        raise HTTPException(status_code=400, detail="Estado invalido: debe ser activo o inactivo")
     return {"mensaje": f"Micro {accion}"}

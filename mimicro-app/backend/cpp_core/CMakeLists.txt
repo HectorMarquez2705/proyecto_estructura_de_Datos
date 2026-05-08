@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 REQUIRED)
 
-set(CPP_ROOT "${CMAKE_SOURCE_DIR}/../../PROYECTO ESTRUCTURA")
+set(CPP_ROOT "${CMAKE_SOURCE_DIR}/../../..")
 
 pybind11_add_module(mimicro_core bindings.cpp)
 

@@ -1,0 +1,81 @@
+/* ── Admin / Usuarios — estilos específicos de página ──────── */
+
+/* Barra de búsqueda */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  max-width: 420px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  pointer-events: none;
+  opacity: .6;
+}
+
+.search-input {
+  width: 100%;
+  padding-left: 38px;
+}
+
+.search-count {
+  font-size: 13px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* Select de rol dentro de la tabla */
+.rol-select {
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.rol-select:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.15);
+}
+
+/* Skeleton loading */
+.skeleton-row td {
+  padding: 14px 16px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(90deg, var(--surface-3) 25%, var(--border) 50%, var(--surface-3) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.skeleton-line.skeleton-short {
+  max-width: 100px;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Badge rol */
+.badge-pasajero { background: var(--blue-light);   color: var(--blue); }
+.badge-chofer   { background: var(--green-light);  color: var(--green); }
+.badge-admin    { background: var(--purple-light); color: var(--purple); }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Micros</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-admin">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <div class="page-header">
+      <h2 class="page-title">Gestión de Micros</h2>
+      <button class="btn btn-primary" onclick="Modal.open('modal-micro')">+ Nuevo Micro</button>
+    </div>
+
+    <div class="card table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Placa</th>
+            <th>Capacidad</th>
+            <th>Ruta</th>
+            <th>Estado</th>
+            <th>Ocupación</th>
+            <th>Chofer ID</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body">
+          <tr><td colspan="6" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+          <tr><td colspan="6" class="skeleton-cell"><div class="skeleton-line"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal Nuevo Micro -->
+<div id="modal-micro" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Nuevo Micro</h3>
+      <button class="modal-close" onclick="Modal.close('modal-micro')">×</button>
+    </div>
+    <form id="form-micro" onsubmit="crearMicro(event)">
+      <div class="form-group">
+        <label class="form-label">Placa *</label>
+        <input id="m-placa" class="input" required placeholder="Ej: ABC-123">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Capacidad</label>
+        <input id="m-capacidad" class="input" type="number" value="30" min="1" max="100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ruta asignada</label>
+        <select id="m-ruta" class="input">
+          <option value="">Sin ruta</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ID del Chofer <span class="label-optional">(opcional)</span></label>
+        <input id="m-chofer" class="input" type="number" placeholder="ID del usuario chofer">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="Modal.close('modal-micro')">Cancelar</button>
+        <button type="submit" id="btn-crear-micro" class="btn btn-primary">Crear Micro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+/* Login — sobrescrituras específicas */
+.auth-page { min-height: 100vh; }
+
+.form-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+  border: none;
+  font-size: 15px;
+  padding: 13px;
+  letter-spacing: .3px;
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--blue-hover) 0%, #6d28d9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37,99,235,.35);
+}

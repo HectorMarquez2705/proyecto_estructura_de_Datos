@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Mapa</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-pasajero">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content mapa-main">
+
+    <div class="planner-wrap">
+
+      <!-- ── Panel izquierdo ─────────────────────────────────── -->
+      <div class="planner-panel" id="planner-panel">
+
+        <h3 class="panel-title">Planificar viaje</h3>
+
+        <!-- Origen -->
+        <div class="pin-row">
+          <div class="pin-dot pin-dot-origin"></div>
+          <div class="pin-field">
+            <label class="pin-label">Desde</label>
+            <div class="pin-input-row">
+              <input id="input-origen" class="pin-input" readonly
+                     placeholder="Detectando tu ubicación…">
+              <button id="btn-gps" class="btn btn-sm btn-ghost pin-btn" title="Usar GPS">📍</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-connector"></div>
+
+        <!-- Destino -->
+        <div class="pin-row">
+          <div class="pin-dot pin-dot-dest"></div>
+          <div class="pin-field">
+            <label class="pin-label">Hasta</label>
+            <div class="pin-input-row">
+              <input id="input-destino" class="pin-input" readonly
+                     placeholder="Tocá el mapa para fijar">
+              <button id="btn-clear-dest" class="btn btn-sm btn-ghost pin-btn"
+                      style="display:none" title="Borrar destino">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de modo pin -->
+        <div class="pin-mode-row">
+          <button id="btn-modo-origen"  class="btn btn-sm btn-outline">📌 Cambiar origen</button>
+          <button id="btn-modo-destino" class="btn btn-sm btn-outline">📌 Fijar destino</button>
+        </div>
+
+        <!-- Hint de modo pin -->
+        <div id="pin-hint" class="pin-hint" style="display:none">
+          Hacé clic en el mapa para fijar el punto
+        </div>
+
+        <!-- Calcular -->
+        <button id="btn-calcular" class="btn btn-primary btn-block" disabled>
+          Calcular ruta óptima
+        </button>
+
+        <!-- Resultado encontrado -->
+        <div id="result-section" style="display:none">
+          <div class="result-header">
+            <span class="result-tiempo" id="result-tiempo"></span>
+            <span class="result-label">tiempo estimado</span>
+          </div>
+          <div id="tramos-list" class="tramos-list"></div>
+        </div>
+
+        <!-- Sin ruta -->
+        <div id="no-ruta-section" class="no-ruta" style="display:none">
+          <div class="no-ruta-icon">🗺️</div>
+          <div class="no-ruta-title">Sin ruta disponible</div>
+          <p class="no-ruta-sub">No hay conexión entre estos puntos con las líneas actuales. Intentá mover el origen o el destino.</p>
+        </div>
+
+      </div><!-- /planner-panel -->
+
+      <!-- ── Mapa ──────────────────────────────────────────────── -->
+      <div id="mapa-container"></div>
+
+    </div><!-- /planner-wrap -->
+
+  </main>
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

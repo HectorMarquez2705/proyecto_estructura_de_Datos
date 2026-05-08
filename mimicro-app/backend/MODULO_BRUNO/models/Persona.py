@@ -37,3 +37,17 @@ async def verificar_credenciales(email: str, password: str):
     if not verify_password(password, usuario["password_hash"]):
         return None
     return usuario
+
+
+async def actualizar_foto(user_id: int, foto_url: str):
+    await execute(
+        "UPDATE usuarios SET foto_url=$1 WHERE id=$2",
+        foto_url, user_id,
+    )
+
+
+async def actualizar_password(user_id: int, nuevo_hash: str):
+    await execute(
+        "UPDATE usuarios SET password_hash=$1 WHERE id=$2",
+        nuevo_hash, user_id,
+    )

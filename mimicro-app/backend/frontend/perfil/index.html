@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Mi Perfil</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <!-- Cabecera del perfil -->
+    <div class="perfil-header">
+      <div class="perfil-avatar-wrap">
+        <div class="perfil-avatar" id="perfil-avatar">?</div>
+        <label class="perfil-avatar-edit" for="foto-input" title="Cambiar foto">
+          📷
+          <input type="file" id="foto-input" accept="image/jpeg,image/png,image/webp" style="display:none">
+        </label>
+      </div>
+      <div class="perfil-header-info">
+        <h2 class="perfil-nombre" id="perfil-nombre">Cargando…</h2>
+        <span class="perfil-rol-badge" id="perfil-rol-badge"></span>
+        <p class="perfil-email" id="perfil-email"></p>
+      </div>
+    </div>
+
+    <div class="perfil-grid">
+
+      <!-- Información personal -->
+      <section class="card perfil-section">
+        <div class="perfil-section-title">
+          <span class="perfil-section-icon">👤</span>
+          Información Personal
+        </div>
+        <div class="info-row">
+          <span class="info-label">Nombre completo</span>
+          <span class="info-value" id="info-nombre">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value" id="info-email">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Teléfono</span>
+          <span class="info-value" id="info-telefono">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Rol</span>
+          <span class="info-value" id="info-rol">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Miembro desde</span>
+          <span class="info-value" id="info-fecha">—</span>
+        </div>
+      </section>
+
+      <!-- Foto de perfil -->
+      <section class="card perfil-section">
+        <div class="perfil-section-title">
+          <span class="perfil-section-icon">📷</span>
+          Foto de Perfil
+        </div>
+        <div class="foto-preview-wrap">
+          <div class="foto-preview" id="foto-preview">
+            <span id="foto-preview-text">Sin foto cargada</span>
+            <img id="foto-preview-img" src="" alt="Preview" style="display:none">
+          </div>
+        </div>
+        <p class="foto-hint">JPG, PNG o WebP · Máximo 5 MB</p>
+        <label for="foto-input" class="btn btn-secondary btn-full" style="cursor:pointer;text-align:center;display:block;margin-top:10px;">
+          Seleccionar imagen
+        </label>
+        <button id="btn-subir-foto" class="btn btn-primary btn-full" onclick="subirFoto()" style="display:none;margin-top:8px;">
+          Subir foto
+        </button>
+      </section>
+
+      <!-- Cambiar contraseña -->
+      <section class="card perfil-section perfil-section-full">
+        <div class="perfil-section-title">
+          <span class="perfil-section-icon">🔒</span>
+          Cambiar Contraseña
+        </div>
+        <form id="form-password" onsubmit="cambiarPassword(event)" class="password-form">
+          <div class="form-group">
+            <label class="form-label">Contraseña actual</label>
+            <div class="input-password-wrap">
+              <input id="pwd-actual" type="password" class="input" required placeholder="Tu contraseña actual">
+              <button type="button" class="btn-eye" onclick="togglePwd('pwd-actual', this)">👁️</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nueva contraseña</label>
+            <div class="input-password-wrap">
+              <input id="pwd-nueva" type="password" class="input" required placeholder="Mínimo 6 caracteres">
+              <button type="button" class="btn-eye" onclick="togglePwd('pwd-nueva', this)">👁️</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmar nueva contraseña</label>
+            <div class="input-password-wrap">
+              <input id="pwd-confirmar" type="password" class="input" required placeholder="Repite la nueva contraseña">
+              <button type="button" class="btn-eye" onclick="togglePwd('pwd-confirmar', this)">👁️</button>
+            </div>
+          </div>
+          <div id="pwd-error" class="pwd-error" style="display:none"></div>
+          <button type="submit" id="btn-cambiar-pwd" class="btn btn-primary">Actualizar contraseña</button>
+        </form>
+      </section>
+
+    </div>
+
+  </main>
+</div>
+
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

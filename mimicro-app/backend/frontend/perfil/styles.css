@@ -1,0 +1,222 @@
+/* perfil/styles.css */
+
+/* ── Cabecera ─────────────────────────────────────────────── */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  animation: fadeIn .4s ease both;
+}
+
+.perfil-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.perfil-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--rl, var(--blue-light));
+  color: var(--rc, var(--blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 800;
+  border: 3px solid var(--rc, var(--blue));
+  overflow: hidden;
+  transition: border-color var(--t-slow);
+}
+
+.perfil-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.perfil-avatar-edit {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  background: var(--rc, var(--blue));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  border: 2px solid var(--surface);
+  transition: transform var(--t);
+}
+.perfil-avatar-edit:hover { transform: scale(1.15); }
+
+.perfil-header-info { flex: 1; min-width: 0; }
+
+.perfil-nombre {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.perfil-rol-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: var(--r-full);
+  background: var(--rl, var(--blue-light));
+  color: var(--rc, var(--blue));
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+
+.perfil-email {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+/* ── Grid de secciones ────────────────────────────────────── */
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.perfil-section { animation: slideInUp .35s ease both; }
+.perfil-section-full { grid-column: 1 / -1; }
+
+.perfil-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.perfil-section-icon { font-size: 16px; }
+
+/* ── Filas de info ────────────────────────────────────────── */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+  font-size: 12.5px;
+  color: var(--text-3);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 13.5px;
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* ── Foto preview ─────────────────────────────────────────── */
+.foto-preview-wrap { margin-bottom: 10px; }
+
+.foto-preview {
+  width: 100%;
+  height: 160px;
+  border: 2px dashed var(--border);
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  font-size: 13px;
+  overflow: hidden;
+  background: var(--surface-2);
+  transition: border-color var(--t);
+}
+.foto-preview.has-image { border-style: solid; border-color: var(--rc, var(--blue)); }
+
+.foto-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-hint {
+  font-size: 11.5px;
+  color: var(--text-3);
+  text-align: center;
+  margin-top: 6px;
+}
+
+/* ── Contraseña ───────────────────────────────────────────── */
+.password-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.password-form .form-group { margin-bottom: 0; }
+
+.input-password-wrap {
+  position: relative;
+}
+.input-password-wrap .input { padding-right: 40px; }
+
+.btn-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  opacity: .6;
+  transition: opacity var(--t);
+}
+.btn-eye:hover { opacity: 1; }
+
+.pwd-error {
+  grid-column: 1 / -1;
+  background: var(--red-light);
+  color: var(--red);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  animation: slideInUp .2s ease;
+}
+
+.password-form #btn-cambiar-pwd { align-self: end; }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .perfil-grid { grid-template-columns: 1fr; }
+  .perfil-section-full { grid-column: 1; }
+  .password-form { grid-template-columns: 1fr; }
+  .perfil-header { flex-direction: column; text-align: center; }
+  .perfil-header-info { width: 100%; }
+  .perfil-email { justify-content: center; }
+}

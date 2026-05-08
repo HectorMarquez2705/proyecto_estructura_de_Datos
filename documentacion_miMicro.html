@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<title>miMicro — Documentación Técnica Completa</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; line-height: 1.6; color: #1a1a2e; background: #fff; }
+
+  /* ── Print layout ── */
+  @media print {
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    body { font-size: 11px; }
+    h1 { font-size: 22px !important; }
+    h2 { font-size: 16px !important; }
+    h3 { font-size: 13px !important; }
+    pre, code { font-size: 9px !important; }
+  }
+
+  /* ── Typography ── */
+  h1 { font-size: 28px; font-weight: 800; }
+  h2 { font-size: 18px; font-weight: 700; margin: 28px 0 10px; border-bottom: 2px solid #1565c0; padding-bottom: 6px; color: #0d47a1; }
+  h3 { font-size: 14px; font-weight: 700; margin: 18px 0 6px; color: #1a237e; }
+  h4 { font-size: 13px; font-weight: 600; margin: 12px 0 4px; color: #283593; }
+  p  { margin: 6px 0 10px; }
+  ul, ol { margin: 6px 0 10px 20px; }
+  li { margin: 3px 0; }
+  a  { color: #1565c0; }
+
+  /* ── Layout ── */
+  .container { max-width: 1000px; margin: 0 auto; padding: 40px 48px; }
+  .section   { margin-bottom: 36px; }
+
+  /* ── Cover ── */
+  .cover { text-align: center; padding: 80px 0 60px; border-bottom: 3px solid #1565c0; margin-bottom: 48px; }
+  .cover .bus { font-size: 72px; display: block; margin-bottom: 16px; }
+  .cover h1   { font-size: 42px; color: #0d47a1; }
+  .cover .sub { font-size: 17px; color: #555; margin: 8px 0 24px; }
+  .cover .meta { font-size: 13px; color: #777; line-height: 2; }
+  .cover .badge { display: inline-block; background: #1565c0; color: #fff; border-radius: 20px; padding: 4px 14px; font-size: 12px; margin: 4px; }
+
+  /* ── Notice ── */
+  .notice { background: #e3f2fd; border-left: 4px solid #1565c0; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 0 0 24px; font-size: 12px; }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 12px; }
+  th { background: #1565c0; color: #fff; padding: 8px 10px; text-align: left; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f5f9ff; }
+
+  /* ── Code ── */
+  pre { background: #1e1e2e; color: #cdd6f4; padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-size: 11px; margin: 8px 0 16px; line-height: 1.5; }
+  code { font-family: 'Consolas', 'Courier New', monospace; }
+  .inline-code { background: #e8eaf6; color: #1a237e; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 11px; }
+
+  /* ── Cards / Boxes ── */
+  .card { border: 1px solid #c5cae9; border-radius: 8px; padding: 14px 18px; margin: 10px 0 16px; }
+  .card-blue   { border-color: #90caf9; background: #e3f2fd; }
+  .card-green  { border-color: #a5d6a7; background: #e8f5e9; }
+  .card-purple { border-color: #ce93d8; background: #f3e5f5; }
+  .card-amber  { border-color: #ffe082; background: #fffde7; }
+  .card-red    { border-color: #ef9a9a; background: #ffebee; }
+
+  /* ── Badges ── */
+  .badge { display: inline-block; border-radius: 12px; padding: 2px 10px; font-size: 11px; font-weight: 600; }
+  .badge-blue   { background: #1565c0; color: #fff; }
+  .badge-green  { background: #2e7d32; color: #fff; }
+  .badge-purple { background: #6a1b9a; color: #fff; }
+  .badge-amber  { background: #f57f17; color: #fff; }
+  .badge-red    { background: #b71c1c; color: #fff; }
+  .badge-gray   { background: #546e7a; color: #fff; }
+
+  /* ── TOC ── */
+  .toc { background: #f5f9ff; border: 1px solid #c5cae9; border-radius: 8px; padding: 20px 28px; margin-bottom: 36px; }
+  .toc h2 { border: none; margin-top: 0; font-size: 16px; }
+  .toc ol { counter-reset: toc; }
+  .toc > ol > li { font-weight: 600; margin: 6px 0; }
+  .toc > ol > li > ol { font-weight: 400; }
+
+  /* ── Diagrams ── */
+  .diagram-box { border: 2px solid #90caf9; border-radius: 8px; padding: 10px 16px; text-align: center; background: #e3f2fd; font-size: 12px; font-weight: 600; color: #0d47a1; display: inline-block; min-width: 120px; }
+  .diagram-arrow { text-align: center; font-size: 18px; color: #1565c0; margin: 2px 0; line-height: 1; }
+  .diagram-row { display: flex; gap: 12px; align-items: center; justify-content: center; margin: 8px 0; flex-wrap: wrap; }
+  .diagram-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .diagram-line { width: 2px; height: 20px; background: #1565c0; }
+  .arch-container { border: 2px dashed #90caf9; border-radius: 12px; padding: 16px; margin: 12px 0; background: #fafcff; }
+  .arch-title { font-size: 11px; font-weight: 700; color: #546e7a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+
+  /* ── Method list ── */
+  .method { font-family: monospace; font-size: 11px; background: #f0f4ff; border-left: 3px solid #5c6bc0; padding: 3px 8px; margin: 3px 0; border-radius: 0 4px 4px 0; }
+  .method .ret { color: #388e3c; }
+  .method .name { color: #1565c0; font-weight: 600; }
+  .method .params { color: #6d4c41; }
+
+  /* ── Screen cards ── */
+  .screen-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 18px; margin: 10px 0; }
+  .screen-card h4 { margin-top: 0; }
+  .screen-tag { font-size: 10px; background: #eceff1; border-radius: 10px; padding: 2px 8px; margin-left: 6px; color: #546e7a; }
+
+  /* ── Endpoint list ── */
+  .endpoint { display: flex; align-items: flex-start; gap: 10px; padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
+  .method-tag { font-size: 10px; font-weight: 700; border-radius: 3px; padding: 2px 6px; min-width: 44px; text-align: center; font-family: monospace; }
+  .GET    { background: #e8f5e9; color: #2e7d32; }
+  .POST   { background: #e3f2fd; color: #1565c0; }
+  .PATCH  { background: #fff8e1; color: #f57f17; }
+  .DELETE { background: #ffebee; color: #c62828; }
+
+  /* ── Two columns ── */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── Flow diagram (CSS) ── */
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .flow-step { border: 2px solid #1565c0; border-radius: 8px; padding: 8px 20px; text-align: center; font-size: 12px; font-weight: 600; background: #e3f2fd; color: #0d47a1; min-width: 220px; }
+  .flow-decision { border: 2px solid #f57f17; border-radius: 0; padding: 8px 20px; text-align: center; font-size: 12px; font-weight: 600; background: #fff8e1; color: #e65100; min-width: 220px; transform: skewX(-8deg); }
+  .flow-decision span { display: inline-block; transform: skewX(8deg); }
+  .flow-action  { border: 2px solid #2e7d32; border-radius: 20px; padding: 8px 20px; text-align: center; font-size: 12px; font-weight: 600; background: #e8f5e9; color: #1b5e20; min-width: 220px; }
+  .flow-arrow-down { width: 2px; height: 24px; background: #546e7a; margin: 0 auto; }
+  .flow-arrow-label { font-size: 10px; color: #546e7a; margin: -4px 0; }
+  .flow-split { display: flex; gap: 24px; justify-content: center; align-items: flex-start; }
+  .flow-split-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .flow-split-label { font-size: 10px; font-weight: 600; color: #fff; background: #546e7a; border-radius: 10px; padding: 2px 8px; margin: 4px 0; }
+
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 30px 0; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- PRINT NOTICE -->
+<div class="notice no-print">
+  <strong>Para guardar como PDF:</strong> presioná <strong>Ctrl + P</strong> (o Cmd + P en Mac) → seleccioná <strong>"Guardar como PDF"</strong> → orientación Vertical, márgenes Mínimos. Chrome da el mejor resultado.
+</div>
+
+<!-- ══════════════════ PORTADA ══════════════════ -->
+<div class="cover">
+  <span class="bus">🚌</span>
+  <h1>miMicro</h1>
+  <p class="sub">Plataforma de Transporte Inteligente — Santa Cruz de la Sierra, Bolivia</p>
+  <p class="meta">
+    <strong>Materia:</strong> Estructuras de Datos &nbsp;|&nbsp; <strong>Semestre:</strong> 3er semestre 2026<br>
+    <strong>Universidad:</strong> UPSA — Universidad Privada de Santa Cruz de la Sierra<br>
+    <strong>Versión:</strong> 1.2 Prototipo &nbsp;|&nbsp; <strong>Fecha:</strong> Mayo 2026
+  </p>
+  <br>
+  <div>
+    <span class="badge">Hector Marquez — 2025111291</span>
+    <span class="badge">Bruno Parada — 2025113242</span>
+    <span class="badge">Cristhian Arze — 2025114451</span>
+    <span class="badge">Javier Caye — 2025111797</span>
+    <span class="badge">Roberto Gutierrez — 2025111916</span>
+    <span class="badge">Samuel Carrasco — 2025211490</span>
+  </div>
+</div>
+
+<!-- ══════════════════ ÍNDICE ══════════════════ -->
+<div class="toc">
+  <h2>Índice</h2>
+  <ol>
+    <li>Descripción del Proyecto</li>
+    <li>Stack Tecnológico</li>
+    <li>Diagrama de Arquitectura del Sistema</li>
+    <li>Estructuras de Datos C++ (17 clases .h)
+      <ol>
+        <li>CLASES HECTOR — AnalizadorFlujo, ReporteSeguridad</li>
+        <li>CLASES BRUNO — Persona, TarjetaTransporte, GestorPagos</li>
+        <li>CLASES CRISTHIAN — GrafoParadas, OptimizadorRuta, Ruta</li>
+        <li>CLASES JAVIER — GestorGPS, Parada, PilaHistorial</li>
+        <li>CLASES ROBERTO — Micro, ListaPasajeros, SensorPuerta</li>
+        <li>CLASES SAMUEL — ColaEspera, NotificacionAlerta, TiempoEstimado</li>
+      </ol>
+    </li>
+    <li>Base de Datos PostgreSQL (schema.sql + seed.sql completos)</li>
+    <li>Backend API — Módulos y Endpoints</li>
+    <li>Frontend — Pantallas por Rol
+      <ol>
+        <li>Autenticación: Login y Registro</li>
+        <li>Pasajero: Mapa, ETA, Tarjeta, Historial, Notificaciones</li>
+        <li>Chofer: Ruta Activa, Ocupación, Desvío</li>
+        <li>Administrador: Usuarios, Líneas de Micro, Reportes</li>
+        <li>Perfil de Usuario (todos los roles)</li>
+      </ol>
+    </li>
+    <li>Diagrama de Flujo del Sistema</li>
+    <li>Variables de Entorno y Configuración</li>
+    <li>Código Fuente de Archivos Clave (main.py, setup.py, global.css)</li>
+    <li>Guía Completa para Recrear el Proyecto</li>
+  </ol>
+</div>
+
+<!-- ══════════════════ 1. DESCRIPCIÓN ══════════════════ -->
+<div class="section page-break">
+<h2>1. Descripción del Proyecto</h2>
+
+<h3>El Problema</h3>
+<p>El transporte público en Santa Cruz de la Sierra opera de manera informal, generando estas problemáticas para los usuarios:</p>
+<ul>
+  <li><strong>Incertidumbre total:</strong> No se sabe cuándo llegará el siguiente micro ni si tendrá lugar disponible.</li>
+  <li><strong>Cambios de ruta sin aviso:</strong> Los choferes alteran recorridos por tráfico o decisión propia.</li>
+  <li><strong>Pagos ineficientes:</strong> Solo efectivo, genera conflictos por cambio y riesgos de robo.</li>
+  <li><strong>Vacío tecnológico:</strong> Aplicaciones globales como Google Maps no cubren las rutas informales locales.</li>
+</ul>
+
+<h3>La Solución — miMicro</h3>
+<p>miMicro es una plataforma web con tres actores principales que se complementan:</p>
+<div class="cols-2">
+  <div class="card card-blue">
+    <h4>🧑 Pasajero</h4>
+    <p>Ve el mapa en tiempo real con la posición de los micros, consulta tiempos de llegada (ETA), gestiona su tarjeta de transporte digital y recibe notificaciones de desvíos.</p>
+  </div>
+  <div class="card card-green">
+    <h4>🚌 Chofer</h4>
+    <p>Transmite su posición GPS en tiempo real, reporta el nivel de ocupación del micro y envía alertas de desvíos o incidentes a los pasajeros de su ruta.</p>
+  </div>
+</div>
+<div class="card card-purple">
+  <h4>🛠 Administrador</h4>
+  <p>Gestiona usuarios (cambio de roles), administra <strong>Líneas de Micro</strong> (grupos de micros con ruta trazada en mapa), registra micros dentro de cada línea, y consulta estadísticas y logs de seguridad del sistema.</p>
+</div>
+
+<h3>Objetivos académicos</h3>
+<p>El proyecto aplica las siguientes estructuras de datos estudiadas en la materia:</p>
+<table>
+  <tr><th>Estructura</th><th>Clase implementada</th><th>Uso en el sistema</th></tr>
+  <tr><td>Pila (Stack)</td><td>PilaHistorial</td><td>Historial de viajes LIFO por usuario</td></tr>
+  <tr><td>Cola (Queue)</td><td>ColaEspera</td><td>Cola de pasajeros esperando en parada</td></tr>
+  <tr><td>Grafo</td><td>GrafoParadas</td><td>Red de paradas de una ruta</td></tr>
+  <tr><td>Lista Enlazada</td><td>ListaPasajeros</td><td>Pasajeros activos a bordo de un micro</td></tr>
+  <tr><td>Árbol de prioridad (min-heap)</td><td>OptimizadorRuta</td><td>Dijkstra para camino más corto</td></tr>
+  <tr><td>Map (árbol AVL interno)</td><td>AnalizadorFlujo</td><td>Indexación de datos de flujo por ruta/hora</td></tr>
+</table>
+</div>
+
+<!-- ══════════════════ 2. STACK ══════════════════ -->
+<div class="section page-break">
+<h2>2. Stack Tecnológico</h2>
+
+<div class="cols-2">
+  <div>
+    <h3>Backend</h3>
+    <table>
+      <tr><th>Tecnología</th><th>Versión</th><th>Función</th></tr>
+      <tr><td>Python</td><td>3.11</td><td>Lenguaje principal del servidor</td></tr>
+      <tr><td>FastAPI</td><td>0.111</td><td>Framework REST API asíncrono</td></tr>
+      <tr><td>Uvicorn</td><td>0.29</td><td>Servidor ASGI de producción</td></tr>
+      <tr><td>python-socketio</td><td>5.11</td><td>WebSockets para GPS en tiempo real</td></tr>
+      <tr><td>asyncpg</td><td>0.29</td><td>Driver PostgreSQL asíncrono (sin ORM)</td></tr>
+      <tr><td>redis-py</td><td>5.0</td><td>Caché de posiciones GPS (TTL 30s)</td></tr>
+      <tr><td>python-jose</td><td>3.3</td><td>Generación y verificación de JWT</td></tr>
+      <tr><td>bcrypt</td><td>4.2</td><td>Hash de contraseñas (bcrypt rounds=12)</td></tr>
+      <tr><td>pybind11</td><td>2.12</td><td>Bindings Python↔C++ para las estructuras</td></tr>
+      <tr><td>python-dotenv</td><td>1.0</td><td>Carga de variables de entorno (.env)</td></tr>
+    </table>
+  </div>
+  <div>
+    <h3>Frontend</h3>
+    <table>
+      <tr><th>Tecnología</th><th>Versión</th><th>Función</th></tr>
+      <tr><td>HTML5 / CSS3</td><td>—</td><td>Marcado y estilos. Sin framework ni build step</td></tr>
+      <tr><td>JavaScript (ES6+)</td><td>—</td><td>Lógica cliente en vanilla JS puro</td></tr>
+      <tr><td>Leaflet.js</td><td>1.9 (CDN)</td><td>Mapas interactivos (OpenStreetMap)</td></tr>
+      <tr><td>socket.io-client</td><td>4.7 (CDN)</td><td>WebSocket cliente para GPS en tiempo real</td></tr>
+      <tr><td>FastAPI StaticFiles</td><td>—</td><td>Sirve el frontend en el mismo puerto 3000</td></tr>
+    </table>
+    <h3>Base de datos e infraestructura</h3>
+    <table>
+      <tr><th>Tecnología</th><th>Función</th></tr>
+      <tr><td>PostgreSQL 14+</td><td>Base de datos relacional principal</td></tr>
+      <tr><td>Redis 7+</td><td>Caché en memoria para posiciones GPS (TTL 30s)</td></tr>
+    </table>
+    <h3>Dependencias adicionales (backend)</h3>
+    <table>
+      <tr><th>Librería</th><th>Versión</th><th>Función</th></tr>
+      <tr><td>python-multipart</td><td>0.0.9</td><td>Soporte para subida de archivos (foto de perfil)</td></tr>
+    </table>
+  </div>
+</div>
+
+<h3>C++ Core</h3>
+<p>Las 18 clases C++ están implementadas como <span class="inline-code">.h</span> headers only (sin archivos <span class="inline-code">.cpp</span> separados). Se vinculan al backend Python mediante <strong>pybind11</strong>. Si no se compilan, el backend usa implementaciones de fallback en Python puro.</p>
+</div>
+
+<!-- ══════════════════ 3. DIAGRAMA ARQUITECTURA ══════════════════ -->
+<div class="section page-break">
+<h2>3. Diagrama de Arquitectura del Sistema</h2>
+
+<div style="background:#f5f9ff; border:2px solid #c5cae9; border-radius:12px; padding:24px; margin:12px 0;">
+
+  <!-- Capa de usuarios -->
+  <div class="arch-title">CAPA DE CLIENTES (Navegador Web — http://localhost:3000)</div>
+  <div class="diagram-row">
+    <div class="diagram-col">
+      <div class="diagram-box" style="background:#e3f2fd; border-color:#1565c0;">🧑 Pasajero<br><small>/pasajero/mapa, /eta, /tarjeta...</small></div>
+    </div>
+    <div class="diagram-col">
+      <div class="diagram-box" style="background:#e8f5e9; border-color:#2e7d32;">🚌 Chofer<br><small>/chofer/ruta, /ocupacion, /desvio</small></div>
+    </div>
+    <div class="diagram-col">
+      <div class="diagram-box" style="background:#f3e5f5; border-color:#6a1b9a;">🛠 Admin<br><small>/admin/usuarios, /lineas...</small></div>
+    </div>
+    <div class="diagram-col">
+      <div class="diagram-box" style="background:#fff8e1; border-color:#f57f17;">👤 Perfil<br><small>/perfil/ (todos los roles)</small></div>
+    </div>
+  </div>
+
+  <div class="diagram-arrow">↕ HTTP/REST &nbsp;&nbsp; ↕ WebSocket (Socket.IO)</div>
+
+  <!-- Capa Frontend Estático -->
+  <div class="diagram-row">
+    <div class="diagram-box" style="min-width:480px; background:#e8f5e9; border-color:#2e7d32;">
+      📄 Frontend Estático — HTML5 + CSS3 + Vanilla JS<br>
+      <small>Servido por FastAPI StaticFiles en el mismo puerto 3000<br>Shared: auth.js · api.js · layout.js · socket.js · global.css</small>
+    </div>
+  </div>
+
+  <div class="diagram-arrow">↕ Peticiones HTTP directas al mismo servidor + WebSocket</div>
+
+  <!-- Capa Backend -->
+  <div class="arch-title" style="margin-top:12px;">CAPA DE BACKEND (FastAPI — Puerto 3000)</div>
+  <div class="diagram-row" style="gap:8px;">
+    <div class="diagram-box" style="min-width:100px; background:#fce4ec; border-color:#c62828; font-size:11px;">🔐 HECTOR<br>Auth/JWT/Logs</div>
+    <div class="diagram-box" style="min-width:100px; background:#e8eaf6; border-color:#3949ab; font-size:11px;">👤 BRUNO<br>/auth /tarjeta</div>
+    <div class="diagram-box" style="min-width:100px; background:#e0f2f1; border-color:#00695c; font-size:11px;">🗺 CRISTHIAN<br>/rutas</div>
+    <div class="diagram-box" style="min-width:100px; background:#fff8e1; border-color:#f57f17; font-size:11px;">📍 JAVIER<br>/gps Socket.IO</div>
+    <div class="diagram-box" style="min-width:100px; background:#f3e5f5; border-color:#6a1b9a; font-size:11px;">🚌 ROBERTO<br>/micros</div>
+    <div class="diagram-box" style="min-width:100px; background:#e8f5e9; border-color:#2e7d32; font-size:11px;">🔔 SAMUEL<br>/notif /eta</div>
+  </div>
+
+  <div class="diagram-arrow">↕ asyncpg &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↕ redis-py</div>
+
+  <!-- Capa datos -->
+  <div class="arch-title" style="margin-top:8px;">CAPA DE DATOS</div>
+  <div class="diagram-row">
+    <div class="diagram-box" style="min-width:200px; background:#e8f5e9; border-color:#2e7d32;">
+      🐘 PostgreSQL :5432<br>
+      <small>mimicro_db — 9 tablas<br>usuarios, rutas, paradas, <strong>lineas</strong>, micros, tarjetas, transacciones, historial, notificaciones</small>
+    </div>
+    <div class="diagram-box" style="min-width:200px; background:#ffebee; border-color:#c62828;">
+      🔴 Redis :6379<br>
+      <small>GPS cache — TTL 30 seg<br>Clave: gps:micro:{id} → {lat, lng, vel}</small>
+    </div>
+  </div>
+
+  <div class="diagram-arrow">↕ pybind11 (opcional)</div>
+
+  <!-- Capa C++ -->
+  <div class="arch-title" style="margin-top:8px;">NÚCLEO C++ (mimicro_core)</div>
+  <div class="diagram-row" style="flex-wrap:wrap; gap:6px;">
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">AnalizadorFlujo</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">ReporteSeguridad</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">Persona</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">TarjetaTransporte</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">GestorPagos</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">GrafoParadas</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">OptimizadorRuta</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">GestorGPS</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">PilaHistorial</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">ColaEspera</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">ListaPasajeros</div>
+    <div class="diagram-box" style="font-size:10px; min-width:80px; background:#fff; border-color:#90caf9;">TiempoEstimado</div>
+  </div>
+</div>
+
+<h3>Flujo de comunicación GPS (tiempo real)</h3>
+<div style="background:#f5f9ff; border:1px solid #c5cae9; border-radius:8px; padding:16px; font-size:12px;">
+<p>
+  <strong>1. Chofer emite:</strong> <span class="inline-code">navigator.geolocation.watchPosition()</span> → frontend llama <span class="inline-code">emitirGPS(microId, lat, lng, vel)</span> → Socket.IO evento <span class="inline-code">gps_update</span><br>
+  <strong>2. Backend recibe:</strong> Escribe en Redis <span class="inline-code">gps:micro:{id}</span> con TTL 30s → emite <span class="inline-code">micro_moved</span> a sala <span class="inline-code">ruta:{rutaId}</span><br>
+  <strong>3. Pasajero recibe:</strong> Suscripto via <span class="inline-code">join_ruta</span> → escucha <span class="inline-code">micro_moved</span> → actualiza marcador en el mapa<br>
+  <strong>4. Al parar:</strong> Chofer emite <span class="inline-code">gps_stop</span> → backend borra Redis key → emite <span class="inline-code">micro_offline</span> → mapa quita el marcador
+</p>
+</div>
+</div>
+
+<!-- ══════════════════ 4. CLASES C++ ══════════════════ -->
+<div class="section page-break">
+<h2>4. Estructuras de Datos C++</h2>
+<p>Todas las clases están definidas exclusivamente en archivos <span class="inline-code">.h</span>. El lenguaje usado (nombres de variables, comentarios, métodos) es <strong>español</strong>.</p>
+
+<h3>4.1 CLASES HECTOR — Seguridad y Análisis de Flujo</h3>
+
+<div class="card">
+  <h4>AnalizadorFlujo <span class="badge badge-gray">std::map&lt;string, DatoFlujo&gt;</span></h4>
+  <p>Analiza el tráfico de pasajeros por ruta y hora del día. Usa un <strong>mapa indexado</strong> con clave compuesta <span class="inline-code">"rutaId_hora"</span> para acceso O(log n).</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>DatoFlujo::rutaId</td><td>int</td><td>ID de la ruta</td></tr>
+    <tr><td>DatoFlujo::hora</td><td>int</td><td>Hora del día (0–23)</td></tr>
+    <tr><td>DatoFlujo::cantidadViajes</td><td>int</td><td>Número de viajes registrados</td></tr>
+    <tr><td>DatoFlujo::totalPasajeros</td><td>int</td><td>Total de pasajeros en esa franja</td></tr>
+    <tr><td>registrarViaje(rutaId, hora, pasajeros)</td><td>void</td><td>Acumula datos de un viaje</td></tr>
+    <tr><td>obtenerFlujo(rutaId, hora)</td><td>DatoFlujo</td><td>Consulta datos específicos</td></tr>
+    <tr><td>getTotalViajes()</td><td>int</td><td>Suma todos los viajes registrados</td></tr>
+    <tr><td>getMicrosActivos() / setMicrosActivos(n)</td><td>int/void</td><td>Contador de micros en servicio</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>ReporteSeguridad <span class="badge badge-gray">std::vector&lt;LogSeguridad&gt;</span></h4>
+  <p>Sistema de logging de eventos de seguridad. En Python se serializa a archivo JSONL (<span class="inline-code">security.log</span>).</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>LogSeguridad::eventoId</td><td>int</td><td>ID autoincremental</td></tr>
+    <tr><td>LogSeguridad::tipoEvento</td><td>string</td><td>LOGIN_OK / LOGIN_FAIL / ERROR / WARNING</td></tr>
+    <tr><td>LogSeguridad::usuario</td><td>string</td><td>Email del usuario</td></tr>
+    <tr><td>LogSeguridad::ip</td><td>string</td><td>IP de origen</td></tr>
+    <tr><td>LogSeguridad::timestamp</td><td>string</td><td>ISO 8601 UTC</td></tr>
+    <tr><td>LogSeguridad::nivel</td><td>string</td><td>INFO / WARNING / ERROR</td></tr>
+    <tr><td>registrarAcceso(usuario, ip, exitoso)</td><td>void</td><td>Log de intento de login</td></tr>
+    <tr><td>registrarError(evento, detalle)</td><td>void</td><td>Log de error del sistema</td></tr>
+    <tr><td>obtenerLogs(n)</td><td>vector</td><td>Últimos N registros</td></tr>
+    <tr><td>obtenerLogsPorNivel(nivel)</td><td>vector</td><td>Filtrar por severidad</td></tr>
+  </table>
+</div>
+
+<h3>4.2 CLASES BRUNO — Usuarios y Pagos</h3>
+
+<div class="card">
+  <h4>Persona</h4>
+  <p>Representa a un usuario del sistema. Campos públicos para acceso directo desde pybind11.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>id, nombre, email</td><td>int/string</td><td>Identificación del usuario</td></tr>
+    <tr><td>passwordHash</td><td>string</td><td>Hash bcrypt de la contraseña</td></tr>
+    <tr><td>rol</td><td>string</td><td>pasajero / chofer / admin / suspendido</td></tr>
+    <tr><td>telefono</td><td>string</td><td>Número de contacto (opcional)</td></tr>
+    <tr><td>esAdmin() / esChofer() / esPasajero()</td><td>bool</td><td>Verificación de rol</td></tr>
+    <tr><td>toString()</td><td>string</td><td>Representación legible</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>TarjetaTransporte</h4>
+  <p>Tarjeta de pago digital con saldo. Cada pasajero tiene exactamente una tarjeta.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>id, usuarioId</td><td>int</td><td>Identificadores</td></tr>
+    <tr><td>saldo</td><td>double</td><td>Saldo disponible en Bolivianos</td></tr>
+    <tr><td>numeroTarjeta</td><td>string</td><td>Ej: TC-000001</td></tr>
+    <tr><td>activa</td><td>bool</td><td>Estado de la tarjeta</td></tr>
+    <tr><td>recargar(monto)</td><td>bool</td><td>Suma saldo (monto > 0)</td></tr>
+    <tr><td>cobrar(monto)</td><td>bool</td><td>Descuenta saldo (verifica fondos)</td></tr>
+    <tr><td>activar() / desactivar()</td><td>void</td><td>Cambia estado</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>GestorPagos</h4>
+  <p>Administra múltiples tarjetas y el historial de transacciones.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>Transaccion::id, tarjetaId, monto</td><td>int/double</td><td>Datos de la transacción</td></tr>
+    <tr><td>Transaccion::tipo</td><td>string</td><td>recarga / cobro</td></tr>
+    <tr><td>agregarTarjeta(tarjeta)</td><td>void</td><td>Registra tarjeta en el gestor</td></tr>
+    <tr><td>recargarTarjeta(id, monto)</td><td>bool</td><td>Recarga con validación</td></tr>
+    <tr><td>cobrarPasaje(id, monto)</td><td>bool</td><td>Cobro de tarifa</td></tr>
+    <tr><td>consultarSaldo(id)</td><td>double</td><td>Saldo actual</td></tr>
+    <tr><td>obtenerHistorial(id)</td><td>vector&lt;Transaccion&gt;</td><td>Historial de movimientos</td></tr>
+  </table>
+</div>
+
+<h3>4.3 CLASES CRISTHIAN — Rutas y Optimización</h3>
+
+<div class="card">
+  <h4>GrafoParadas <span class="badge badge-gray">Lista de adyacencia — std::map</span></h4>
+  <p>Grafo bidireccional donde cada nodo es una parada y cada arista tiene un peso (distancia en km calculada con Haversine).</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>AristaGrafo::destino</td><td>int</td><td>ID de la parada destino</td></tr>
+    <tr><td>AristaGrafo::peso</td><td>double</td><td>Distancia en km</td></tr>
+    <tr><td>agregarParada(id)</td><td>void</td><td>Agrega nodo al grafo</td></tr>
+    <tr><td>agregarArista(origen, destino, peso)</td><td>void</td><td>Arista bidireccional</td></tr>
+    <tr><td>obtenerVecinos(id)</td><td>vector&lt;AristaGrafo&gt;</td><td>Paradas adyacentes</td></tr>
+    <tr><td>existeParada(id)</td><td>bool</td><td>Verificación O(log n)</td></tr>
+    <tr><td>obtenerTodasParadas()</td><td>vector&lt;int&gt;</td><td>Todos los nodos</td></tr>
+    <tr><td>getNumParadas()</td><td>int</td><td>Total de nodos</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>OptimizadorRuta <span class="badge badge-gray">Dijkstra — std::priority_queue (min-heap)</span></h4>
+  <p>Implementación del algoritmo de Dijkstra para encontrar el camino más corto entre dos paradas de una ruta.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>ResultadoRuta::camino</td><td>vector&lt;int&gt;</td><td>Secuencia de IDs de paradas</td></tr>
+    <tr><td>ResultadoRuta::distanciaTotal</td><td>double</td><td>Distancia total en km</td></tr>
+    <tr><td>ResultadoRuta::encontrado</td><td>bool</td><td>Indica si existe camino</td></tr>
+    <tr><td>dijkstra(grafo, origen, destino)</td><td>ResultadoRuta</td><td>Algoritmo principal O((V+E)·log V)</td></tr>
+    <tr><td>encontrarRutaOptima(grafo, orig, dest)</td><td>ResultadoRuta</td><td>Wrapper con validación</td></tr>
+  </table>
+  <pre><code>// Pseudocódigo Dijkstra implementado
+priority_queue&lt;pair&lt;double,int&gt;, vector, greater&gt; pq;
+map&lt;int,double&gt; distancias;  // inicializadas a infinito
+map&lt;int,int&gt;    previos;     // para reconstruir el camino
+pq.push({0.0, origen});
+distancias[origen] = 0.0;
+while (!pq.empty()) {
+    auto [dist, u] = pq.top(); pq.pop();
+    for (auto& arista : grafo.obtenerVecinos(u)) {
+        double nueva = dist + arista.peso;
+        if (nueva &lt; distancias[arista.destino]) {
+            distancias[arista.destino] = nueva;
+            previos[arista.destino] = u;
+            pq.push({nueva, arista.destino});
+        }
+    }
+}</code></pre>
+</div>
+
+<div class="card">
+  <h4>Ruta</h4>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>id, nombre, descripcion</td><td>int/string</td><td>Datos básicos de la ruta</td></tr>
+    <tr><td>activa</td><td>bool</td><td>Estado de operación</td></tr>
+    <tr><td>paradaIds</td><td>vector&lt;int&gt;</td><td>IDs de paradas en orden</td></tr>
+    <tr><td>agregarParada(id)</td><td>void</td><td>Añade parada al final</td></tr>
+    <tr><td>tieneParada(id)</td><td>bool</td><td>Verifica membresía</td></tr>
+    <tr><td>desactivar()</td><td>void</td><td>Marca inactiva</td></tr>
+  </table>
+</div>
+
+<h3>4.4 CLASES JAVIER — GPS e Historial</h3>
+
+<div class="card">
+  <h4>GestorGPS <span class="badge badge-gray">std::map&lt;int, PosicionGPS&gt;</span></h4>
+  <p>Mantiene el registro en memoria de las posiciones activas. En producción es reemplazado por Redis con TTL de 30 segundos.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>PosicionGPS::microId, lat, lng</td><td>int/double</td><td>Identificación y coordenadas</td></tr>
+    <tr><td>PosicionGPS::timestamp</td><td>string</td><td>Momento del registro</td></tr>
+    <tr><td>PosicionGPS::velocidad</td><td>double</td><td>Km/h</td></tr>
+    <tr><td>actualizarPosicion(microId, lat, lng, vel)</td><td>void</td><td>Inserta o actualiza</td></tr>
+    <tr><td>obtenerPosicion(microId)</td><td>PosicionGPS</td><td>Última posición conocida</td></tr>
+    <tr><td>microActivo(microId)</td><td>bool</td><td>Verifica si tiene posición activa</td></tr>
+    <tr><td>obtenerTodas()</td><td>vector</td><td>Todas las posiciones activas</td></tr>
+    <tr><td>eliminarMicro(microId)</td><td>void</td><td>Quita del tracking (fin de ruta)</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>Parada</h4>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>id, nombre</td><td>int/string</td><td>Identificación</td></tr>
+    <tr><td>lat, lng</td><td>double</td><td>Coordenadas geográficas WGS84</td></tr>
+    <tr><td>rutaId</td><td>int</td><td>Ruta a la que pertenece</td></tr>
+    <tr><td>ordenEnRuta</td><td>int</td><td>Posición secuencial (1, 2, 3...)</td></tr>
+    <tr><td>distanciaA(otraParada)</td><td>double</td><td>Distancia Haversine en km</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>PilaHistorial <span class="badge badge-gray">std::stack&lt;RegistroViaje&gt;</span></h4>
+  <p>Pila LIFO que almacena el historial de viajes de un usuario. Capacidad máxima configurable (default: 100 entradas).</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>RegistroViaje::usuarioId, microId</td><td>int</td><td>Identificadores del viaje</td></tr>
+    <tr><td>RegistroViaje::paradaOrigenId, paradaDestinoId</td><td>int</td><td>Paradas del trayecto</td></tr>
+    <tr><td>RegistroViaje::fecha</td><td>string</td><td>Timestamp del viaje</td></tr>
+    <tr><td>RegistroViaje::costo</td><td>double</td><td>Costo cobrado en Bs</td></tr>
+    <tr><td>agregarViaje(registro)</td><td>void</td><td>Push — elimina el más viejo si llena</td></tr>
+    <tr><td>obtenerUltimo()</td><td>RegistroViaje</td><td>Top sin pop</td></tr>
+    <tr><td>obtenerTodos()</td><td>vector</td><td>Convierte pila a vector</td></tr>
+    <tr><td>estaVacia()</td><td>bool</td><td>Verificación</td></tr>
+    <tr><td>limpiar()</td><td>void</td><td>Vacía la pila</td></tr>
+  </table>
+</div>
+
+<h3>4.5 CLASES ROBERTO — Micros y Pasajeros</h3>
+
+<div class="card">
+  <h4>Micro</h4>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>id, placa</td><td>int/string</td><td>Identificación del vehículo</td></tr>
+    <tr><td>choferId, rutaId</td><td>int</td><td>Relaciones con chofer y ruta</td></tr>
+    <tr><td>capacidad</td><td>int</td><td>Capacidad máxima de pasajeros</td></tr>
+    <tr><td>estado</td><td>string</td><td>activo / inactivo / mantenimiento</td></tr>
+    <tr><td>pasajerosAbordo</td><td>int</td><td>Contador actual</td></tr>
+    <tr><td>estaActivo()</td><td>bool</td><td>estado == "activo"</td></tr>
+    <tr><td>estaLleno()</td><td>bool</td><td>pasajerosAbordo >= capacidad</td></tr>
+    <tr><td>getOcupacion()</td><td>string</td><td>vacio / medio / lleno (por porcentaje)</td></tr>
+    <tr><td>subirPasajero() / bajarPasajero()</td><td>bool</td><td>Modifica contador (valida límites)</td></tr>
+    <tr><td>activar() / desactivar()</td><td>void</td><td>Cambia estado</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>ListaPasajeros <span class="badge badge-gray">Lista enlazada simple — NodoPasajero*</span></h4>
+  <p>Lista enlazada simple donde cada nodo representa un pasajero actualmente a bordo de un micro.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>NodoPasajero::usuarioId</td><td>int</td><td>ID del pasajero</td></tr>
+    <tr><td>NodoPasajero::nombre</td><td>string</td><td>Nombre del pasajero</td></tr>
+    <tr><td>NodoPasajero::paradaOrigen</td><td>int</td><td>Parada donde abordó</td></tr>
+    <tr><td>NodoPasajero::siguiente</td><td>NodoPasajero*</td><td>Puntero al siguiente nodo</td></tr>
+    <tr><td>agregarPasajero(id, nombre, parada)</td><td>void</td><td>Inserta al frente O(1)</td></tr>
+    <tr><td>eliminarPasajero(usuarioId)</td><td>bool</td><td>Búsqueda y eliminación O(n)</td></tr>
+    <tr><td>existePasajero(usuarioId)</td><td>bool</td><td>Búsqueda O(n)</td></tr>
+    <tr><td>obtenerIds()</td><td>vector&lt;int&gt;</td><td>Lista de todos los IDs</td></tr>
+    <tr><td>getTamanio()</td><td>int</td><td>Recorre la lista O(n)</td></tr>
+    <tr><td>~ListaPasajeros()</td><td>destructor</td><td>Libera toda la memoria</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>SensorPuerta</h4>
+  <p>Simula un sensor físico de la puerta del micro. Cuenta entradas y salidas para determinar ocupación real.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>puertaAbierta</td><td>bool</td><td>Estado actual de la puerta</td></tr>
+    <tr><td>entradas, salidas</td><td>int</td><td>Contadores de movimiento</td></tr>
+    <tr><td>abrirPuerta() / cerrarPuerta()</td><td>void</td><td>Cambio de estado</td></tr>
+    <tr><td>registrarEntrada() / registrarSalida()</td><td>void</td><td>Incrementa contadores</td></tr>
+    <tr><td>getPasajerosNetos()</td><td>int</td><td>entradas - salidas</td></tr>
+    <tr><td>resetear()</td><td>void</td><td>Pone contadores a 0</td></tr>
+  </table>
+</div>
+
+<h3>4.6 CLASES SAMUEL — Cola, ETA y Notificaciones</h3>
+
+<div class="card">
+  <h4>ColaEspera <span class="badge badge-gray">std::queue&lt;PasajeroEspera&gt;</span></h4>
+  <p>Cola FIFO de pasajeros esperando en una parada específica. Cada parada tiene su propia cola.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>PasajeroEspera::usuarioId</td><td>int</td><td>ID del pasajero</td></tr>
+    <tr><td>PasajeroEspera::paradaId</td><td>int</td><td>Parada donde espera</td></tr>
+    <tr><td>PasajeroEspera::timestamp</td><td>string</td><td>Hora de llegada a la parada</td></tr>
+    <tr><td>PasajeroEspera::rutaId</td><td>int</td><td>Ruta de interés del pasajero</td></tr>
+    <tr><td>agregarPasajero(pasajero)</td><td>void</td><td>Enqueue O(1)</td></tr>
+    <tr><td>atenderPasajero()</td><td>PasajeroEspera</td><td>Dequeue O(1)</td></tr>
+    <tr><td>estaVacia()</td><td>bool</td><td>Verificación</td></tr>
+    <tr><td>getTamanio()</td><td>int</td><td>Cantidad esperando</td></tr>
+    <tr><td>getParadaId()</td><td>int</td><td>Parada asociada a esta cola</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>NotificacionAlerta <span class="badge badge-gray">std::vector&lt;Notificacion&gt;</span></h4>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>Notificacion::id, usuarioId</td><td>int</td><td>Identificadores</td></tr>
+    <tr><td>Notificacion::mensaje</td><td>string</td><td>Texto de la notificación</td></tr>
+    <tr><td>Notificacion::tipo</td><td>string</td><td>desvio / retraso / info / sistema</td></tr>
+    <tr><td>Notificacion::leida</td><td>bool</td><td>Estado de lectura</td></tr>
+    <tr><td>Notificacion::timestamp</td><td>string</td><td>Fecha/hora de creación</td></tr>
+    <tr><td>crearNotificacion(usuarioId, msg, tipo)</td><td>void</td><td>Agrega nueva notificación</td></tr>
+    <tr><td>obtenerParaUsuario(usuarioId)</td><td>vector</td><td>Notificaciones del usuario</td></tr>
+    <tr><td>marcarLeida(id)</td><td>void</td><td>Marca como leída</td></tr>
+    <tr><td>contarNoLeidas(usuarioId)</td><td>int</td><td>Conteo de no leídas</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h4>TiempoEstimado</h4>
+  <p>Calcula el ETA de un micro a una parada usando la fórmula de Haversine y una velocidad promedio de 25 km/h.</p>
+  <table>
+    <tr><th>Atributo / Método</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td>ResultadoETA::microId, paradaId</td><td>int</td><td>Identificadores</td></tr>
+    <tr><td>ResultadoETA::distanciaMetros</td><td>double</td><td>Distancia calculada</td></tr>
+    <tr><td>ResultadoETA::tiempoSegundos</td><td>int</td><td>Tiempo estimado de llegada</td></tr>
+    <tr><td>ResultadoETA::ocupacion</td><td>string</td><td>Estado de ocupación del micro</td></tr>
+    <tr><td>haversine(lat1, lng1, lat2, lng2)</td><td>double</td><td>Distancia en km entre dos puntos</td></tr>
+    <tr><td>calcularETA(posicion, parada)</td><td>ResultadoETA</td><td>Cálculo principal</td></tr>
+    <tr><td>distanciaASegundos(km)</td><td>int</td><td>km / 25km/h → segundos</td></tr>
+  </table>
+  <pre><code>// Fórmula Haversine implementada
+R = 6371.0  // radio Tierra en km
+dLat = (lat2 - lat1) * π / 180
+dLng = (lng2 - lng1) * π / 180
+a = sin(dLat/2)² + cos(lat1) * cos(lat2) * sin(dLng/2)²
+c = 2 * atan2(√a, √(1−a))
+distancia = R * c</code></pre>
+</div>
+</div>
+
+<!-- ══════════════════ 5. BASE DE DATOS ══════════════════ -->
+<div class="section page-break">
+<h2>5. Base de Datos PostgreSQL</h2>
+<p>Motor: <strong>PostgreSQL 14+</strong>. Nombre: <strong>mimicro_db</strong>. Acceso: <strong>asyncpg</strong> (driver async sin ORM). 8 tablas con índices para consultas frecuentes.</p>
+
+<h3>Diagrama Entidad-Relación (simplificado)</h3>
+<div style="background:#f5f9ff; border:1px solid #c5cae9; border-radius:8px; padding:20px; font-family:monospace; font-size:11px; line-height:2;">
+<pre style="background:transparent; color:#1a1a2e; padding:0;">
+                    ┌─────────────────┐
+                    │    usuarios     │
+                    │─────────────────│
+                    │ id (PK)         │
+                    │ email (UNIQUE)  │
+                    │ password_hash   │
+                    │ rol             │──── pasajero/chofer/admin/suspendido
+                    │ nombre          │
+                    │ telefono        │
+                    │ created_at      │
+                    └────────┬────────┘
+                             │ 1
+              ┌──────────────┼──────────────┐
+              │ 1            │ N            │ N
+ ┌────────────┴──┐    ┌──────┴───────┐  ┌──┴──────────────┐
+ │    micros     │    │   tarjetas_  │  │   historial_    │
+ │───────────────│    │  transporte  │  │    viajes       │
+ │ id (PK)       │    │─────────────────│─────────────────│
+ │ placa (UNIQUE)│    │ id (PK)      │  │ id (PK)        │
+ │ chofer_id(FK) │    │ usuario_id   │  │ usuario_id(FK) │
+ │ ruta_id (FK)  │    │ saldo        │  │ micro_id (FK)  │
+ │ capacidad     │    │ numero_tarj. │  │ parada_origen  │
+ │ estado        │    │ activa       │  │ parada_destino │
+ │ ocupacion_est.│    │ created_at   │  │ fecha          │
+ └───────────────┘    └──────┬───────┘  │ costo          │
+        │ 1                  │ 1        └────────────────┘
+        │            ┌───────┴──────────┐
+  ┌─────┴──────┐     │  transacciones   │
+  │   rutas    │     │──────────────────│
+  │────────────│     │ id (PK)          │
+  │ id (PK)    │     │ tarjeta_id (FK)  │
+  │ nombre     │     │ monto            │
+  │ descripcion│     │ tipo             │──── recarga/cobro
+  │ tarifa     │     │ descripcion      │
+  │ activa     │     │ created_at       │
+  └─────┬──────┘     └──────────────────┘
+        │ 1
+  ┌─────┴──────┐     ┌──────────────────┐
+  │  paradas   │     │  notificaciones  │
+  │────────────│     │──────────────────│
+  │ id (PK)    │     │ id (PK)          │
+  │ nombre     │     │ usuario_id (FK)  │
+  │ lat, lng   │     │ mensaje          │
+  │ ruta_id(FK)│     │ tipo             │
+  │ orden_ruta │     │ leida            │
+  └────────────┘     │ created_at       │
+                     └──────────────────┘
+</pre>
+</div>
+
+<h3>Índices</h3>
+<table>
+  <tr><th>Índice</th><th>Tabla</th><th>Columnas</th><th>Motivo</th></tr>
+  <tr><td>idx_micros_ruta</td><td>micros</td><td>ruta_id</td><td>Buscar micros por ruta</td></tr>
+  <tr><td>idx_micros_linea</td><td>micros</td><td>linea_id</td><td>Buscar micros por línea</td></tr>
+  <tr><td>idx_paradas_ruta</td><td>paradas</td><td>ruta_id, orden_en_ruta</td><td>Listar paradas en orden</td></tr>
+  <tr><td>idx_historial_usuario</td><td>historial_viajes</td><td>usuario_id, fecha DESC</td><td>Historial reciente de un usuario</td></tr>
+  <tr><td>idx_notif_usuario</td><td>notificaciones</td><td>usuario_id, leida</td><td>Notificaciones no leídas</td></tr>
+  <tr><td>idx_transac_tarjeta</td><td>transacciones</td><td>tarjeta_id, created_at DESC</td><td>Historial de movimientos</td></tr>
+</table>
+
+<h3>Caché Redis</h3>
+<table>
+  <tr><th>Clave</th><th>Valor (JSON)</th><th>TTL</th><th>Propósito</th></tr>
+  <tr><td><span class="inline-code">gps:micro:{id}</span></td><td><span class="inline-code">{"lat":..., "lng":..., "velocidad":..., "timestamp":...}</span></td><td>30 seg</td><td>Posición actual del micro. Expira si no hay actualización.</td></tr>
+</table>
+
+<h3>Código SQL completo — schema.sql</h3>
+<p>Ejecutar con: <span class="inline-code">psql -U postgres -d mimicro_db -f mimicro-app/backend/database/schema.sql</span></p>
+<pre><code>-- miMicro — Esquema PostgreSQL completo
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id            SERIAL PRIMARY KEY,
+    email         VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rol           VARCHAR(20)  NOT NULL CHECK (rol IN ('pasajero','chofer','admin','suspendido')),
+    nombre        VARCHAR(255) NOT NULL,
+    telefono      VARCHAR(20)  DEFAULT '',
+    created_at    TIMESTAMP    DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tarjetas_transporte (
+    id             SERIAL PRIMARY KEY,
+    usuario_id     INTEGER      REFERENCES usuarios(id) ON DELETE CASCADE,
+    saldo          DECIMAL(10,2) DEFAULT 0.00,
+    numero_tarjeta VARCHAR(20)  UNIQUE NOT NULL,
+    activa         BOOLEAN      DEFAULT TRUE,
+    created_at     TIMESTAMP    DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS transacciones (
+    id          SERIAL PRIMARY KEY,
+    tarjeta_id  INTEGER      REFERENCES tarjetas_transporte(id) ON DELETE CASCADE,
+    monto       DECIMAL(10,2) NOT NULL,
+    tipo        VARCHAR(20)  CHECK (tipo IN ('recarga','cobro')),
+    descripcion VARCHAR(255) DEFAULT '',
+    created_at  TIMESTAMP    DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS rutas (
+    id          SERIAL PRIMARY KEY,
+    nombre      VARCHAR(100) NOT NULL,
+    descripcion TEXT         DEFAULT '',
+    activa      BOOLEAN      DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS paradas (
+    id            SERIAL PRIMARY KEY,
+    nombre        VARCHAR(255) NOT NULL,
+    lat           DECIMAL(10,8) NOT NULL,
+    lng           DECIMAL(11,8) NOT NULL,
+    ruta_id       INTEGER      REFERENCES rutas(id) ON DELETE CASCADE,
+    orden_en_ruta INTEGER      NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS lineas (
+    id          SERIAL PRIMARY KEY,
+    nombre      VARCHAR(50)  NOT NULL UNIQUE,
+    descripcion TEXT         DEFAULT '',
+    ruta_path   JSONB        DEFAULT '[]',
+    created_at  TIMESTAMP    DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS micros (
+    id               SERIAL PRIMARY KEY,
+    placa            VARCHAR(20)  UNIQUE NOT NULL,
+    modelo           VARCHAR(100) DEFAULT '',
+    descripcion      TEXT         DEFAULT '',
+    chofer_id        INTEGER      REFERENCES usuarios(id),
+    ruta_id          INTEGER      REFERENCES rutas(id),
+    linea_id         INTEGER      REFERENCES lineas(id) ON DELETE SET NULL,
+    capacidad        INTEGER      DEFAULT 30,
+    estado           VARCHAR(20)  DEFAULT 'inactivo' CHECK (estado IN ('activo','inactivo')),
+    ocupacion_estado VARCHAR(20)  DEFAULT 'vacio'    CHECK (ocupacion_estado IN ('vacio','medio','lleno'))
+);
+
+CREATE TABLE IF NOT EXISTS historial_viajes (
+    id                 SERIAL PRIMARY KEY,
+    usuario_id         INTEGER      REFERENCES usuarios(id),
+    micro_id           INTEGER      REFERENCES micros(id),
+    parada_origen_id   INTEGER      REFERENCES paradas(id),
+    parada_destino_id  INTEGER      REFERENCES paradas(id),
+    fecha              TIMESTAMP    DEFAULT NOW(),
+    costo              DECIMAL(10,2) DEFAULT 3.50
+);
+
+CREATE TABLE IF NOT EXISTS notificaciones (
+    id          SERIAL PRIMARY KEY,
+    usuario_id  INTEGER      REFERENCES usuarios(id) ON DELETE CASCADE,
+    mensaje     TEXT         NOT NULL,
+    tipo        VARCHAR(50)  DEFAULT 'info',
+    leida       BOOLEAN      DEFAULT FALSE,
+    created_at  TIMESTAMP    DEFAULT NOW()
+);
+
+-- Índices para consultas frecuentes
+CREATE INDEX IF NOT EXISTS idx_micros_ruta       ON micros(ruta_id);
+CREATE INDEX IF NOT EXISTS idx_paradas_ruta      ON paradas(ruta_id, orden_en_ruta);
+CREATE INDEX IF NOT EXISTS idx_historial_usuario ON historial_viajes(usuario_id, fecha DESC);
+CREATE INDEX IF NOT EXISTS idx_notif_usuario     ON notificaciones(usuario_id, leida);
+CREATE INDEX IF NOT EXISTS idx_transacc_tarjeta  ON transacciones(tarjeta_id, created_at DESC);</code></pre>
+
+<h3>Código SQL completo — seed.sql</h3>
+<p>Ejecutar con: <span class="inline-code">psql -U postgres -d mimicro_db -f mimicro-app/backend/database/seed.sql</span></p>
+<pre><code>-- miMicro — Datos iniciales para desarrollo/testing
+-- IMPORTANTE: Cambiar la contraseña del admin antes de producción.
+
+-- Admin (contraseña: Admin2026!)
+INSERT INTO usuarios (email, password_hash, rol, nombre, telefono)
+VALUES (
+    'admin@mimicro.bo',
+    '$2b$12$ouIgUYE7fy1RXmjN2O7x8.QZ7p4IXCvLo7erk6HSF67a96aZ124jW',
+    'admin',
+    'Administrador miMicro',
+    '+591 70000000'
+) ON CONFLICT (email) DO NOTHING;
+
+-- Choferes de prueba (contraseña: Chofer123!)
+INSERT INTO usuarios (email, password_hash, rol, nombre, telefono) VALUES
+('pedro.rios@mimicro.bo',  '$2b$12$wKZoHSnZ808SlEVApkeDFeIl1WChvq/6u5SOdYgijofLsrCLcGdUK', 'chofer', 'Pedro Rios',  '+591 71111111'),
+('carlos.vaca@mimicro.bo', '$2b$12$wKZoHSnZ808SlEVApkeDFeIl1WChvq/6u5SOdYgijofLsrCLcGdUK', 'chofer', 'Carlos Vaca', '+591 72222222')
+ON CONFLICT (email) DO NOTHING;
+
+-- Pasajeros de prueba (contraseña: Pasajero123!)
+INSERT INTO usuarios (email, password_hash, rol, nombre, telefono) VALUES
+('juan.perez@mail.com',  '$2b$12$qpaxt0jGZA36z/1o9i7A.es3hw35pbBMQ2etSXhOkucYHA7dA0522', 'pasajero', 'Juan Perez',  '+591 76543210'),
+('maria.lopez@mail.com', '$2b$12$qpaxt0jGZA36z/1o9i7A.es3hw35pbBMQ2etSXhOkucYHA7dA0522', 'pasajero', 'Maria Lopez', '+591 76543211')
+ON CONFLICT (email) DO NOTHING;
+
+-- Tarjetas para los pasajeros (saldo inicial: Bs 50)
+INSERT INTO tarjetas_transporte (usuario_id, saldo, numero_tarjeta)
+SELECT id, 50.00, 'TC-' || LPAD(id::TEXT, 6, '0')
+FROM usuarios WHERE rol='pasajero'
+ON CONFLICT DO NOTHING;
+
+-- Rutas de Santa Cruz de la Sierra
+INSERT INTO rutas (nombre, descripcion) VALUES
+('Ruta 17 - Terminal / Urbarí',     'Terminal Bimodal → 2do Anillo → Equipetrol → Urbarí'),
+('Ruta 24 - Mercado Los Pozos / UV', 'Mercado Los Pozos → Av. Cañoto → UV'),
+('Ruta 31 - Plan 3000 / Centro',     'Plan 3000 → Av. Brasil → Plaza 24 de Septiembre')
+ON CONFLICT DO NOTHING;
+
+-- Paradas Ruta 17 (ruta_id = 1)
+INSERT INTO paradas (nombre, lat, lng, ruta_id, orden_en_ruta) VALUES
+('Terminal Bimodal',        -17.78330, -63.18200, 1, 1),
+('Av. Cañoto / 2do Anillo', -17.78500, -63.18000, 1, 2),
+('Equipetrol Norte',        -17.77500, -63.19500, 1, 3),
+('Plaza del Estudiante',    -17.77200, -63.19800, 1, 4),
+('Urbarí',                  -17.76800, -63.20500, 1, 5)
+ON CONFLICT DO NOTHING;
+
+-- Paradas Ruta 24 (ruta_id = 2)
+INSERT INTO paradas (nombre, lat, lng, ruta_id, orden_en_ruta) VALUES
+('Mercado Los Pozos',       -17.79100, -63.17200, 2, 1),
+('Av. Cañoto Esq. 21 Sept', -17.78600, -63.17900, 2, 2),
+('Plaza 24 de Septiembre',  -17.78330, -63.18220, 2, 3),
+('Universidad UV',          -17.77900, -63.18600, 2, 4)
+ON CONFLICT DO NOTHING;
+
+-- Micros (chofer_id se resuelve por email)
+INSERT INTO micros (placa, chofer_id, ruta_id, capacidad, estado)
+SELECT 'SCZ-1234', u.id, 1, 30, 'inactivo'
+FROM usuarios u WHERE u.email='pedro.rios@mimicro.bo'
+ON CONFLICT (placa) DO NOTHING;
+
+INSERT INTO micros (placa, chofer_id, ruta_id, capacidad, estado)
+SELECT 'SCZ-5678', u.id, 2, 25, 'inactivo'
+FROM usuarios u WHERE u.email='carlos.vaca@mimicro.bo'
+ON CONFLICT (placa) DO NOTHING;</code></pre>
+</div>
+
+<!-- ══════════════════ 6. BACKEND API ══════════════════ -->
+<div class="section page-break">
+<h2>6. Backend API — Módulos y Endpoints</h2>
+<p>El servidor corre en <strong>http://localhost:3000</strong>. Documentación interactiva disponible en <span class="inline-code">http://localhost:3000/docs</span> (Swagger UI generado automáticamente por FastAPI).</p>
+
+<h3>Autenticación</h3>
+<p>Los endpoints protegidos requieren el header: <span class="inline-code">Authorization: Bearer &lt;token_JWT&gt;</span><br>
+El token JWT contiene: <span class="inline-code">{ "sub": userId, "rol": "admin|chofer|pasajero", "nombre": "...", "exp": timestamp }</span><br>
+El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(token.split('.')[1]))</span> — sin librerías externas.</p>
+
+<h3>MODULO_BRUNO — /auth y /tarjeta</h3>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/auth/login</strong><br><small>Body: {email, password} → {token, rol, nombre}. Registra el intento en security.log con la IP.</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/auth/register</strong><br><small>Body: {nombre, email, password, rol, telefono} → {token, rol, nombre}. Solo rol pasajero/chofer. Crea tarjeta automáticamente.</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/auth/perfil</strong> <span class="badge badge-blue">Auth</span><br><small>→ {id, nombre, email, telefono, rol, foto_url, created_at} — perfil del usuario actual</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/auth/cambiar-password</strong> <span class="badge badge-blue">Auth</span><br><small>Body: {password_actual, password_nueva, password_confirmar} → {ok, mensaje}. Valida contraseña actual con bcrypt.</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/auth/foto</strong> <span class="badge badge-blue">Auth</span><br><small>multipart/form-data, campo "file". JPG/PNG/WebP, máx. 5 MB. Guarda en static/uploads/avatars/. → {foto_url}</small></div></div>
+<div class="endpoint"><span class="method-tag" style="background:#f3e5f5;color:#6a1b9a;">GET</span><div><strong>/auth/usuarios</strong> <span class="badge badge-purple">Admin</span><br><small>→ [{id, nombre, email, rol, telefono, created_at}]</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/auth/usuarios/{id}/rol</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {rol} → {ok, user_id, nuevo_rol}</small></div></div>
+<div class="endpoint"><span class="method-tag" style="background:#f3e5f5;color:#6a1b9a;">GET</span><div><strong>/auth/logs</strong> <span class="badge badge-purple">Admin</span><br><small>?limite=50 → {logs: [{timestamp, nivel, evento, usuario, ip}]}</small></div></div>
+<div class="endpoint"><span class="method-tag" style="background:#f3e5f5;color:#6a1b9a;">GET</span><div><strong>/tarjeta/{usuario_id}</strong> <span class="badge badge-blue">Auth</span><br><small>→ {id, saldo, numero_tarjeta, activa}</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/tarjeta/{usuario_id}/recargar</strong> <span class="badge badge-blue">Auth</span><br><small>Body: {monto} → {ok, saldo_nuevo}</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/tarjeta/{usuario_id}/cobrar</strong> <span class="badge badge-blue">Auth</span><br><small>Body: {monto, descripcion} → {ok, saldo_nuevo}</small></div></div>
+<div class="endpoint"><span class="method-tag" style="background:#f3e5f5;color:#6a1b9a;">GET</span><div><strong>/tarjeta/{usuario_id}/historial</strong> <span class="badge badge-blue">Auth</span><br><small>→ {transacciones: [{id, monto, tipo, descripcion, created_at}]}</small></div></div>
+
+<h3>MODULO_CRISTHIAN — /rutas</h3>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas</strong><br><small>→ [{id, nombre, descripcion, activa}]</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas/{id}</strong><br><small>→ {id, nombre, descripcion, activa}</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas/{id}/paradas</strong><br><small>→ [{id, nombre, lat, lng, orden_en_ruta}]</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/rutas</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {nombre, descripcion} → {id, nombre, ...}</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/rutas/{id}</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {nombre, descripcion} → ruta actualizada</small></div></div>
+<div class="endpoint"><span class="method-tag DELETE">DELETE</span><div><strong>/rutas/{id}</strong> <span class="badge badge-purple">Admin</span><br><small>→ {ok: true} — desactivación lógica (activa=false)</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/rutas/{id}/optima?origen=X&amp;destino=Y</strong><br><small>→ {encontrado, camino:[paradaId,...], distanciaTotal} — Dijkstra C++</small></div></div>
+
+<h3>MODULO_JAVIER — /gps</h3>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/gps/{micro_id}</strong><br><small>→ {microId, lat, lng, velocidad, timestamp} o 404 si no activo</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/gps/activos</strong><br><small>→ [{microId, lat, lng, velocidad, timestamp}] — todas las posiciones en Redis</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/gps/historial/{usuario_id}</strong> <span class="badge badge-blue">Auth</span><br><small>→ [{id, micro_placa, ruta_nombre, parada_origen, fecha, costo}]</small></div></div>
+<div style="margin-top:8px; padding:8px; background:#fff8e1; border-radius:6px; font-size:12px;">
+  <strong>Socket.IO eventos:</strong><br>
+  <span class="inline-code">gps_update</span> {microId, lat, lng, velocidad} → guarda Redis, emite <span class="inline-code">micro_moved</span><br>
+  <span class="inline-code">gps_stop</span> {microId} → borra Redis, emite <span class="inline-code">micro_offline</span><br>
+  <span class="inline-code">join_ruta</span> {rutaId} → suscribe a sala ruta:{rutaId}<br>
+  <span class="inline-code">leave_ruta</span> {rutaId} → desuscribe
+</div>
+
+<h3>MODULO_ROBERTO — /micros y /lineas</h3>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/micros</strong><br><small>→ [{id, placa, modelo, descripcion, ruta_nombre, chofer_nombre, capacidad, estado, ocupacion_estado}]</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/micros/{id}</strong><br><small>→ micro + cant_pasajeros_abordo</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/micros</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {placa, capacidad, ruta_id, chofer_id} → micro creado (endpoint legacy)</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/micros/{id}/ocupacion</strong> <span class="badge badge-green">Chofer</span><br><small>Body: {estado: "vacio"|"medio"|"lleno"} → {ok}</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/micros/{id}/estado</strong> <span class="badge badge-green">Chofer/Admin</span><br><small>Body: {estado: "activo"|"inactivo"} → {ok}</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/lineas</strong> <span class="badge badge-purple">Admin</span><br><small>→ [{id, nombre, descripcion, ruta_path, created_at, total_micros}]</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/lineas</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {nombre, descripcion, ruta_path: [{lat,lng},...]} → {id, nombre}. Ruta dibujada en Leaflet.</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/lineas/{id}</strong> <span class="badge badge-purple">Admin</span><br><small>→ {id, nombre, descripcion, ruta_path, micros:[{placa, modelo, descripcion, chofer_nombre, estado, ocupacion_estado}]}</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/lineas/{id}/micros</strong> <span class="badge badge-purple">Admin</span><br><small>Body: {placa, modelo, descripcion, chofer_id} → {id, placa}. Registra micro dentro de la línea.</small></div></div>
+
+<h3>MODULO_SAMUEL — /notificaciones y /eta</h3>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/notificaciones/{usuario_id}</strong> <span class="badge badge-blue">Auth</span><br><small>→ [{id, mensaje, tipo, leida, created_at}] — últimas 50</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/notificaciones</strong> <span class="badge badge-blue">Auth</span><br><small>Body: {usuario_id, mensaje, tipo} → notificación creada</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/notificaciones/{id}/leida</strong> <span class="badge badge-blue">Auth</span><br><small>→ {ok}</small></div></div>
+<div class="endpoint"><span class="method-tag PATCH">PATCH</span><div><strong>/notificaciones/todas/{usuario_id}/leidas</strong> <span class="badge badge-blue">Auth</span><br><small>→ {ok} — marca todas las notificaciones del usuario como leídas</small></div></div>
+<div class="endpoint"><span class="method-tag POST">POST</span><div><strong>/notificaciones/desvio</strong> <span class="badge badge-green">Chofer</span><br><small>Body: {ruta_id, descripcion} → notifica masivamente a pasajeros de esa ruta (últimas 2h)</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/notificaciones/cola/{ruta_id}</strong><br><small>→ [{parada_id, cantidad_esperando}] — estado de colas ColaEspera C++ por parada</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/eta/{micro_id}/{parada_id}</strong><br><small>→ {microId, paradaId, distanciaMetros, tiempoSegundos} — ETA de un micro específico</small></div></div>
+<div class="endpoint"><span class="method-tag GET">GET</span><div><strong>/eta/ruta/{ruta_id}/{parada_id}</strong><br><small>→ [{microId, distanciaMetros, tiempoSegundos, ocupacion}] — ETAs de todos los micros activos en la ruta</small></div></div>
+</div>
+
+<!-- ══════════════════ 7. PANTALLAS FRONTEND ══════════════════ -->
+<div class="section page-break">
+<h2>7. Frontend — Pantallas por Rol</h2>
+<p>La interfaz usa <strong>HTML5 + CSS3 + JavaScript puro</strong>, servida directamente por FastAPI en <strong>http://localhost:3000</strong>. Cada rol accede a su propio conjunto de páginas protegidas por JWT. El sidebar y topbar se inyectan dinámicamente por <span class="inline-code">layout.js</span> según el rol detectado.</p>
+<div class="card card-blue" style="margin-bottom:16px;">
+  <h4>Arquitectura del frontend estático</h4>
+  <p><strong>Módulos compartidos</strong> cargados en todas las páginas:</p>
+  <ul>
+    <li><span class="inline-code">auth.js</span> — <code>Auth.initPage(rol)</code> verifica JWT y redirige. <code>escapeHtml(str)</code> previene XSS.</li>
+    <li><span class="inline-code">api.js</span> — <code>Api.get/post/patch/delete(url, body)</code> agrega header de autorización automáticamente.</li>
+    <li><span class="inline-code">layout.js</span> — <code>Layout.init(rol)</code> inyecta sidebar con links por rol y topbar. Footer del sidebar es un enlace a <code>/perfil/</code>.</li>
+    <li><span class="inline-code">socket.js</span> — Singleton de Socket.IO compartido entre páginas.</li>
+  </ul>
+</div>
+
+<h3>Pantallas de Autenticación (acceso público)</h3>
+<div class="cols-2">
+  <div class="screen-card">
+    <h4>🔑 Login <span class="screen-tag">/login</span></h4>
+    <p>Formulario de inicio de sesión con email y contraseña. Detecta automáticamente el rol del usuario y redirige a su pantalla principal. Incluye enlace a registro.</p>
+    <ul>
+      <li>Validación de campos en el frontend</li>
+      <li>Mensajes de error en tiempo real</li>
+      <li>Redirección automática por rol tras autenticación</li>
+      <li>Token JWT guardado en localStorage</li>
+    </ul>
+  </div>
+  <div class="screen-card">
+    <h4>📝 Registro <span class="screen-tag">/register</span></h4>
+    <p>Formulario de creación de cuenta. Solo permite crear cuentas de <strong>Pasajero</strong> o <strong>Chofer</strong>. Los administradores solo se crean via seed.sql.</p>
+    <ul>
+      <li>Selector de rol (pasajero / chofer)</li>
+      <li>Validación de contraseña (mínimo 6 caracteres)</li>
+      <li>Detección de email duplicado (409)</li>
+      <li>Login automático tras registro exitoso</li>
+    </ul>
+  </div>
+</div>
+
+<hr>
+
+<h3>🧑 Pantallas del Pasajero — 5 pantallas</h3>
+<p>Acceso desde <span class="inline-code">/pasajero/*</span>. Sidebar azul.</p>
+
+<div class="screen-card card-blue">
+  <h4>🗺️ Mapa en Vivo <span class="screen-tag">/pasajero/mapa</span></h4>
+  <p>Pantalla principal del pasajero. Muestra un mapa interactivo centrado en Santa Cruz (lat -17.7833, lng -63.1822) con la posición en tiempo real de todos los micros activos en la ruta seleccionada.</p>
+  <ul>
+    <li><strong>Selector de ruta:</strong> pestañas superiores con todas las rutas disponibles</li>
+    <li><strong>Marcadores de paradas:</strong> ícono azul predeterminado de Leaflet en cada parada de la ruta</li>
+    <li><strong>Marcadores de micros:</strong> ícono dorado personalizado, se mueve en tiempo real vía Socket.IO</li>
+    <li><strong>Suscripción automática:</strong> al cambiar de ruta se desuscribe de la anterior y se suscribe a la nueva</li>
+    <li><strong>Evento micro_moved:</strong> actualiza la posición del marcador en el mapa</li>
+    <li><strong>Evento micro_offline:</strong> elimina el marcador del micro del mapa</li>
+    <li><strong>Limpieza:</strong> al desmontar el componente se llama a la función de limpieza del WebSocket</li>
+  </ul>
+  <p><strong>Servicios usados:</strong> getRutas(), getParadas(), suscribirMapa(rutaId, onMoved, onOffline)</p>
+</div>
+
+<div class="screen-card card-blue">
+  <h4>⏱️ Llegadas (ETA) <span class="screen-tag">/pasajero/eta</span></h4>
+  <p>Muestra el tiempo estimado de llegada de todos los micros activos a la parada seleccionada.</p>
+  <ul>
+    <li><strong>Selector de ruta</strong> + <strong>selector de parada</strong> (dependiente de la ruta)</li>
+    <li><strong>Auto-refresh:</strong> actualiza automáticamente cada 10 segundos</li>
+    <li><strong>Botón refresh manual</strong></li>
+    <li>Por cada micro activo muestra: distancia en metros, tiempo en minutos y segundos, badge de ocupación coloreado</li>
+    <li>Colores de ocupación: verde (vacío), amarillo (medio), rojo (lleno)</li>
+    <li>Estado vacío si no hay micros activos en la ruta</li>
+  </ul>
+  <p><strong>Servicios usados:</strong> getRutas(), getParadas(rutaId), getETARuta(rutaId, paradaId)</p>
+</div>
+
+<div class="screen-card card-blue">
+  <h4>💳 Mi Tarjeta <span class="screen-tag">/pasajero/tarjeta</span></h4>
+  <p>Gestión de la tarjeta de transporte digital del pasajero.</p>
+  <ul>
+    <li><strong>Tarjeta visual</strong> con número, saldo en Bs, nombre del titular</li>
+    <li><strong>Código QR</strong> generado dinámicamente con el número de tarjeta</li>
+    <li><strong>Modal de recarga:</strong> input de monto con validación (mínimo Bs 5, máximo Bs 500)</li>
+    <li><strong>Historial de transacciones:</strong> últimas 10 operaciones con tipo, monto y fecha</li>
+    <li>Colores: recarga en verde, cobro en rojo</li>
+    <li>Toast de confirmación/error</li>
+  </ul>
+  <p><strong>Servicios usados:</strong> getTarjeta(userId), recargar(userId, monto), getHistorial(userId)</p>
+</div>
+
+<div class="screen-card card-blue">
+  <h4>📋 Historial de Viajes <span class="screen-tag">/pasajero/historial</span></h4>
+  <p>Lista completa del historial de viajes del pasajero, mostrando los viajes más recientes primero (implementado con PilaHistorial en C++).</p>
+  <ul>
+    <li>Tabla con: placa del micro, nombre de la ruta, paradas de origen y destino, fecha/hora, costo en Bs</li>
+    <li>Formato de fecha localizado (es-BO)</li>
+    <li>Estado de carga con spinner</li>
+    <li>Estado vacío si no tiene viajes registrados</li>
+  </ul>
+  <p><strong>Endpoint:</strong> GET /gps/historial/{userId}</p>
+</div>
+
+<div class="screen-card card-blue">
+  <h4>🔔 Notificaciones <span class="screen-tag">/pasajero/notificaciones</span></h4>
+  <p>Centro de notificaciones del pasajero. Recibe alertas de desvíos, retrasos e información del sistema.</p>
+  <ul>
+    <li>Lista de notificaciones con badge de tipo (desvío=rojo, retraso=amarillo, info=azul)</li>
+    <li>Contador de no leídas en el header</li>
+    <li>Clic en notificación la marca como leída (feedback visual inmediato)</li>
+    <li>Botón "Marcar todas como leídas" (aparece solo si hay no leídas)</li>
+    <li>Estado vacío si no hay notificaciones</li>
+  </ul>
+  <p><strong>Servicios usados:</strong> getNotificaciones(userId), marcarLeida(id), marcarTodasLeidas(userId)</p>
+</div>
+
+<hr>
+
+<h3>🚌 Pantallas del Chofer — 3 pantallas</h3>
+<p>Acceso desde <span class="inline-code">/chofer/*</span>. Sidebar verde.</p>
+
+<div class="screen-card card-green">
+  <h4>🛣️ Ruta Activa <span class="screen-tag">/chofer/ruta</span></h4>
+  <p>Panel principal del chofer. Activa/desactiva la transmisión de posición GPS en tiempo real.</p>
+  <ul>
+    <li><strong>Botón "Iniciar Ruta":</strong> activa el micro en la base de datos, inicia <span class="inline-code">navigator.geolocation.watchPosition()</span></li>
+    <li><strong>Indicador de estado</strong> (animado en verde cuando activo)</li>
+    <li><strong>Coordenadas en tiempo real:</strong> muestra lat, lng y velocidad actuales</li>
+    <li><strong>Mapa integrado:</strong> muestra la posición del chofer y las paradas de su ruta</li>
+    <li><strong>Emisión GPS:</strong> cada actualización de posición envía evento <span class="inline-code">gps_update</span> via Socket.IO</li>
+    <li><strong>Botón "Detener Ruta":</strong> limpia el watchPosition, desactiva el micro, emite <span class="inline-code">gps_stop</span></li>
+    <li>Manejo de error si el navegador no tiene geolocalización habilitada</li>
+  </ul>
+  <p><strong>APIs:</strong> GET /micros (busca su micro asignado), PATCH /micros/{id}/estado, socket emitirGPS(), detenerGPS()</p>
+</div>
+
+<div class="screen-card card-green">
+  <h4>👥 Reportar Ocupación <span class="screen-tag">/chofer/ocupacion</span></h4>
+  <p>Permite al chofer reportar el nivel de ocupación actual de su micro con un solo clic.</p>
+  <ul>
+    <li><strong>3 botones grandes</strong> con emoji e instrucciones claras:
+      <ul>
+        <li>🟢 <strong>Vacío</strong> — menos del 40% de capacidad</li>
+        <li>🟡 <strong>Medio</strong> — entre 40% y 80%</li>
+        <li>🔴 <strong>Lleno</strong> — más del 80%</li>
+      </ul>
+    </li>
+    <li>Muestra el último nivel reportado</li>
+    <li>Botones deshabilitados durante el envío</li>
+    <li>Toast de confirmación</li>
+  </ul>
+  <p><strong>API:</strong> PATCH /micros/{id}/ocupacion con body {estado: "vacio"|"medio"|"lleno"}</p>
+</div>
+
+<div class="screen-card card-green">
+  <h4>⚠️ Reportar Desvío <span class="screen-tag">/chofer/desvio</span></h4>
+  <p>Envía una alerta masiva a todos los pasajeros que viajaron recientemente en la ruta afectada.</p>
+  <ul>
+    <li><strong>Selector de ruta:</strong> precargado con la ruta del chofer</li>
+    <li><strong>Textarea:</strong> descripción del desvío o incidente</li>
+    <li>Validación de campos requeridos</li>
+    <li>Al enviar: el backend crea una notificación para cada pasajero reciente de esa ruta</li>
+    <li>Toast de éxito al confirmarse el envío</li>
+    <li>Limpia el formulario tras éxito</li>
+  </ul>
+  <p><strong>API:</strong> POST /notificaciones/desvio con body {ruta_id, descripcion}</p>
+</div>
+
+<hr>
+
+<h3>🛠 Pantallas del Administrador — 3 pantallas</h3>
+<p>Acceso desde <span class="inline-code">/admin/*</span>. Sidebar violeta. Solo accesible con rol <strong>admin</strong>. Menú: Usuarios · Líneas de Micro · Reportes.</p>
+
+<div class="screen-card card-purple">
+  <h4>👤 Gestión de Usuarios <span class="screen-tag">/admin/usuarios</span></h4>
+  <p>Tabla completa de todos los usuarios registrados en el sistema.</p>
+  <ul>
+    <li>Tabla: ID, nombre, email, teléfono, badge de rol (coloreado)</li>
+    <li><strong>Buscador en tiempo real</strong> por nombre o email (filtrado en el frontend)</li>
+    <li><strong>Selector de rol inline</strong> por cada usuario: al cambiar el select se guarda inmediatamente via API</li>
+    <li>Roles disponibles: pasajero, chofer, admin, suspendido</li>
+    <li>Badge de conteo de usuarios totales en el header</li>
+    <li>Toast de confirmación/error por cada cambio</li>
+  </ul>
+  <p><strong>APIs:</strong> GET /auth/usuarios, PATCH /auth/usuarios/{id}/rol</p>
+</div>
+
+<div class="screen-card card-purple">
+  <h4>🚌 Líneas de Micro <span class="screen-tag">/admin/lineas</span></h4>
+  <p>Gestión de líneas de microbús. Una <strong>línea</strong> es un grupo de micros que recorren una misma ruta (ej: "Línea 79" cubre todo el Cuarto Anillo).</p>
+  <ul>
+    <li><strong>Grilla de tarjetas</strong> por cada línea registrada: nombre, descripción, cantidad de micros asignados, puntos de ruta</li>
+    <li>Clic en tarjeta → navega al detalle de esa línea</li>
+    <li><strong>Botón "+ Nueva Línea"</strong> → página de creación</li>
+    <li>Estado vacío con instrucción si no hay líneas</li>
+  </ul>
+  <p><strong>API:</strong> GET /lineas</p>
+</div>
+
+<div class="screen-card card-purple">
+  <h4>🚌 Nueva Línea <span class="screen-tag">/admin/lineas/nueva</span></h4>
+  <p>Formulario para crear una nueva línea con su ruta personalizada dibujada a mano sobre el mapa.</p>
+  <ul>
+    <li><strong>Campos:</strong> Número/Nombre de línea*, descripción (opcional)</li>
+    <li><strong>Mapa interactivo Leaflet</strong> centrado en Santa Cruz:
+      <ul>
+        <li>Clic en el mapa → agrega un waypoint numerado (pin azul)</li>
+        <li>Los waypoints se conectan con una polilínea azul en tiempo real</li>
+        <li>Contador de puntos agregados en la barra de herramientas</li>
+        <li>Botón "↩ Deshacer último" — elimina el último waypoint</li>
+        <li>Botón "🗑 Limpiar todo" — borra toda la ruta</li>
+      </ul>
+    </li>
+    <li>La ruta se guarda como array JSON <span class="inline-code">[{lat, lng}, ...]</span> en columna <span class="inline-code">ruta_path JSONB</span></li>
+    <li>Validación: mínimo 2 puntos en el mapa antes de guardar</li>
+    <li>Al guardar → redirige automáticamente al detalle de la línea creada</li>
+  </ul>
+  <p><strong>API:</strong> POST /lineas {nombre, descripcion, ruta_path}</p>
+</div>
+
+<div class="screen-card card-purple">
+  <h4>🚌 Detalle de Línea <span class="screen-tag">/admin/lineas/detalle/?id=X</span></h4>
+  <p>Vista completa de una línea: ruta en mapa y todos sus micros asignados.</p>
+  <ul>
+    <li><strong>Mapa de la ruta:</strong>
+      <ul>
+        <li>Marcador verde (▶) en el punto de inicio</li>
+        <li>Marcador rojo (■) en el punto final</li>
+        <li>Círculos pequeños azules en los puntos intermedios</li>
+        <li>Polilínea azul conectando todos los puntos</li>
+        <li>Zoom automático al área de la ruta con padding</li>
+      </ul>
+    </li>
+    <li><strong>Tabla de micros asignados:</strong> placa (monoespaciado), modelo, descripción, chofer asignado, badge de estado (activo/inactivo), badge de ocupación</li>
+    <li><strong>Botón "+ Agregar Micro"</strong> → modal con formulario:
+      <ul>
+        <li>Placa* (normalizada a mayúsculas)</li>
+        <li>Modelo* (ej: Mercedes-Benz OF 1721)</li>
+        <li>Descripción (ej: color azul, carrocería Marcopolo)</li>
+        <li>Chofer: select desplegable con todos los choferes registrados (nombre + email)</li>
+      </ul>
+    </li>
+    <li>Tabla se recarga automáticamente tras agregar un micro</li>
+  </ul>
+  <p><strong>APIs:</strong> GET /lineas/{id}, POST /lineas/{id}/micros, GET /auth/usuarios</p>
+</div>
+
+<div class="screen-card card-purple">
+  <h4>📊 Reportes y Estadísticas <span class="screen-tag">/admin/reportes</span></h4>
+  <p>Panel de métricas generales del sistema y log de seguridad.</p>
+  <ul>
+    <li><strong>4 tarjetas de estadísticas:</strong>
+      <ul>
+        <li>Total usuarios registrados</li>
+        <li>Rutas activas en el sistema</li>
+        <li>Micros en la flota</li>
+        <li>Micros con estado "activo" en este momento</li>
+      </ul>
+    </li>
+    <li><strong>Tabla de logs de seguridad:</strong> últimas 50 entradas con timestamp, badge de nivel (INFO/WARNING/ERROR), tipo de evento, usuario e IP</li>
+    <li>Los logs se ordenan de más reciente a más antiguo</li>
+    <li>Carga todos los datos en paralelo con Promise.all()</li>
+  </ul>
+  <p><strong>APIs:</strong> GET /auth/usuarios, GET /rutas, GET /micros, GET /auth/logs?limite=50</p>
+</div>
+
+<hr>
+
+<h3>👤 Página de Perfil — todos los roles</h3>
+<p>Acceso desde <span class="inline-code">/perfil/</span>. Disponible para <strong>todos los roles</strong> (pasajero, chofer, admin). El avatar del footer del sidebar es un enlace directo a esta página.</p>
+
+<div class="screen-card" style="border-color:#f57f17;">
+  <h4>👤 Mi Perfil <span class="screen-tag">/perfil/</span></h4>
+  <p>Página compartida entre todos los roles para gestionar la cuenta personal.</p>
+  <ul>
+    <li><strong>Cabecera de perfil:</strong> avatar (foto o inicial del nombre), badge de rol, email y nombre en grande</li>
+    <li><strong>Información personal (solo lectura):</strong> nombre completo, email, teléfono, rol y fecha de registro formateada</li>
+    <li><strong>Foto de perfil:</strong>
+      <ul>
+        <li>Vista previa de la foto actual o placeholder "Sin foto cargada"</li>
+        <li>Selector de archivo (JPG, PNG, WebP, máx. 5 MB)</li>
+        <li>Vista previa instantánea antes de subir</li>
+        <li>Botón "Subir foto" aparece solo al seleccionar imagen</li>
+        <li>La foto se refleja inmediatamente en el avatar del sidebar</li>
+        <li>Formato guardado: <span class="inline-code">avatar_{user_id}.{ext}</span></li>
+      </ul>
+    </li>
+    <li><strong>Cambiar contraseña:</strong>
+      <ul>
+        <li>3 campos: contraseña actual, nueva contraseña, confirmar nueva</li>
+        <li>Toggle 👁️/🙈 para mostrar/ocultar cada campo</li>
+        <li>Validación cliente: mínimo 6 caracteres, coincidencia</li>
+        <li>Validación servidor: verifica contraseña actual con bcrypt</li>
+        <li>Mensaje de error inline si falla</li>
+      </ul>
+    </li>
+    <li>Diseño responsivo: grid de 2 columnas en desktop, 1 columna en móvil</li>
+  </ul>
+  <p><strong>APIs:</strong> GET /auth/perfil, PATCH /auth/cambiar-password, POST /auth/foto</p>
+</div>
+
+</div>
+
+<!-- ══════════════════ 8. DIAGRAMA DE FLUJO ══════════════════ -->
+<div class="section page-break">
+<h2>8. Diagrama de Flujo del Sistema</h2>
+
+<h3>8.1 Flujo de autenticación y acceso</h3>
+<div style="display:flex; gap:40px; flex-wrap:wrap; justify-content:center; margin:16px 0;">
+  <div class="flow">
+    <div class="flow-step">Usuario abre la app</div>
+    <div class="flow-arrow-down"></div>
+    <div class="flow-decision"><span>¿Tiene token JWT<br>en localStorage?</span></div>
+    <div style="display:flex; gap:40px; margin-top:0;">
+      <div class="flow">
+        <div class="flow-arrow-label" style="margin-left:0;">✗ No</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-step" style="min-width:160px; font-size:11px;">Pantalla de Login</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-action" style="min-width:160px; font-size:11px;">POST /auth/login</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-decision" style="min-width:160px; font-size:11px;"><span>¿Credenciales<br>válidas?</span></div>
+        <div style="display:flex; gap:20px;">
+          <div class="flow">
+            <div class="flow-arrow-label">✗</div>
+            <div class="flow-arrow-down"></div>
+            <div class="flow-step" style="min-width:100px; font-size:10px;">Error 401<br>mostrar mensaje</div>
+          </div>
+          <div class="flow">
+            <div class="flow-arrow-label">✓</div>
+            <div class="flow-arrow-down"></div>
+            <div class="flow-action" style="min-width:100px; font-size:10px;">Guardar JWT<br>en localStorage</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="flow-arrow-label">✓ Sí</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-action" style="min-width:160px; font-size:11px;">Decodificar JWT<br>(atob + JSON.parse)</div>
+      </div>
+    </div>
+    <div class="flow-arrow-down"></div>
+    <div class="flow-decision"><span>Rol del usuario</span></div>
+    <div style="display:flex; gap:16px; margin-top:0;">
+      <div class="flow">
+        <div class="flow-arrow-label">pasajero</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-step" style="min-width:100px; font-size:11px; background:#e3f2fd; border-color:#1565c0;">/pasajero/mapa</div>
+      </div>
+      <div class="flow">
+        <div class="flow-arrow-label">chofer</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-step" style="min-width:100px; font-size:11px; background:#e8f5e9; border-color:#2e7d32;">/chofer/ruta</div>
+      </div>
+      <div class="flow">
+        <div class="flow-arrow-label">admin</div>
+        <div class="flow-arrow-down"></div>
+        <div class="flow-step" style="min-width:100px; font-size:11px; background:#f3e5f5; border-color:#6a1b9a;">/admin/usuarios</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>8.2 Flujo GPS en tiempo real (Chofer → Pasajero)</h3>
+<div style="background:#f5f9ff; border:1px solid #c5cae9; border-radius:8px; padding:20px; margin:12px 0; font-size:12px;">
+<table style="margin:0;">
+  <tr><th style="width:30%;">Actor</th><th>Paso</th><th>Tecnología</th></tr>
+  <tr><td>🚌 Chofer</td><td>Presiona "Iniciar Ruta" en su pantalla</td><td>HTML button onclick</td></tr>
+  <tr><td>🚌 Chofer</td><td>Llama PATCH /micros/{id}/estado → {estado: "activo"}</td><td>fetch() API</td></tr>
+  <tr><td>🚌 Chofer</td><td>Inicia navigator.geolocation.watchPosition()</td><td>Web Geolocation API</td></tr>
+  <tr><td>🚌 Chofer</td><td>Emite evento gps_update {microId, lat, lng, velocidad}</td><td>Socket.IO emit</td></tr>
+  <tr><td>⚙️ Backend</td><td>Recibe gps_update en gpsSocket.py</td><td>python-socketio</td></tr>
+  <tr><td>⚙️ Backend</td><td>Guarda en Redis: gps:micro:{id} = {lat, lng, vel} TTL 30s</td><td>redis-py SETEX</td></tr>
+  <tr><td>⚙️ Backend</td><td>Emite micro_moved a sala ruta:{rutaId}</td><td>sio.emit(room=)</td></tr>
+  <tr><td>🧑 Pasajero</td><td>Recibe evento micro_moved (suscripto a join_ruta)</td><td>Socket.IO on()</td></tr>
+  <tr><td>🧑 Pasajero</td><td>Actualiza el marcador en el mapa con nuevas coordenadas</td><td>Leaflet marker.setLatLng()</td></tr>
+  <tr><td>🚌 Chofer</td><td>Presiona "Detener Ruta"</td><td>HTML button onclick</td></tr>
+  <tr><td>🚌 Chofer</td><td>clearWatch(watchId) + emite gps_stop {microId}</td><td>Geolocation + Socket.IO</td></tr>
+  <tr><td>⚙️ Backend</td><td>Borra Redis key + emite micro_offline a sala</td><td>DEL + sio.emit</td></tr>
+  <tr><td>🧑 Pasajero</td><td>Recibe micro_offline → elimina marcador del mapa</td><td>Leaflet map.removeLayer()</td></tr>
+</table>
+</div>
+
+<h3>8.3 Flujo de pago con tarjeta</h3>
+<div class="flow" style="align-items:flex-start; max-width:500px; margin:0 auto;">
+  <div class="flow-step" style="min-width:300px;">Pasajero abre "Mi Tarjeta"</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">GET /tarjeta/{userId} → muestra saldo y número</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-step" style="min-width:300px;">Presiona "Recargar tarjeta"</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-decision" style="min-width:300px;"><span>¿Monto válido? (5 ≤ x ≤ 500)</span></div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">POST /tarjeta/{userId}/recargar {monto}</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-step" style="min-width:300px;">Backend valida → TarjetaTransporte.recargar()</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-step" style="min-width:300px;">INSERT transacciones + UPDATE saldo</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">Frontend actualiza saldo mostrado + toast ✓</div>
+</div>
+
+<h3>8.4 Flujo de desvío (Chofer notifica a Pasajeros)</h3>
+<div class="flow" style="align-items:flex-start; max-width:500px; margin:0 auto;">
+  <div class="flow-step" style="min-width:300px;">Chofer abre "Reportar Desvío"</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">Selecciona ruta + escribe descripción</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">POST /notificaciones/desvio {ruta_id, descripcion}</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-step" style="min-width:300px;">Backend busca pasajeros recientes de esa ruta<br>(historial_viajes últimas 2 horas)</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-step" style="min-width:300px;">NotificacionAlerta.crear_masiva(usuario_ids, msg)</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">INSERT múltiple en tabla notificaciones</div>
+  <div class="flow-arrow-down"></div>
+  <div class="flow-action" style="min-width:300px;">Cada pasajero ve badge de no leídas en su sidebar</div>
+</div>
+</div>
+
+<!-- ══════════════════ 9. VARIABLES DE ENTORNO ══════════════════ -->
+<div class="section page-break">
+<h2>9. Variables de Entorno y Configuración</h2>
+<p>Archivo ubicado en <span class="inline-code">mimicro-app/.env</span></p>
+<table>
+  <tr><th>Variable</th><th>Ejemplo</th><th>Descripción</th></tr>
+  <tr><td>DATABASE_URL</td><td>postgresql://postgres:1234@localhost:5432/mimicro_db</td><td>Conexión a PostgreSQL. Formato: usuario:contraseña@host:puerto/db</td></tr>
+  <tr><td>REDIS_URL</td><td>redis://localhost:6379</td><td>Conexión a Redis para caché GPS</td></tr>
+  <tr><td>JWT_SECRET</td><td>mimicro_clave_secreta_min32chars_2026</td><td>Clave de firma JWT. Mínimo 32 caracteres. NUNCA compartir.</td></tr>
+  <tr><td>JWT_EXPIRES_DAYS</td><td>7</td><td>Días de validez del token JWT</td></tr>
+  <tr><td>PORT</td><td>3000</td><td>Puerto del servidor backend (FastAPI)</td></tr>
+  <tr><td>FRONTEND_URL</td><td>http://localhost:5173</td><td>URL del frontend para CORS</td></tr>
+  <tr><td>LOG_FILE</td><td>security.log</td><td>Archivo JSONL de logs de seguridad</td></tr>
+</table>
+</div>
+
+<!-- ══════════════════ 10. CÓDIGO FUENTE CLAVE ══════════════════ -->
+<div class="section page-break">
+<h2>10. Código Fuente de Archivos Clave</h2>
+<p>Esta sección contiene el código fuente completo de los archivos de configuración y entrada que no se generan automáticamente — son imprescindibles para que el proyecto funcione.</p>
+
+<h3>backend/main.py — Punto de entrada del servidor</h3>
+<p>Instancia FastAPI, registra todos los routers, monta Socket.IO y gestiona el ciclo de vida (DB + Redis).</p>
+<pre><code>import os
+from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import socketio
+
+from MODULO_HECTOR.config.db import init_db
+from MODULO_HECTOR.config.redis_config import init_redis
+from MODULO_HECTOR.config.socket_config import sio
+
+from MODULO_BRUNO.routes.authRoutes import router as auth_router
+from MODULO_BRUNO.routes.pagosRoutes import router as pagos_router
+from MODULO_CRISTHIAN.routes.rutasRoutes import router as rutas_router
+from MODULO_JAVIER.routes.gpsRoutes import router as gps_router
+from MODULO_ROBERTO.routes.microsRoutes import router as micros_router
+from MODULO_SAMUEL.routes.notifRoutes import router as notif_router
+from MODULO_SAMUEL.routes.etaRoutes import router as eta_router
+
+# Registrar handlers de Socket.IO (los eventos se registran al importar)
+import MODULO_JAVIER.socket.gpsSocket  # noqa: F401
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    await init_redis()
+    yield
+
+
+app = FastAPI(title="miMicro API", version="1.0.0", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:5173"), "*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth_router,   prefix="/auth",           tags=["auth"])
+app.include_router(pagos_router,  prefix="/tarjeta",        tags=["pagos"])
+app.include_router(rutas_router,  prefix="/rutas",          tags=["rutas"])
+app.include_router(gps_router,    prefix="/gps",            tags=["gps"])
+app.include_router(micros_router, prefix="/micros",         tags=["micros"])
+app.include_router(notif_router,  prefix="/notificaciones", tags=["notificaciones"])
+app.include_router(eta_router,    prefix="/eta",            tags=["eta"])
+
+
+@app.get("/", tags=["health"])
+async def health():
+    return {"status": "ok", "app": "miMicro API"}
+
+
+# Montar Socket.IO sobre la app ASGI
+socket_app = socketio.ASGIApp(sio, app)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(socket_app, host="0.0.0.0", port=int(os.getenv("PORT", "3000")))</code></pre>
+
+<h3>frontend/vite.config.js — Proxy de desarrollo</h3>
+<p>Redirige todas las llamadas API relativas al backend en puerto 3000. Incluye proxy WebSocket para Socket.IO.</p>
+<pre><code>import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+    proxy: {
+      '/auth':           { target: 'http://localhost:3000', changeOrigin: true },
+      '/rutas':          { target: 'http://localhost:3000', changeOrigin: true },
+      '/gps':            { target: 'http://localhost:3000', changeOrigin: true },
+      '/micros':         { target: 'http://localhost:3000', changeOrigin: true },
+      '/notificaciones': { target: 'http://localhost:3000', changeOrigin: true },
+      '/eta':            { target: 'http://localhost:3000', changeOrigin: true },
+      '/tarjeta':        { target: 'http://localhost:3000', changeOrigin: true },
+      '/socket.io':      { target: 'http://localhost:3000', changeOrigin: true, ws: true },
+    }
+  }
+})</code></pre>
+
+<h3>frontend/package.json — Dependencias exactas</h3>
+<pre><code>{
+  "name": "mimicro-web",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev":     "vite --port 5173",
+    "build":   "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react":            "^18.3.1",
+    "react-dom":        "^18.3.1",
+    "react-router-dom": "^6.26.0",
+    "socket.io-client": "^4.7.5",
+    "react-leaflet":    "^4.2.1",
+    "leaflet":          "^1.9.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite":                 "^5.4.0"
+  }
+}</code></pre>
+
+<h3>backend/cpp_core/setup.py — Compilación del módulo C++</h3>
+<p>Permite compilar las clases C++ como módulo Python (<span class="inline-code">mimicro_core</span>) via pybind11. Se ejecuta desde <span class="inline-code">backend/cpp_core/</span>.</p>
+<pre><code>import os
+from setuptools import setup, Extension
+import pybind11
+
+# Ruta absoluta a la raíz del repo donde están las carpetas CLASES*/
+cpp_root = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..', '..', '..', 'PROYECTO_ESTRUCTURA')
+)
+
+ext = Extension(
+    'mimicro_core',
+    sources=['bindings.cpp'],
+    include_dirs=[
+        pybind11.get_include(),
+        os.path.join(cpp_root, 'CLASES HECTOR'),
+        os.path.join(cpp_root, 'CLASES BRUNO'),
+        os.path.join(cpp_root, 'CLASES CRISTHIAN'),
+        os.path.join(cpp_root, 'CLASES JAVIER'),
+        os.path.join(cpp_root, 'CLASES ROBERTO'),
+        os.path.join(cpp_root, 'CLASES SAMUEL'),
+    ],
+    language='c++',
+    extra_compile_args=['/std:c++17', '/utf-8'] if os.name == 'nt' else ['-std=c++17'],
+)
+
+setup(
+    name='mimicro_core',
+    version='1.0.0',
+    ext_modules=[ext],
+)</code></pre>
+
+<div class="card card-amber">
+  <h4>⚠️ Nota sobre la integración C++</h4>
+  <p>El módulo <span class="inline-code">mimicro_core</span> es <strong>opcional</strong>. Todo el backend tiene fallbacks Python puro — si el módulo no se compila, el sistema igual funciona al 100% usando listas, colas y grafos en Python nativo. Para compilar:</p>
+  <pre style="margin:8px 0 0;"><code>cd mimicro-app/backend/cpp_core
+pip install pybind11
+pip install -e .</code></pre>
+  <p style="margin-top:8px;">Requiere compilador C++17: <strong>MSVC</strong> (Visual Studio Build Tools) en Windows, <strong>GCC 9+</strong> en Linux/Mac. Los archivos <span class="inline-code">.h</span> de las carpetas <span class="inline-code">CLASES */</span> deben estar presentes.</p>
+</div>
+</div>
+
+<!-- ══════════════════ 11. INSTALACIÓN ══════════════════ -->
+<div class="section page-break">
+<h2>11. Guía Completa para Recrear el Proyecto</h2>
+
+<h3>Paso 1 — Requisitos de software</h3>
+<table>
+  <tr><th>Programa</th><th>Versión</th><th>Notas</th></tr>
+  <tr><td>Git</td><td>cualquiera</td><td>Para clonar el repositorio</td></tr>
+  <tr><td>Python</td><td><strong>3.11 o 3.12</strong></td><td>Marcar "Add to PATH" al instalar. <strong>No se necesita Node.js</strong></td></tr>
+  <tr><td>PostgreSQL</td><td>14+</td><td>Anotar la contraseña del usuario postgres</td></tr>
+  <tr><td>Redis</td><td>7+</td><td>Windows: usar instalador .msi de github.com/tporadowski/redis</td></tr>
+</table>
+<div class="card card-amber">
+  <strong>Sin Node.js ni npm:</strong> el frontend es HTML/CSS/JS estático servido directamente por FastAPI. No se necesita ningún build step ni servidor de desarrollo separado.
+</div>
+
+<h3>Paso 2 — Clonar el repositorio</h3>
+<pre><code>git clone https://github.com/HectorMarquez2705/proyecto_estructura_de_Datos.git
+cd proyecto_estructura_de_Datos</code></pre>
+
+<h3>Paso 3 — Configurar .env</h3>
+<pre><code># Editar mimicro-app/.env
+DATABASE_URL=postgresql://postgres:TU_CONTRASEÑA@localhost:5432/mimicro_db
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=mimicro_clave_secreta_minimo_32_caracteres_2026
+JWT_EXPIRES_DAYS=7
+PORT=3000
+FRONTEND_URL=http://localhost:3000
+LOG_FILE=security.log</code></pre>
+
+<h3>Paso 4 — Crear la base de datos</h3>
+<pre><code>psql -U postgres -c "CREATE DATABASE mimicro_db;"
+psql -U postgres -d mimicro_db -f mimicro-app/backend/database/schema.sql
+psql -U postgres -d mimicro_db -f mimicro-app/backend/database/seed.sql</code></pre>
+<p>Si el schema.sql es de una instalación anterior sin <span class="inline-code">foto_url</span>, ejecutar además:</p>
+<pre><code>psql -U postgres -d mimicro_db -c "ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_url VARCHAR(500) DEFAULT NULL;"</code></pre>
+
+<h3>Paso 5 — Instalar dependencias e iniciar el servidor</h3>
+<pre><code>cd mimicro-app/backend
+pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 3000</code></pre>
+<p>Si <span class="inline-code">pip</span> falla (Python mal instalado en Windows), usar: <span class="inline-code">py -3.12 -m pip install -r requirements.txt</span></p>
+
+<h3>Paso 5b — Compilar módulo C++ (opcional)</h3>
+<p>Integra las clases C++ al backend vía pybind11. Si se omite, el backend usa fallbacks Python puro.</p>
+<pre><code># Requiere Visual Studio Build Tools (Windows) o GCC 9+ (Linux/Mac)
+cd mimicro-app/backend/cpp_core
+pip install pybind11
+pip install -e .</code></pre>
+<p>Los includes en <span class="inline-code">bindings.cpp</span> usan rutas relativas <span class="inline-code">../../../CLASES HECTOR/...</span> (3 niveles desde <span class="inline-code">cpp_core/</span>).</p>
+
+<h3>Paso 6 — Acceder a la aplicación</h3>
+<p>Abrí <strong>http://localhost:3000</strong> en el navegador (Chrome recomendado). El mismo servidor sirve la API y el frontend.</p>
+
+<h3>Cuentas de prueba del seed</h3>
+<table>
+  <tr><th>Rol</th><th>Email</th><th>Contraseña</th></tr>
+  <tr><td><span class="badge badge-purple">Admin</span></td><td>admin@mimicro.bo</td><td>Admin2026!</td></tr>
+  <tr><td><span class="badge badge-green">Chofer</span></td><td>pedro.rios@mimicro.bo</td><td>Chofer123!</td></tr>
+  <tr><td><span class="badge badge-green">Chofer</span></td><td>carlos.vaca@mimicro.bo</td><td>Chofer123!</td></tr>
+  <tr><td><span class="badge badge-blue">Pasajero</span></td><td>juan.perez@mail.com</td><td>Pasajero123!</td></tr>
+  <tr><td><span class="badge badge-blue">Pasajero</span></td><td>maria.lopez@mail.com</td><td>Pasajero123!</td></tr>
+</table>
+
+<h3>Estructura completa de carpetas generada</h3>
+<pre><code>PROYECTO_ESTRUCTURA/
+├── README.md
+├── CLAUDE.md
+├── documentacion_miMicro.html          ← este documento
+├── CLASES HECTOR/
+│   ├── Analizador_Flujo_Hector.h
+│   ├── Reporte_Seguridad_Hector.h
+│   └── main.cpp                        ← demo C++ standalone
+├── CLASES BRUNO/
+│   ├── persona.h
+│   ├── TarjetaTransporte.h
+│   └── GestorPagos.h
+├── CLASES CRISTHIAN/
+│   ├── GrafoParadas.h
+│   ├── OptimizadorRuta.h
+│   └── Ruta.h
+├── CLASES JAVIER/
+│   ├── GestorGPS.h
+│   ├── Parada.h
+│   └── PilaHistorial.h
+├── CLASES ROBERTO/
+│   ├── Micro.h
+│   ├── ListaPasajeros.h
+│   └── SensorPuerta.h
+├── CLASES SAMUEL/
+│   ├── ColaEspera.h
+│   ├── NotificacionAlerta.h
+│   └── TiempoEstimado.h
+└── mimicro-app/
+    ├── .env
+    ├── backend/
+    │   ├── main.py
+    │   ├── requirements.txt
+    │   ├── database/
+    │   │   ├── schema.sql
+    │   │   └── seed.sql
+    │   ├── MODULO_HECTOR/
+    │   │   ├── config/db.py, redis_config.py, socket_config.py
+    │   │   ├── middleware/authMiddleware.py, rolesMiddleware.py
+    │   │   ├── utils/jwtHelper.py, encriptador.py
+    │   │   └── services/reporteSeguridad.py
+    │   ├── MODULO_BRUNO/
+    │   │   ├── models/Persona.py, TarjetaTransporte.py
+    │   │   ├── controllers/authController.py, pagosController.py
+    │   │   └── routes/authRoutes.py, pagosRoutes.py
+    │   ├── MODULO_CRISTHIAN/
+    │   │   ├── models/Ruta.py, GrafoParadas.py, OptimizadorRuta.py
+    │   │   ├── controllers/rutasController.py
+    │   │   └── routes/rutasRoutes.py
+    │   ├── MODULO_JAVIER/
+    │   │   ├── models/GestorGPS.py, Parada.py, PilaHistorial.py
+    │   │   ├── controllers/gpsController.py
+    │   │   ├── routes/gpsRoutes.py
+    │   │   └── socket/gpsSocket.py
+    │   ├── MODULO_ROBERTO/
+    │   │   ├── models/Micro.py, ListaPasajeros.py, SensorPuerta.py
+    │   │   ├── controllers/microsController.py
+    │   │   └── routes/microsRoutes.py
+    │   └── MODULO_SAMUEL/
+    │       ├── models/ColaEspera.py, NotificacionAlerta.py, TiempoEstimado.py
+    │       ├── controllers/notifController.py, etaController.py
+    │       └── routes/notifRoutes.py, etaRoutes.py
+    └── frontend/                          ← Servido por FastAPI en puerto 3000
+        ├── index.html                     ← Redirección raíz según rol
+        ├── login/index.html, script.js, styles.css
+        ├── register/index.html, script.js, styles.css
+        ├── perfil/index.html, script.js, styles.css   ← Perfil (todos los roles)
+        ├── admin/
+        │   ├── usuarios/index.html, script.js, styles.css
+        │   ├── rutas/index.html, script.js, styles.css
+        │   ├── micros/index.html, script.js, styles.css
+        │   └── reportes/index.html, script.js, styles.css
+        ├── chofer/
+        │   ├── ruta/index.html, script.js, styles.css
+        │   ├── ocupacion/index.html, script.js, styles.css
+        │   └── desvio/index.html, script.js, styles.css
+        ├── pasajero/
+        │   ├── mapa/index.html, script.js, styles.css
+        │   ├── eta/index.html, script.js, styles.css
+        │   ├── tarjeta/index.html, script.js, styles.css
+        │   ├── historial/index.html, script.js, styles.css
+        │   └── notificaciones/index.html, script.js, styles.css
+        └── static/
+            ├── global.css             ← Sistema de diseño (variables, layout, dark mode)
+            ├── favicon.svg
+            ├── uploads/avatars/       ← Fotos de perfil: avatar_{id}.{ext}
+            └── shared/
+                ├── auth.js            ← JWT, initPage(), escapeHtml()
+                ├── api.js             ← Fetch wrapper con Authorization header
+                ├── layout.js          ← Sidebar/topbar dinámico por rol
+                └── socket.js          ← Socket.IO singleton</code></pre>
+
+<br>
+<hr>
+<p style="text-align:center; color:#999; font-size:11px; margin-top:24px;">
+  miMicro v1.1 Prototipo — Estructuras de Datos · UPSA · Santa Cruz de la Sierra, Bolivia · Mayo 2026<br>
+  Hector Marquez · Bruno Parada · Cristhian Arze · Javier Caye · Roberto Gutierrez · Samuel Carrasco<br>
+  <em>Para regenerar el PDF: abrir este archivo en Chrome → Ctrl+P → Guardar como PDF → Márgenes Mínimos</em>
+</p>
+</div>
+
+</div>
+</body>
+</html>

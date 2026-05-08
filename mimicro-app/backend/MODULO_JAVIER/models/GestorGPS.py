@@ -5,10 +5,12 @@ GPS_TTL = 30  # segundos
 
 
 async def actualizar_posicion(micro_id: int, lat: float, lng: float,
-                               velocidad: float = 0.0) -> None:
+                               velocidad: float = 0.0, linea_id: int = None) -> None:
     redis = get_redis()
     data = {"microId": micro_id, "lat": lat, "lng": lng,
             "velocidad": velocidad, "timestamp": __import__("time").time()}
+    if linea_id is not None:
+        data["linea_id"] = linea_id
     await redis.setex(f"gps:micro:{micro_id}", GPS_TTL, json.dumps(data))
 
 

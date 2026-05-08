@@ -9,11 +9,11 @@ async def get_notificaciones(usuario_id: int) -> list:
 
 
 async def crear_notificacion(body: dict) -> dict:
-    usuario_id = body.get("usuarioId")
+    usuario_id = body.get("usuario_id")
     mensaje    = body.get("mensaje", "").strip()
     tipo       = body.get("tipo", "info")
     if not usuario_id or not mensaje:
-        raise HTTPException(status_code=400, detail="usuarioId y mensaje requeridos")
+        raise HTTPException(status_code=400, detail="usuario_id y mensaje son requeridos")
     nid = await NotificacionAlerta.crear(usuario_id, mensaje, tipo)
     return {"id": nid}
 
@@ -30,9 +30,9 @@ async def marcar_todas_leidas(usuario_id: int) -> dict:
 
 async def reportar_desvio(body: dict, usuario: dict) -> dict:
     descripcion = body.get("descripcion", "").strip()
-    ruta_id     = body.get("rutaId")
+    ruta_id     = body.get("ruta_id")
     if not descripcion or not ruta_id:
-        raise HTTPException(status_code=400, detail="descripcion y rutaId requeridos")
+        raise HTTPException(status_code=400, detail="descripcion y ruta_id son requeridos")
     pasajeros = await fetchall(
         """
         SELECT DISTINCT hv.usuario_id
@@ -49,8 +49,6 @@ async def reportar_desvio(body: dict, usuario: dict) -> dict:
 
 
 async def get_cola_paradas(ruta_id: int) -> list:
-    paradas = await fetchall(
-        "SELECT id FROM paradas WHERE ruta_id=$1", ruta_id
-    )
+    paradas = await fetchall("SELECT id FROM paradas WHERE ruta_id=$1", ruta_id)
     ids = [r["id"] for r in paradas]
     return estado_paradas(ids)

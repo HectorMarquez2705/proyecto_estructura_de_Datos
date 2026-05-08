@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     rol           VARCHAR(20)  NOT NULL CHECK (rol IN ('pasajero','chofer','admin','suspendido')),
     nombre        VARCHAR(255) NOT NULL,
     telefono      VARCHAR(20)  DEFAULT '',
+    foto_url      VARCHAR(500) DEFAULT NULL,
     created_at    TIMESTAMP    DEFAULT NOW()
 );
 
@@ -45,11 +46,32 @@ CREATE TABLE IF NOT EXISTS paradas (
     orden_en_ruta INTEGER      NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS lineas (
+    id          SERIAL PRIMARY KEY,
+    nombre      VARCHAR(50)  NOT NULL UNIQUE,
+    descripcion TEXT         DEFAULT '',
+    ruta_path   JSONB        DEFAULT '[]',
+    created_at  TIMESTAMP    DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS paradas_linea (
+    id        SERIAL PRIMARY KEY,
+    linea_id  INTEGER      NOT NULL REFERENCES lineas(id) ON DELETE CASCADE,
+    nombre    VARCHAR(255) NOT NULL,
+    lat       DECIMAL(10,8) NOT NULL,
+    lng       DECIMAL(11,8) NOT NULL,
+    orden     INTEGER      NOT NULL DEFAULT 0,
+    created_at TIMESTAMP   DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS micros (
     id               SERIAL PRIMARY KEY,
     placa            VARCHAR(20)  UNIQUE NOT NULL,
+    modelo           VARCHAR(100) DEFAULT '',
+    descripcion      TEXT         DEFAULT '',
     chofer_id        INTEGER      REFERENCES usuarios(id),
     ruta_id          INTEGER      REFERENCES rutas(id),
+    linea_id         INTEGER      REFERENCES lineas(id) ON DELETE SET NULL,
     capacidad        INTEGER      DEFAULT 30,
     estado           VARCHAR(20)  DEFAULT 'inactivo' CHECK (estado IN ('activo','inactivo')),
     ocupacion_estado VARCHAR(20)  DEFAULT 'vacio'    CHECK (ocupacion_estado IN ('vacio','medio','lleno'))
@@ -76,6 +98,8 @@ CREATE TABLE IF NOT EXISTS notificaciones (
 
 -- Índices para consultas frecuentes
 CREATE INDEX IF NOT EXISTS idx_micros_ruta       ON micros(ruta_id);
+CREATE INDEX IF NOT EXISTS idx_micros_linea      ON micros(linea_id);
+CREATE INDEX IF NOT EXISTS idx_paradas_linea     ON paradas_linea(linea_id, orden);
 CREATE INDEX IF NOT EXISTS idx_paradas_ruta      ON paradas(ruta_id, orden_en_ruta);
 CREATE INDEX IF NOT EXISTS idx_historial_usuario ON historial_viajes(usuario_id, fecha DESC);
 CREATE INDEX IF NOT EXISTS idx_notif_usuario     ON notificaciones(usuario_id, leida);

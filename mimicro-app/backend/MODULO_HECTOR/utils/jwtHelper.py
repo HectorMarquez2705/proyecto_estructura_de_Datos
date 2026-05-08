@@ -7,11 +7,12 @@ ALGORITHM = "HS256"
 EXPIRES_DAYS = int(os.environ.get("JWT_EXPIRES_DAYS", "7"))
 
 
-def crear_token(user_id: int, rol: str) -> str:
+def crear_token(user_id: int, rol: str, nombre: str = "") -> str:
     payload = {
-        "sub": str(user_id),
-        "rol": rol,
-        "exp": datetime.utcnow() + timedelta(days=EXPIRES_DAYS),
+        "sub":    str(user_id),
+        "rol":    rol,
+        "nombre": nombre,
+        "exp":    datetime.utcnow() + timedelta(days=EXPIRES_DAYS),
     }
     return jwt.encode(payload, SECRET, algorithm=ALGORITHM)
 

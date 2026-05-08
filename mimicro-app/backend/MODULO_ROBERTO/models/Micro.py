@@ -26,6 +26,15 @@ async def crear(placa: str, chofer_id: int, ruta_id: int, capacidad: int = 30) -
     )
 
 
+async def crear_en_linea(placa: str, modelo: str, descripcion: str,
+                          chofer_id, linea_id: int) -> int:
+    return await fetchval(
+        "INSERT INTO micros (placa, modelo, descripcion, chofer_id, linea_id) "
+        "VALUES ($1,$2,$3,$4,$5) RETURNING id",
+        placa, modelo, descripcion, chofer_id, linea_id,
+    )
+
+
 async def actualizar_ocupacion(micro_id: int, estado: str):
     valid = ("vacio", "medio", "lleno", "activo", "inactivo")
     if estado not in valid:

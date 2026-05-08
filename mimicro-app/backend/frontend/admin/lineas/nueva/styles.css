@@ -1,0 +1,104 @@
+/* admin/lineas/nueva/styles.css */
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.nueva-linea-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.form-col {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin: 0 0 var(--sp-3);
+}
+
+.form-hint {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.map-hint {
+  margin-bottom: var(--sp-3);
+}
+
+.form-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--sp-4) 0;
+}
+
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-2);
+}
+
+.puntos-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  background: var(--surface-2);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-right: auto;
+}
+
+.btn-danger-ghost {
+  color: var(--red, #dc2626);
+}
+
+.btn-danger-ghost:hover {
+  background: rgba(220,38,38,.08);
+}
+
+.map-nueva {
+  width: 100%;
+  height: 420px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Icono waypoint numerado */
+.wp-icon {
+  width: 28px;
+  height: 28px;
+  background: #2563EB;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}

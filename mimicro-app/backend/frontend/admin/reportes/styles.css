@@ -1,0 +1,125 @@
+/* ── Admin / Reportes — estilos específicos de página ───────── */
+
+/* Grid de stat cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* Stat card base */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--t), transform var(--t);
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.stat-card-highlight {
+  border-color: var(--purple);
+  background: linear-gradient(135deg, var(--surface), var(--purple-light));
+}
+
+.stat-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-3);
+  border-radius: var(--r);
+}
+
+.stat-card-highlight .stat-icon {
+  background: var(--purple-light);
+}
+
+.stat-body {
+  min-width: 0;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-card-highlight .stat-value {
+  color: var(--purple);
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+/* Sección de logs */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section-sub {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* Badge de acción en logs */
+.badge-success { background: var(--green-light); color: var(--green); }
+.badge-danger  { background: var(--red-light);   color: var(--red); }
+.badge-warning { background: var(--amber-light);  color: var(--amber); }
+.badge-info    { background: var(--blue-light);   color: var(--blue); }
+
+/* Acciones de página */
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Skeleton */
+.skeleton-row td {
+  padding: 14px 16px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(90deg, var(--surface-3) 25%, var(--border) 50%, var(--surface-3) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.skeleton-line.skeleton-short { max-width: 100px; }
+.skeleton-line.skeleton-med   { max-width: 160px; }
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
