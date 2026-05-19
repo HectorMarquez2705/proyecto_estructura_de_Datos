@@ -1,8 +1,13 @@
-/* admin/lineas/nueva/script.js */
+/* admin/lineas/editar-ruta/script.js */
 Auth.initPage('admin');
+
+const params  = new URLSearchParams(window.location.search);
+const lineaId = parseInt(params.get('id'));
+if (!lineaId) window.location.href = '/admin/lineas/';
 
 /* ── Estado: modo manual ────────────────────────────────────── */
 let map;
+let refLayer     = null;
 let waypoints    = [];
 let markers      = [];
 let osrmSegments = [];
@@ -14,13 +19,30 @@ let gpsPoints = [];
 let watchId   = null;
 let grabando  = false;
 
-/* ── Inicializar mapa ───────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  map = L.map('map-nueva').setView([-17.7833, -63.1822], 13);
+/* ── Init: cargar línea y mostrar ruta de referencia ────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  map = L.map('map-editar').setView([-17.7833, -63.1822], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors', maxZoom: 19,
   }).addTo(map);
   map.on('click', onMapClick);
+
+  try {
+    const linea = await Api.get(`/lineas/${lineaId}`);
+    document.getElementById('page-titulo').textContent  = `Editar ruta — Línea ${escapeHtml(linea.nombre)}`;
+    document.getElementById('btn-volver').href          = `/admin/lineas/detalle/?id=${lineaId}`;
+    document.getElementById('link-cancelar').href       = `/admin/lineas/detalle/?id=${lineaId}`;
+
+    if (linea.ruta_path?.length >= 2) {
+      const latlngs = linea.ruta_path.map(p => [p.lat, p.lng]);
+      refLayer = L.polyline(latlngs, {
+        color: '#9ca3af', weight: 3, opacity: 0.5, dashArray: '6 4',
+      }).addTo(map);
+      map.fitBounds(latlngs, { padding: [40, 40] });
+    }
+  } catch (e) {
+    Toast.error('Error al cargar la línea');
+  }
 });
 
 /* ── OSRM routing entre dos puntos (modo manual) ────────────── */
@@ -41,7 +63,6 @@ async function fetchOSRMSegment(desde, hasta) {
 
 /* ── OSRM Map Matching con traza GPS ────────────────────────── */
 async function matchConOSRM(points) {
-  /* Samplear a máx 100 puntos para no superar límite de URL */
   let pts = points;
   if (pts.length > 100) {
     const step    = Math.ceil(pts.length / 99);
@@ -52,24 +73,23 @@ async function matchConOSRM(points) {
   }
 
   const coords   = pts.map(p => `${p.lng},${p.lat}`).join(';');
-  const radiuses = pts.map(() => '25').join(';');  // 25 m de precisión GPS
+  const radiuses = pts.map(() => '25').join(';');
   const url = `https://routing.openstreetmap.de/routed-car/match/v1/driving/${coords}` +
               `?overview=full&geometries=geojson&radiuses=${radiuses}`;
   try {
     const res  = await fetch(url);
     const json = await res.json();
     if (json.code !== 'Ok' || !json.matchings?.length) throw new Error(json.code);
-    /* Puede haber varios matchings si hay gaps en el GPS — los concatenamos */
     return json.matchings.flatMap(m =>
       m.geometry.coordinates.map(([lng, lat]) => ({ lat, lng }))
     );
   } catch (e) {
     console.warn('[OSRM match] falló:', e.message);
-    return pts;  // fallback: devolver los puntos GPS crudos
+    return pts;
   }
 }
 
-/* ── Path completo (waypoints + segmentos OSRM) ─────────────── */
+/* ── Path completo ──────────────────────────────────────────── */
 function buildFullPath() {
   if (!osrmSegments.length) return waypoints.slice();
   const full = [];
@@ -138,7 +158,7 @@ function iniciarGrabacion() {
   gpsPoints = [];
   grabando  = true;
   actualizarUIGrabacion();
-  Toast.info('Grabación iniciada. Recorré la ruta con el dispositivo.');
+  Toast.info('Grabación iniciada. Recorrés la ruta con el dispositivo.');
 
   watchId = navigator.geolocation.watchPosition(
     pos => {
@@ -167,7 +187,6 @@ async function detenerGrabacion() {
   const matched = await matchConOSRM(gpsPoints);
   gpsPoints = [];
 
-  /* Limpiar ruta manual previa sin verificar grabando (ya es false) */
   waypoints    = [];
   osrmSegments = [];
   markers.forEach(m => map.removeLayer(m));
@@ -201,7 +220,6 @@ function actualizarUIGrabacion() {
   document.getElementById('btn-grabar').style.display  = grabando ? 'none' : '';
   document.getElementById('btn-detener').style.display = grabando ? '' : 'none';
   document.getElementById('gps-info').style.display    = grabando ? '' : 'none';
-  /* Bloquear botones de modo manual mientras graba */
   document.getElementById('btn-deshacer').disabled = grabando;
   document.getElementById('btn-limpiar').disabled  = grabando;
 }
@@ -233,32 +251,25 @@ function makeIcon(n) {
   });
 }
 
-/* ── Guardar línea ──────────────────────────────────────────── */
-async function guardarLinea(e) {
-  e.preventDefault();
+/* ── Guardar nueva ruta ─────────────────────────────────────── */
+async function guardarRuta() {
   if (fetching || grabando) return;
 
-  const btn    = document.getElementById('btn-guardar');
-  const nombre = document.getElementById('l-nombre').value.trim();
-  const desc   = document.getElementById('l-desc').value.trim();
-
-  if (!nombre) { Toast.error('El nombre de la línea es requerido'); return; }
   if (waypoints.length < 2) {
     Toast.error('Trazá al menos 2 puntos o grabá la ruta para definir el recorrido');
     return;
   }
 
+  const btn = document.getElementById('btn-guardar');
   btn.disabled    = true;
   btn.textContent = 'Guardando…';
   try {
-    const res = await Api.post('/lineas', {
-      nombre, descripcion: desc, ruta_path: buildFullPath(),
-    });
-    Toast.success(`Línea "${nombre}" creada correctamente`);
-    setTimeout(() => { window.location.href = `/admin/lineas/detalle/?id=${res.id}`; }, 800);
+    await Api.patch(`/lineas/${lineaId}/ruta`, { ruta_path: buildFullPath() });
+    Toast.success('Ruta actualizada correctamente');
+    setTimeout(() => { window.location.href = `/admin/lineas/detalle/?id=${lineaId}`; }, 800);
   } catch (err) {
-    Toast.error(err.detail || 'Error al guardar la línea');
+    Toast.error(err.detail || 'Error al guardar la ruta');
     btn.disabled    = false;
-    btn.textContent = 'Guardar Línea';
+    btn.textContent = 'Guardar ruta';
   }
 }

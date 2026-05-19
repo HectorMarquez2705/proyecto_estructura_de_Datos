@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,57 +14,33 @@
 <div id="app-shell"></div>
 <div class="main-wrap">
   <div id="topbar-mount"></div>
-  <main class="main-content">
+  <main class="main-content" style="padding:0;">
 
-    <!-- Cabecera del perfil -->
-    <div class="perfil-header">
-      <div class="perfil-avatar-wrap">
-        <div class="perfil-avatar" id="perfil-avatar">?</div>
-        <label class="perfil-avatar-edit" for="foto-input" title="Cambiar foto">
-          📷
-          <input type="file" id="foto-input" accept="image/jpeg,image/png,image/webp" style="display:none">
-        </label>
-      </div>
-      <div class="perfil-header-info">
-        <h2 class="perfil-nombre" id="perfil-nombre">Cargando…</h2>
-        <span class="perfil-rol-badge" id="perfil-rol-badge"></span>
-        <p class="perfil-email" id="perfil-email"></p>
-      </div>
+    <!-- Gradient hero header -->
+    <div class="perfil-hero">
+      <div class="perfil-avatar-hero" id="perfil-avatar">?</div>
+      <div class="perfil-name-hero"  id="perfil-nombre">Cargando…</div>
+      <div class="perfil-role-hero"  id="perfil-rol-badge"></div>
     </div>
 
-    <div class="perfil-grid">
+    <div style="padding:0 16px 16px;">
 
       <!-- Información personal -->
-      <section class="card perfil-section">
-        <div class="perfil-section-title">
+      <section class="mobile-card" style="margin-bottom:14px;">
+        <div class="perfil-section-title" style="margin-bottom:14px;">
           <span class="perfil-section-icon">👤</span>
           Información Personal
         </div>
-        <div class="info-row">
-          <span class="info-label">Nombre completo</span>
-          <span class="info-value" id="info-nombre">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Email</span>
-          <span class="info-value" id="info-email">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Teléfono</span>
-          <span class="info-value" id="info-telefono">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Rol</span>
-          <span class="info-value" id="info-rol">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Miembro desde</span>
-          <span class="info-value" id="info-fecha">—</span>
-        </div>
+        <div class="info-row"><span class="info-label">Nombre</span>     <span class="info-value" id="info-nombre">—</span></div>
+        <div class="info-row"><span class="info-label">Email</span>      <span class="info-value" id="info-email">—</span></div>
+        <div class="info-row"><span class="info-label">Teléfono</span>   <span class="info-value" id="info-telefono">—</span></div>
+        <div class="info-row"><span class="info-label">Rol</span>        <span class="info-value" id="info-rol">—</span></div>
+        <div class="info-row" style="border:none;"><span class="info-label">Miembro desde</span><span class="info-value" id="info-fecha">—</span></div>
       </section>
 
       <!-- Foto de perfil -->
-      <section class="card perfil-section">
-        <div class="perfil-section-title">
+      <section class="mobile-card" style="margin-bottom:14px;">
+        <div class="perfil-section-title" style="margin-bottom:14px;">
           <span class="perfil-section-icon">📷</span>
           Foto de Perfil
         </div>
@@ -77,6 +53,7 @@
         <p class="foto-hint">JPG, PNG o WebP · Máximo 5 MB</p>
         <label for="foto-input" class="btn btn-secondary btn-full" style="cursor:pointer;text-align:center;display:block;margin-top:10px;">
           Seleccionar imagen
+          <input type="file" id="foto-input" accept="image/jpeg,image/png,image/webp" style="display:none">
         </label>
         <button id="btn-subir-foto" class="btn btn-primary btn-full" onclick="subirFoto()" style="display:none;margin-top:8px;">
           Subir foto
@@ -84,8 +61,8 @@
       </section>
 
       <!-- Cambiar contraseña -->
-      <section class="card perfil-section perfil-section-full">
-        <div class="perfil-section-title">
+      <section class="mobile-card">
+        <div class="perfil-section-title" style="margin-bottom:14px;">
           <span class="perfil-section-icon">🔒</span>
           Cambiar Contraseña
         </div>
@@ -117,7 +94,6 @@
       </section>
 
     </div>
-
   </main>
 </div>
 

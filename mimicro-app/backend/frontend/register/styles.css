@@ -1,26 +1,33 @@
-.role-selector {
-  display: flex; gap: 10px;
+/* register/styles.css */
+
+/* Role selector */
+.reg-role-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   margin-bottom: 22px;
 }
-.role-btn {
-  flex: 1; padding: 10px;
+.reg-role-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
   border: 2px solid var(--border);
-  border-radius: var(--r);
+  border-radius: 14px;
   background: var(--surface-2);
   color: var(--text-2);
-  font-size: 13.5px; font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all var(--t);
   font-family: inherit;
+  transition: all var(--t);
 }
-.role-btn:hover { border-color: var(--blue); color: var(--blue); }
-.role-btn.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
-  font-size: 15px; padding: 13px;
+.reg-role-btn:hover { border-color: var(--cyan, #00d4e8); color: var(--text); }
+.reg-role-btn.active {
+  border-color: var(--cyan, #00d4e8);
+  background: rgba(0,212,232,.08);
+  color: var(--cyan, #00d4e8);
 }
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37,99,235,.35);
-}
+.reg-role-icon { font-size: 22px; }
+.reg-role-label { font-size: 13px; font-weight: 700; }

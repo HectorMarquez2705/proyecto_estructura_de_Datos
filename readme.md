@@ -158,7 +158,66 @@ cd mimicro-app/backend
 python -m uvicorn main:socket_app --reload --port 3000
 ```
 
-Luego abrís `http://localhost:3000` en el navegador.
+Luego abrís `http://localhost:3000` en el navegador. La app abre directamente en la pantalla splash animada y redirige al login.
+
+---
+
+## Progressive Web App (PWA) — instalar en celular
+
+miMicro es una PWA instalable. Podés agregarla a la pantalla de inicio de tu celular **sin pasar por el App Store ni Play Store**.
+
+### Requisitos
+- El servidor debe estar accesible por **HTTPS** (en celular real, `localhost` no funciona).
+- Para pruebas locales usá **ngrok**:
+
+#### Instalar ngrok (Windows)
+```powershell
+# Opción 1 — winget (recomendada)
+winget install ngrok.ngrok
+
+# Opción 2 — descarga manual
+# Ir a https://ngrok.com/download → descargar el .zip → extraer ngrok.exe en C:\Windows\System32
+```
+
+Luego registrate gratis en [ngrok.com](https://ngrok.com) y configurá tu authtoken:
+```powershell
+ngrok config add-authtoken TU_TOKEN_AQUI
+```
+
+#### Exponer el servidor con HTTPS
+```powershell
+# Terminal 1 — servidor backend
+cd mimicro-app/backend
+python -m uvicorn main:socket_app --reload --port 3000
+
+# Terminal 2 — túnel HTTPS
+ngrok http 3000
+```
+
+Ngrok te da una URL como `https://xxxx.ngrok-free.app`. Abrila en tu celular.
+
+### Instalar en iPhone (Safari)
+1. Abrí la URL de ngrok en **Safari**
+2. Tocá el botón de compartir (cuadrado con flecha ↑)
+3. Seleccioná **"Agregar a pantalla de inicio"**
+
+### Instalar en Android (Chrome)
+1. Abrí la URL de ngrok en **Chrome**
+2. Tocá el banner "Instalar app" que aparece automáticamente, o el menú ⋮ → "Agregar a pantalla de inicio"
+
+Una vez instalada, la app se abre en modo standalone (sin barra del navegador) como si fuera una app nativa.
+
+---
+
+## Diseño y experiencia móvil
+
+miMicro tiene un **rediseño completo dark mobile-first**:
+
+- **Tema oscuro por defecto** — paleta `#0a1628` fondo, `#00d4e8` acento cyan, botones con gradiente azul-cyan
+- **Pantalla splash** (`/splash/`) — animación de carga antes del login, con auto-redirección según JWT
+- **Navegación por bottom nav** (pasajero y chofer) — barra inferior fija con íconos en lugar de sidebar lateral
+- **Soporte iOS safe area** — `env(safe-area-inset-bottom/top)` para el notch del iPhone
+- **Admin mantiene sidebar** — el diseño de escritorio se conserva para la pantalla de administración
 
 ---
 
@@ -166,11 +225,11 @@ Luego abrís `http://localhost:3000` en el navegador.
 
 ### 🧑 Pasajero
 - **Mapa en vivo** — posición de los micros en tiempo real (Socket.IO + Leaflet). Incluye planificador de ruta: el pasajero fija un punto de origen y destino en el mapa (o usa su GPS), y el sistema calcula la ruta óptima usando las líneas existentes mediante algoritmo de Dijkstra sobre los waypoints reales de cada línea
-- **Tiempo de llegada (ETA)** — estimación basada en distancia y velocidad
+- **Tiempo de llegada (ETA)** — estimación basada en distancia y velocidad, con botón de actualización manual
 - **Mi Tarjeta** — saldo de la tarjeta de transporte digital y recarga
-- **Historial de viajes** — registro de todos los viajes realizados
-- **Notificaciones** — alertas de desvíos y avisos del sistema
-- **Mi Perfil** — ver datos personales, cambiar contraseña, subir foto
+- **Historial de viajes** — banner con estadísticas (total viajes, total gastado, rutas únicas) + lista cronológica
+- **Notificaciones** — alertas filtradas por tipo (Todas / Desvíos / Retrasos / Sistema)
+- **Mi Perfil** — header hero con gradiente, datos personales, cambiar contraseña, subir foto
 
 ### 🚌 Chofer
 - **Ruta Activa** — transmisión de posición GPS en tiempo real
@@ -181,7 +240,7 @@ Luego abrís `http://localhost:3000` en el navegador.
 ### 🛠 Administrador
 - **Gestión de Usuarios** — ver todos los usuarios y cambiarles el rol
 - **Líneas de Micro** — crear y administrar líneas (grupos de micros que comparten una ruta). Incluye mapa interactivo para trazar la ruta, vista de micros por línea y registro de nuevos micros dentro de cada línea
-- **Reportes** — estadísticas del sistema y logs de seguridad
+- **Reportes** — dashboard KPI con 4 tarjetas de color (usuarios, líneas, micros, micros activos) + logs de seguridad
 - **Mi Perfil** — ver datos personales, cambiar contraseña, subir foto
 
 ---
@@ -203,8 +262,9 @@ PROYECTO_ESTRUCTURA/
 └── mimicro-app/
     ├── .env                     Configuración: DB, Redis, JWT, puerto
     └── backend/
-        ├── main.py              Servidor FastAPI + Socket.IO + frontend estático
+        ├── main.py              Servidor FastAPI + Socket.IO + rutas PWA (manifest, sw.js)
         ├── requirements.txt
+        ├── create_icons.py      Genera íconos PNG para PWA (solo stdlib Python, ejecutar 1 vez)
         ├── cpp_core/            Bindings pybind11 (bindings.cpp, CMakeLists.txt)
         ├── database/
         │   ├── schema.sql       Tablas: usuarios, tarjetas, rutas, micros...
@@ -238,14 +298,21 @@ PROYECTO_ESTRUCTURA/
             │   ├── tarjeta/     Tarjeta de transporte
             │   ├── historial/   Historial de viajes
             │   └── notificaciones/ Notificaciones
-            └── static/
-                ├── global.css       Sistema de diseño completo
+            ├── splash/              Pantalla de inicio animada (sin auth, redirige según JWT)
+        └── static/
+                ├── global.css       Sistema de diseño (dark theme, bottom nav, safe area)
                 ├── favicon.svg
-                ├── uploads/avatars/ Fotos de perfil de usuarios
+                ├── manifest.json    Web App Manifest (PWA — nombre, íconos, display:standalone)
+                ├── sw.js            Service Worker (cache-first estáticos, network-first API)
+                ├── icons/           Íconos PWA generados automáticamente
+                │   ├── icon-192.png
+                │   ├── icon-512.png
+                │   └── apple-touch-icon.png
+                ├── uploads/avatars/ Fotos de perfil: avatar_{id}.{ext}
                 └── shared/
-                    ├── auth.js      Helper de autenticación y JWT
-                    ├── api.js       Cliente HTTP con autenticación automática
-                    ├── layout.js    Sidebar y topbar dinámico por rol
+                    ├── auth.js      JWT, initPage(), PWA meta injection, dark default
+                    ├── api.js       Fetch wrapper con Authorization header
+                    ├── layout.js    Admin: sidebar | Pasajero/Chofer: bottom nav móvil
                     └── socket.js    Conexión Socket.IO compartida
 ```
 
@@ -352,3 +419,14 @@ PROYECTO_ESTRUCTURA/
 ### "Error al cargar paradas" en el detalle de línea
 - La tabla `paradas_linea` puede no existir si corriste la migración antes de que se agregara
 - Solución: `psql -U postgres -d mimicro_db -f "ruta\completa\migration_lineas.sql"` (usar ruta absoluta)
+
+### La app no se puede instalar como PWA en el celular
+- Verificá que estés accediendo por **HTTPS** (ngrok o servidor con certificado). `http://localhost` no activa el install prompt en móvil
+- En iPhone: **solo Safari** muestra la opción "Agregar a pantalla de inicio". Chrome en iOS no lo permite
+- Si el service worker no se registra, revisá la consola del navegador. Debe aparecer `[SW] registrado`
+- Si los íconos faltan, ejecutá `python create_icons.py` desde `mimicro-app/backend/`
+
+### "ngrok" no es reconocido como comando
+- Instalalo con: `winget install ngrok.ngrok` (reiniciar la terminal después)
+- O descargá el `.zip` desde ngrok.com, extraé `ngrok.exe` en una carpeta del PATH (ej: `C:\Windows\System32`)
+- Después de instalar: `ngrok config add-authtoken TU_TOKEN` (token gratuito en ngrok.com)

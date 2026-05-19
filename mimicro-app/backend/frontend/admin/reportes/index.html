@@ -17,30 +17,31 @@
   <main class="main-content">
 
     <div class="page-header">
-      <h2 class="page-title">Reportes del Sistema</h2>
-      <button class="btn btn-ghost" onclick="cargarReportes()">↺ Actualizar</button>
+      <h2 class="page-title">Dashboard</h2>
+      <button class="btn btn-ghost btn-sm" onclick="cargarReportes()">↺ Actualizar</button>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">👤</div>
-        <div class="stat-value" id="stat-usuarios">…</div>
-        <div class="stat-label">Usuarios Registrados</div>
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-blue">
+        <div class="kpi-lbl">Usuarios registrados</div>
+        <div class="kpi-val" id="stat-usuarios">…</div>
+        <div class="kpi-delta">👤 Total en el sistema</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon">🗺️</div>
-        <div class="stat-value" id="stat-rutas">…</div>
-        <div class="stat-label">Rutas Activas</div>
+      <div class="kpi-card kpi-green">
+        <div class="kpi-lbl">Micros activos ahora</div>
+        <div class="kpi-val" id="stat-activos">…</div>
+        <div class="kpi-delta">🟢 En servicio</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon">🚌</div>
-        <div class="stat-value" id="stat-micros">…</div>
-        <div class="stat-label">Total de Micros</div>
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-lbl">Total de micros</div>
+        <div class="kpi-val" id="stat-micros">…</div>
+        <div class="kpi-delta">🚌 Flota completa</div>
       </div>
-      <div class="stat-card stat-card-highlight">
-        <div class="stat-icon">✅</div>
-        <div class="stat-value" id="stat-activos">…</div>
-        <div class="stat-label">Micros Activos</div>
+      <div class="kpi-card kpi-red">
+        <div class="kpi-lbl">Líneas de micro</div>
+        <div class="kpi-val" id="stat-rutas">…</div>
+        <div class="kpi-delta">🗺️ Configuradas</div>
       </div>
     </div>
 

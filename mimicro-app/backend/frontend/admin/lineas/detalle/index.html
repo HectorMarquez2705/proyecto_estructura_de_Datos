@@ -22,7 +22,12 @@
         <a href="/admin/lineas/" class="btn btn-ghost btn-sm">← Volver</a>
         <h2 class="page-title" id="linea-titulo">Cargando…</h2>
       </div>
-      <button class="btn btn-primary" onclick="Modal.open('modal-micro')">+ Agregar Micro</button>
+      <div class="page-header-actions">
+        <button class="btn btn-sm btn-outline" onclick="cambiarRuta()">✏️ Cambiar ruta</button>
+        <button class="btn btn-sm btn-ghost btn-danger-ghost" onclick="eliminarRuta()">🗑 Eliminar ruta</button>
+        <button class="btn btn-sm btn-danger-ghost" onclick="eliminarLinea()">✕ Eliminar línea</button>
+        <button class="btn btn-primary" onclick="Modal.open('modal-micro')">+ Agregar Micro</button>
+      </div>
     </div>
 
     <p id="linea-desc" class="linea-desc-page"></p>
@@ -155,6 +160,6 @@
 <script src="/static/shared/api.js"></script>
 <script src="/static/shared/socket.js"></script>
 <script src="/static/shared/layout.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>

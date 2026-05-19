@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>miMicro — Notificaciones</title>
@@ -12,19 +12,26 @@
 <div id="app-shell"></div>
 <div class="main-wrap">
   <div id="topbar-mount"></div>
-  <main class="main-content">
+  <main class="main-content" style="padding:8px 0 16px;">
 
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">Centro de notificaciones</h1>
-        <p class="page-sub">Alertas de desvíos, retrasos y comunicados del sistema</p>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span class="badge badge-red" id="badge-noLeidas" style="display:none;"></span>
-        <button class="btn btn-secondary btn-sm" id="btn-todas" style="display:none;" onclick="marcarTodas()">✓ Marcar todas leídas</button>
-      </div>
+    <!-- Cabecera -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 16px 12px;">
+      <h2 class="page-title" style="margin:0;font-size:18px;">
+        Notificaciones
+        <span class="badge badge-red" id="badge-noLeidas" style="display:none;margin-left:6px;vertical-align:middle;"></span>
+      </h2>
+      <button class="btn btn-sm btn-ghost" id="btn-todas" style="display:none;" onclick="marcarTodas()">✓ Leídas</button>
     </div>
-    <div id="notif-list">
+
+    <!-- Filtros -->
+    <div class="notif-tabs">
+      <button class="notif-tab active" data-tipo="todas"   onclick="filtrar('todas', this)">Todas</button>
+      <button class="notif-tab"        data-tipo="desvio"  onclick="filtrar('desvio', this)">Desvíos</button>
+      <button class="notif-tab"        data-tipo="retraso" onclick="filtrar('retraso', this)">Retrasos</button>
+      <button class="notif-tab"        data-tipo="sistema" onclick="filtrar('sistema', this)">Sistema</button>
+    </div>
+
+    <div id="notif-list" style="padding:0 16px;">
       <div class="loading-state"><div class="spinner"></div><span>Cargando notificaciones…</span></div>
     </div>
 

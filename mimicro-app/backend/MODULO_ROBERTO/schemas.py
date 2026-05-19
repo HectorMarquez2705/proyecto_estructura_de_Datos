@@ -54,3 +54,7 @@ class CrearParadaLineaBody(BaseModel):
     @classmethod
     def nombre_strip(cls, v):
         return v.strip()
+
+
+class ActualizarRutaBody(BaseModel):
+    ruta_path: List[Any] = []

@@ -46,17 +46,28 @@
 
             <h3 class="section-title">Ruta en el mapa</h3>
             <p class="form-hint map-hint">
-              Hacé clic en el mapa para agregar puntos a la ruta. Los puntos se conectan en el orden en que los agregás.
+              <strong>Manual:</strong> hacé clic en el mapa punto a punto — OSRM traza el camino por las calles entre cada par.<br>
+              <strong>Grabar ruta:</strong> recorrés la ruta con el dispositivo y OSRM mapea el trayecto GPS a las calles reales.
             </p>
 
             <div class="map-toolbar">
               <span id="puntos-count" class="puntos-count">0 puntos</span>
-              <button type="button" class="btn btn-sm btn-ghost" onclick="deshacerUltimoPunto()">
+              <button type="button" id="btn-deshacer" class="btn btn-sm btn-ghost" onclick="deshacerUltimoPunto()">
                 ↩ Deshacer último
               </button>
-              <button type="button" class="btn btn-sm btn-ghost btn-danger-ghost" onclick="limpiarRuta()">
+              <button type="button" id="btn-limpiar" class="btn btn-sm btn-ghost btn-danger-ghost" onclick="limpiarRuta()">
                 🗑 Limpiar todo
               </button>
+              <button type="button" id="btn-grabar" class="btn btn-sm btn-outline grabacion-btn" onclick="iniciarGrabacion()">
+                🔴 Grabar ruta
+              </button>
+              <button type="button" id="btn-detener" class="btn btn-sm btn-danger" style="display:none" onclick="detenerGrabacion()">
+                ⏹ Detener
+              </button>
+              <span id="gps-info" class="grabando-badge" style="display:none">
+                <span class="grabando-dot"></span>
+                <span id="gps-count">0 puntos GPS</span>
+              </span>
             </div>
 
             <div id="map-nueva" class="map-nueva"></div>
@@ -79,6 +90,6 @@
 <script src="/static/shared/api.js"></script>
 <script src="/static/shared/socket.js"></script>
 <script src="/static/shared/layout.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>

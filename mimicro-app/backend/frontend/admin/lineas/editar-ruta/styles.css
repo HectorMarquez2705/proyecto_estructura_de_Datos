@@ -1,4 +1,4 @@
-/* admin/lineas/nueva/styles.css */
+/* admin/lineas/editar-ruta/styles.css */
 
 .page-header-left {
   display: flex;
@@ -12,9 +12,7 @@
   gap: var(--sp-4);
 }
 
-.form-col {
-  flex: 1;
-}
+.form-col { flex: 1; }
 
 .section-title {
   font-size: 15px;
@@ -29,14 +27,21 @@
   margin-top: 4px;
 }
 
-.map-hint {
-  margin-bottom: var(--sp-3);
+.map-hint { margin-bottom: var(--sp-3); }
+
+.ref-hint {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  color: #0369a1;
+  font-size: 12px;
 }
 
-.form-divider {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: var(--sp-4) 0;
+[data-theme="dark"] .ref-hint {
+  background: rgba(14,165,233,.12);
+  border-color: rgba(14,165,233,.3);
+  color: #7dd3fc;
 }
 
 .map-toolbar {
@@ -61,10 +66,7 @@
 .btn-danger-ghost {
   color: var(--red, #dc2626);
 }
-
-.btn-danger-ghost:hover {
-  background: rgba(220,38,38,.08);
-}
+.btn-danger-ghost:hover { background: rgba(220,38,38,.08); }
 
 .map-nueva {
   width: 100%;
@@ -80,11 +82,6 @@
   justify-content: flex-end;
   gap: var(--sp-2);
   margin-top: var(--sp-4);
-}
-
-.textarea {
-  resize: vertical;
-  min-height: 80px;
 }
 
 /* Botón grabar ruta */
@@ -114,7 +111,6 @@
   50%       { opacity: 0.35; transform: scale(0.65); }
 }
 
-/* Icono waypoint numerado */
 .wp-icon {
   width: 28px;
   height: 28px;

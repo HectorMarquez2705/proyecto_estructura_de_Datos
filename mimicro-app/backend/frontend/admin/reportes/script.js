@@ -8,9 +8,9 @@ async function cargarReportes() {
   });
 
   try {
-    const [usuarios, rutas, micros, logs] = await Promise.all([
+    const [usuarios, lineas, micros, logs] = await Promise.all([
       Api.get('/auth/usuarios'),
-      Api.get('/rutas'),
+      Api.get('/lineas'),
       Api.get('/micros'),
       Api.get('/auth/logs?limite=50'),
     ]);
@@ -19,7 +19,7 @@ async function cargarReportes() {
     const logsList     = Array.isArray(logs)     ? logs     : (logs.logs || []);
 
     document.getElementById('stat-usuarios').textContent = usuariosList.length;
-    document.getElementById('stat-rutas').textContent    = (Array.isArray(rutas) ? rutas : []).length;
+    document.getElementById('stat-rutas').textContent    = (Array.isArray(lineas) ? lineas : []).length;
     document.getElementById('stat-micros').textContent   = (Array.isArray(micros) ? micros : []).length;
     document.getElementById('stat-activos').textContent  =
       (Array.isArray(micros) ? micros : []).filter(m => m.estado === 'activo').length;

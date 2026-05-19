@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>miMicro — Tiempo de Llegada</title>
+  <title>miMicro — Buscar Ruta</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/static/global.css">
   <link rel="stylesheet" href="styles.css">
@@ -14,27 +14,30 @@
 <div id="app-shell"></div>
 <div class="main-wrap">
   <div id="topbar-mount"></div>
-  <main class="main-content">
+  <main class="main-content" style="padding:8px 16px 16px;">
 
-    <div class="page-header">
-      <div><h1 class="page-title">Tiempos de llegada</h1><p class="page-sub">Seleccioná ruta y parada para ver los micros activos</p></div>
-      <button class="btn btn-primary" id="btn-refresh" onclick="cargarETA()">🔄 Actualizar</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 class="page-title" style="margin:0;font-size:18px;">Buscar ruta</h2>
+      <button class="mobile-icon-btn" id="btn-refresh" onclick="cargarETA()" title="Actualizar">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+      </button>
     </div>
 
-    <div class="card" style="margin-bottom:20px;">
-      <div class="input-row">
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Ruta</label>
-          <select class="form-select" id="sel-ruta">
-            <option value="">Cargando rutas…</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin:0">
-          <label class="form-label">Parada</label>
-          <select class="form-select" id="sel-parada" disabled>
-            <option value="">Seleccioná una ruta primero</option>
-          </select>
-        </div>
+    <div class="mobile-card" style="margin-bottom:16px;">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Ruta</label>
+        <select class="form-select" id="sel-ruta">
+          <option value="">Cargando rutas…</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Parada</label>
+        <select class="form-select" id="sel-parada" disabled>
+          <option value="">Seleccioná una ruta primero</option>
+        </select>
       </div>
     </div>
 

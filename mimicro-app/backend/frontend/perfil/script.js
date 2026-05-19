@@ -10,9 +10,10 @@ async function cargarPerfil() {
     const rolLabels = { admin: 'Administrador', pasajero: 'Pasajero', chofer: 'Chofer' };
 
     // Cabecera
-    document.getElementById('perfil-nombre').textContent  = perfil.nombre || '—';
+    document.getElementById('perfil-nombre').textContent    = perfil.nombre || '—';
     document.getElementById('perfil-rol-badge').textContent = rolLabels[perfil.rol] || perfil.rol;
-    document.getElementById('perfil-email').textContent   = perfil.email || '';
+    const emailEl = document.getElementById('perfil-email');
+    if (emailEl) emailEl.textContent = perfil.email || '';
 
     // Info personal
     document.getElementById('info-nombre').textContent   = escapeHtml(perfil.nombre   || '—');

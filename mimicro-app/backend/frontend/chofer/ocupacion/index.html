@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>miMicro — Ocupación</title>
@@ -12,41 +12,38 @@
 <div id="app-shell"></div>
 <div class="main-wrap">
   <div id="topbar-mount"></div>
-  <main class="main-content" style="max-width:600px;margin:0 auto;">
+  <main class="main-content" style="padding:8px 16px 16px;">
 
-    <div class="page-header">
-      <div><h1 class="page-title">Estado de ocupación</h1><p class="page-sub">Informá el nivel de pasajeros actual de tu micro</p></div>
-    </div>
+    <h2 class="page-title" style="margin:0 0 16px;font-size:18px;">Estado de ocupación</h2>
 
-    <div class="card" style="margin-bottom:20px;">
-      <div class="card-header"><span class="card-title">Tu micro</span></div>
+    <div class="mobile-card" style="margin-bottom:16px;">
       <div id="micro-info">
         <div class="loading-state"><div class="spinner"></div><span>Cargando…</span></div>
       </div>
     </div>
 
     <div id="ocup-section" style="display:none;">
-      <div class="ocup-grid">
-        <button class="ocup-btn ocup-vacio" id="btn-vacio" onclick="reportarOcupacion('vacio', this)">
-          <span class="ocup-emoji">🟢</span>
-          <span class="ocup-label">Vacío</span>
-          <span class="ocup-desc">Menos del 40% de capacidad</span>
+      <div class="ocup-selector" style="margin-bottom:16px;">
+        <button class="ocup-btn" id="btn-vacio" onclick="reportarOcupacion('vacio', this)">
+          <span style="font-size:24px;">🟢</span>
+          <span style="font-size:13px;font-weight:700;">Vacío</span>
+          <span style="font-size:11px;color:var(--text-3);margin-top:2px;">< 40%</span>
         </button>
-        <button class="ocup-btn ocup-medio" id="btn-medio" onclick="reportarOcupacion('medio', this)">
-          <span class="ocup-emoji">🟡</span>
-          <span class="ocup-label">Medio</span>
-          <span class="ocup-desc">Entre 40% y 80% de capacidad</span>
+        <button class="ocup-btn" id="btn-medio" onclick="reportarOcupacion('medio', this)">
+          <span style="font-size:24px;">🟡</span>
+          <span style="font-size:13px;font-weight:700;">Medio</span>
+          <span style="font-size:11px;color:var(--text-3);margin-top:2px;">40–80%</span>
         </button>
-        <button class="ocup-btn ocup-lleno" id="btn-lleno" onclick="reportarOcupacion('lleno', this)">
-          <span class="ocup-emoji">🔴</span>
-          <span class="ocup-label">Lleno</span>
-          <span class="ocup-desc">Más del 80% de capacidad</span>
+        <button class="ocup-btn" id="btn-lleno" onclick="reportarOcupacion('lleno', this)">
+          <span style="font-size:24px;">🔴</span>
+          <span style="font-size:13px;font-weight:700;">Lleno</span>
+          <span style="font-size:11px;color:var(--text-3);margin-top:2px;">> 80%</span>
         </button>
       </div>
 
-      <div class="card" id="ultimo-estado" style="display:none; text-align:center; padding:16px;">
-        <div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">Último estado reportado</div>
-        <div id="ultimo-label" style="font-size:18px;font-weight:700;color:var(--text);">—</div>
+      <div class="mobile-card" id="ultimo-estado" style="display:none;text-align:center;">
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:4px;">Último estado reportado</div>
+        <div id="ultimo-label" style="font-size:20px;font-weight:800;color:var(--text);">—</div>
       </div>
     </div>
 

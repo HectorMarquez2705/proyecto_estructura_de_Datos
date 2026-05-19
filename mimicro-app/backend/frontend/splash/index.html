@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>miMicro</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#00d4e8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="miMicro">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="/static/global.css">
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0a1628; }
+    .splash-screen { min-height: 100vh; padding: 40px 28px; }
+    .splash-orb-1 { width: 300px; height: 300px; background: #2563eb; top: -80px; right: -80px; }
+    .splash-orb-2 { width: 200px; height: 200px; background: #00d4e8; bottom: -40px; left: -40px; }
+    .splash-tag-cyan   { color: #00d4e8; border-color: rgba(0,212,232,.4); background: rgba(0,212,232,.08); }
+    .splash-tag-blue   { color: #60a5fa; border-color: rgba(96,165,250,.4); background: rgba(96,165,250,.08); }
+    .splash-tag-purple { color: #a78bfa; border-color: rgba(167,139,250,.4); background: rgba(167,139,250,.08); }
+  </style>
+</head>
+<body>
+  <div class="splash-screen">
+    <div class="splash-orb splash-orb-1"></div>
+    <div class="splash-orb splash-orb-2"></div>
+
+    <div class="splash-logo-wrap">🚌</div>
+
+    <div class="splash-title">miMicro</div>
+    <div class="splash-sub">
+      Plataforma de transporte inteligente<br>
+      Santa Cruz de la Sierra, Bolivia
+    </div>
+
+    <div class="splash-tags">
+      <span class="splash-tag splash-tag-cyan">🗺️ Rutas óptimas</span>
+      <span class="splash-tag splash-tag-blue">🚌 Micros en vivo</span>
+      <span class="splash-tag splash-tag-purple">🤖 IA integrada</span>
+    </div>
+
+    <div class="splash-dots">
+      <div class="splash-dot active" id="dot-0"></div>
+      <div class="splash-dot" id="dot-1"></div>
+      <div class="splash-dot" id="dot-2"></div>
+    </div>
+    <div class="splash-loading">Cargando tu ciudad…</div>
+
+    <div class="splash-credit">UPSA · Estructuras de Datos 2026</div>
+  </div>
+
+  <script>
+    /* Register service worker */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+    }
+
+    /* Animate dots, then redirect */
+    let d = 0;
+    const dots = [document.getElementById('dot-0'), document.getElementById('dot-1'), document.getElementById('dot-2')];
+    const iv = setInterval(() => {
+      dots.forEach((el, i) => el.classList.toggle('active', i === d));
+      d = (d + 1) % dots.length;
+    }, 500);
+
+    setTimeout(() => {
+      clearInterval(iv);
+      const token = localStorage.getItem('mimicro_token');
+      if (!token) { window.location.replace('/login/'); return; }
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const map = { pasajero: '/pasajero/mapa/', chofer: '/chofer/ruta/', admin: '/admin/usuarios/' };
+        window.location.replace(map[payload.rol] || '/login/');
+      } catch {
+        localStorage.removeItem('mimicro_token');
+        window.location.replace('/login/');
+      }
+    }, 2500);
+  </script>
+</body>
+</html>

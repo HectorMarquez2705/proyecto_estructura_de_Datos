@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>miMicro — Reportar Desvío</title>
@@ -12,13 +12,11 @@
 <div id="app-shell"></div>
 <div class="main-wrap">
   <div id="topbar-mount"></div>
-  <main class="main-content" style="max-width:600px;margin:0 auto;">
+  <main class="main-content" style="padding:8px 16px 16px;">
 
-    <div class="page-header">
-      <div><h1 class="page-title">Reportar desvío o incidente</h1><p class="page-sub">Se enviará una alerta a todos los pasajeros recientes de la ruta</p></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><span class="card-title">⚠️ Nueva alerta</span></div>
+    <h2 class="page-title" style="margin:0 0 16px;font-size:18px;">Reportar desvío</h2>
+
+    <div class="mobile-card">
       <form id="desvio-form" novalidate>
         <div class="form-group">
           <label class="form-label">Ruta afectada</label>
@@ -26,15 +24,18 @@
             <option value="">Cargando rutas…</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom:16px;">
           <label class="form-label">Descripción del desvío o incidente</label>
-          <textarea class="form-textarea" id="descripcion" rows="5" placeholder="Ej: Desvío por Av. Roca y Coronado por obras viales. Se tomará la ruta alterna por el 4to Anillo..."></textarea>
+          <textarea class="form-textarea" id="descripcion" rows="5"
+            placeholder="Ej: Desvío por Av. Roca y Coronado por obras viales…"></textarea>
           <span class="form-hint">Sé específico para que los pasajeros puedan planificar su viaje.</span>
         </div>
-        <div id="success-msg" style="display:none;" class="card" style="background:var(--green-light);border-color:var(--green);padding:14px;margin-bottom:16px;">
-          <span style="color:var(--green);font-weight:600;">✅ Alerta enviada exitosamente a los pasajeros.</span>
+
+        <div id="success-msg" class="mobile-card" style="display:none;background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);margin-bottom:14px;">
+          <span style="color:#22c55e;font-weight:600;">✅ Alerta enviada exitosamente a los pasajeros.</span>
         </div>
-        <button class="btn btn-danger btn-lg" type="submit" id="btn-enviar" style="width:100%;">
+
+        <button class="btn-gradient" type="submit" id="btn-enviar" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
           🚨 Enviar alerta a pasajeros
         </button>
       </form>

@@ -229,3 +229,15 @@
 }
 
 .leaflet-container { background: var(--surface-2); }
+
+/* Mobile (bottom nav active) */
+.has-bottom-nav .mapa-main { padding-bottom: 0 !important; }
+.has-bottom-nav .planner-wrap {
+  height: calc(100vh - 61px - 64px); /* mobile-header + bottom-nav */
+}
+@media (max-width: 768px) {
+  .planner-wrap { flex-direction: column; height: auto; }
+  .planner-panel { width: 100%; height: auto; max-height: 45vh; border-right: none; border-bottom: 1px solid var(--border); }
+  #mapa-container { min-height: 50vw; flex: 1; height: 45vh; }
+  .has-bottom-nav .planner-wrap { height: calc(100vh - 61px - 64px); }
+}

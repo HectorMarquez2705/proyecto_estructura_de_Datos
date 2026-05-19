@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miMicro — Editar Ruta</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/global.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="role-admin">
+
+<div id="app-shell"></div>
+<div class="main-wrap">
+  <div id="topbar-mount"></div>
+  <main class="main-content">
+
+    <div class="page-header">
+      <div class="page-header-left">
+        <a id="btn-volver" href="/admin/lineas/" class="btn btn-ghost btn-sm">← Volver</a>
+        <h2 class="page-title" id="page-titulo">Editar Ruta</h2>
+      </div>
+    </div>
+
+    <div class="nueva-linea-layout">
+      <div class="form-col">
+        <div class="card">
+          <h3 class="section-title">Nueva ruta para la línea</h3>
+          <p class="form-hint map-hint ref-hint">
+            La ruta actual se muestra en gris como referencia.<br>
+            <strong>Manual:</strong> hacé clic punto a punto — OSRM traza el camino por las calles entre cada par.<br>
+            <strong>Grabar ruta:</strong> recorrés la ruta con el dispositivo y OSRM mapea el GPS a las calles reales.
+          </p>
+
+          <div class="map-toolbar">
+            <span id="puntos-count" class="puntos-count">0 puntos</span>
+            <button type="button" id="btn-deshacer" class="btn btn-sm btn-ghost" onclick="deshacerUltimoPunto()">
+              ↩ Deshacer último
+            </button>
+            <button type="button" id="btn-limpiar" class="btn btn-sm btn-ghost btn-danger-ghost" onclick="limpiarRuta()">
+              🗑 Limpiar todo
+            </button>
+            <button type="button" id="btn-grabar" class="btn btn-sm btn-outline grabacion-btn" onclick="iniciarGrabacion()">
+              🔴 Grabar ruta
+            </button>
+            <button type="button" id="btn-detener" class="btn btn-sm btn-danger" style="display:none" onclick="detenerGrabacion()">
+              ⏹ Detener
+            </button>
+            <span id="gps-info" class="grabando-badge" style="display:none">
+              <span class="grabando-dot"></span>
+              <span id="gps-count">0 puntos GPS</span>
+            </span>
+          </div>
+
+          <div id="map-editar" class="map-nueva"></div>
+
+          <div class="form-actions">
+            <a id="link-cancelar" href="/admin/lineas/" class="btn btn-ghost">Cancelar</a>
+            <button id="btn-guardar" class="btn btn-primary" onclick="guardarRuta()">
+              Guardar ruta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/shared/auth.js"></script>
+<script src="/static/shared/api.js"></script>
+<script src="/static/shared/socket.js"></script>
+<script src="/static/shared/layout.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

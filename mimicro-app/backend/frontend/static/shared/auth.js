@@ -1,8 +1,44 @@
 /* shared/auth.js — Autenticación, tema y utilidades globales */
 
+/* ── PWA: manifest + meta tags + service worker ─────────────── */
+(function () {
+  /* Inyectar meta tags en <head> si no existen */
+  function addMeta(attrs) {
+    const key = Object.keys(attrs)[0];
+    if (document.querySelector(`[${key}="${attrs[key]}"]`)) return;
+    const el = document.createElement('meta');
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    document.head.appendChild(el);
+  }
+  function addLink(attrs) {
+    const key = 'rel';
+    if (document.querySelector(`link[rel="${attrs.rel}"]`)) return;
+    const el = document.createElement('link');
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    document.head.appendChild(el);
+  }
+
+  addLink({ rel: 'manifest', href: '/manifest.json' });
+  addLink({ rel: 'apple-touch-icon', href: '/static/icons/apple-touch-icon.png' });
+  addMeta({ name: 'theme-color', content: '#00d4e8' });
+  addMeta({ name: 'apple-mobile-web-app-capable', content: 'yes' });
+  addMeta({ name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' });
+  addMeta({ name: 'apple-mobile-web-app-title', content: 'miMicro' });
+  addMeta({ name: 'mobile-web-app-capable', content: 'yes' });
+
+  /* Registrar service worker */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('[SW] registrado, scope:', reg.scope))
+        .catch(err => console.warn('[SW] registro fallido:', err));
+    });
+  }
+})();
+
 /* ── Tema claro / oscuro ────────────────────────────────────── */
 (function () {
-  const saved = localStorage.getItem('mimicro_theme') || 'light';
+  const saved = localStorage.getItem('mimicro_theme') || 'dark';
   document.documentElement.dataset.theme = saved;
 })();
 
@@ -91,8 +127,10 @@ window.Auth = {
   initPage(rolRequerido) {
     if (!this.requireAuth(rolRequerido)) return false;
     document.addEventListener('DOMContentLoaded', () => {
+      const user = this.getUser();
+      const layoutRol = rolRequerido || user?.rol;
       if (window.Layout) {
-        Layout.init(rolRequerido);
+        Layout.init(layoutRol);
       } else {
         this.populateSidebar();
         this.markActiveLink();

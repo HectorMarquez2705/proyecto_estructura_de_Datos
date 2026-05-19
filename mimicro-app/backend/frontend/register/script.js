@@ -14,9 +14,9 @@ function hideAuthError()    { errBox.classList.remove('show'); }
 
 // Selector de rol
 document.getElementById('role-selector').addEventListener('click', e => {
-  const btn = e.target.closest('.role-btn');
+  const btn = e.target.closest('.reg-role-btn');
   if (!btn) return;
-  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.reg-role-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('rol').value = btn.dataset.rol;
 });
@@ -48,6 +48,6 @@ document.getElementById('register-form').addEventListener('submit', async e => {
       : (err.detail || 'Error al crear la cuenta. Intentá de nuevo.');
     showAuthError(msg);
     btnReg.disabled = false;
-    btnReg.textContent = 'Crear cuenta';
+    btnReg.textContent = 'Crear mi cuenta';
   }
 });

@@ -142,7 +142,7 @@
   <p class="meta">
     <strong>Materia:</strong> Estructuras de Datos &nbsp;|&nbsp; <strong>Semestre:</strong> 3er semestre 2026<br>
     <strong>Universidad:</strong> UPSA — Universidad Privada de Santa Cruz de la Sierra<br>
-    <strong>Versión:</strong> 1.3 Prototipo &nbsp;|&nbsp; <strong>Fecha:</strong> Mayo 2026
+    <strong>Versión:</strong> 1.4 Prototipo &nbsp;|&nbsp; <strong>Fecha:</strong> Mayo 2026
   </p>
   <br>
   <div>
@@ -264,6 +264,7 @@
       <tr><td>Leaflet.js</td><td>1.9 (CDN)</td><td>Mapas interactivos (OpenStreetMap)</td></tr>
       <tr><td>socket.io-client</td><td>4.7 (CDN)</td><td>WebSocket cliente para GPS en tiempo real</td></tr>
       <tr><td>FastAPI StaticFiles</td><td>—</td><td>Sirve el frontend en el mismo puerto 3000</td></tr>
+      <tr><td>PWA (Web App Manifest + Service Worker)</td><td>—</td><td>Instalable en iPhone y Android sin App Store</td></tr>
     </table>
     <h3>Base de datos e infraestructura</h3>
     <table>
@@ -279,6 +280,19 @@
   </div>
 </div>
 
+<h3>PWA (Progressive Web App)</h3>
+<div class="card card-blue">
+  <p>miMicro es instalable en dispositivos móviles sin pasar por el App Store ni Google Play.</p>
+  <table>
+    <tr><th>Archivo</th><th>Descripción</th></tr>
+    <tr><td><span class="inline-code">frontend/static/manifest.json</span></td><td>Web App Manifest: nombre, íconos, <code>display: standalone</code>, colores de tema (#00d4e8) y fondo (#0a1628)</td></tr>
+    <tr><td><span class="inline-code">frontend/static/sw.js</span></td><td>Service Worker: cache-first para estáticos, network-first para rutas API. Caché offline → splash page.</td></tr>
+    <tr><td><span class="inline-code">frontend/static/icons/</span></td><td>icon-192.png, icon-512.png (Android), apple-touch-icon.png (iOS). Generados con <code>create_icons.py</code> (Python stdlib)</td></tr>
+    <tr><td><span class="inline-code">backend/create_icons.py</span></td><td>Genera los PNG usando solo <code>struct</code>, <code>zlib</code> y <code>math</code>. Ejecutar una vez desde <code>backend/</code>.</td></tr>
+  </table>
+  <p><strong>Para probar en celular:</strong> el servidor debe ser HTTPS. Usar ngrok: <span class="inline-code">ngrok http 3000</span>. En iPhone usar Safari → "Agregar a pantalla de inicio". En Android usar Chrome → banner automático.</p>
+</div>
+
 <h3>C++ Core</h3>
 <p>Las 18 clases C++ están implementadas como <span class="inline-code">.h</span> headers only (sin archivos <span class="inline-code">.cpp</span> separados). Se vinculan al backend Python mediante <strong>pybind11</strong>. Si no se compilan, el backend usa implementaciones de fallback en Python puro.</p>
 </div>
@@ -290,7 +304,7 @@
 <div style="background:#f5f9ff; border:2px solid #c5cae9; border-radius:12px; padding:24px; margin:12px 0;">
 
   <!-- Capa de usuarios -->
-  <div class="arch-title">CAPA DE CLIENTES (Navegador Web — http://localhost:3000)</div>
+  <div class="arch-title">CAPA DE CLIENTES (Navegador Web / PWA instalada — http://localhost:3000 o HTTPS vía ngrok)</div>
   <div class="diagram-row">
     <div class="diagram-col">
       <div class="diagram-box" style="background:#e3f2fd; border-color:#1565c0;">🧑 Pasajero<br><small>/pasajero/mapa, /eta, /tarjeta...</small></div>
@@ -998,15 +1012,27 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 <!-- ══════════════════ 7. PANTALLAS FRONTEND ══════════════════ -->
 <div class="section page-break">
 <h2>7. Frontend — Pantallas por Rol</h2>
-<p>La interfaz usa <strong>HTML5 + CSS3 + JavaScript puro</strong>, servida directamente por FastAPI en <strong>http://localhost:3000</strong>. Cada rol accede a su propio conjunto de páginas protegidas por JWT. El sidebar y topbar se inyectan dinámicamente por <span class="inline-code">layout.js</span> según el rol detectado.</p>
+<p>La interfaz usa <strong>HTML5 + CSS3 + JavaScript puro</strong>, servida directamente por FastAPI en <strong>http://localhost:3000</strong>. Diseño dark mobile-first. Cada rol accede a su propio conjunto de páginas protegidas por JWT. La navegación se inyecta dinámicamente por <span class="inline-code">layout.js</span> según el rol.</p>
 <div class="card card-blue" style="margin-bottom:16px;">
-  <h4>Arquitectura del frontend estático</h4>
-  <p><strong>Módulos compartidos</strong> cargados en todas las páginas:</p>
+  <h4>Arquitectura del frontend — módulos compartidos</h4>
   <ul>
-    <li><span class="inline-code">auth.js</span> — <code>Auth.initPage(rol)</code> verifica JWT y redirige. <code>escapeHtml(str)</code> previene XSS.</li>
-    <li><span class="inline-code">api.js</span> — <code>Api.get/post/patch/delete(url, body)</code> agrega header de autorización automáticamente.</li>
-    <li><span class="inline-code">layout.js</span> — <code>Layout.init(rol)</code> inyecta sidebar con links por rol y topbar. Footer del sidebar es un enlace a <code>/perfil/</code>.</li>
+    <li><span class="inline-code">auth.js</span> — IIFE superior inyecta meta PWA (<code>manifest</code>, <code>apple-touch-icon</code>, <code>theme-color</code>) y registra el Service Worker en cada página. Luego <code>Auth.initPage(rol)</code> verifica JWT y redirige. Tema por defecto: <strong>dark</strong>. <code>escapeHtml(str)</code> previene XSS.</li>
+    <li><span class="inline-code">api.js</span> — <code>Api.get/post/patch/del(url, body)</code> agrega <code>Authorization: Bearer</code> automáticamente. El método DELETE es <code>Api.del()</code>, NO <code>Api.delete()</code>.</li>
+    <li><span class="inline-code">layout.js</span> — <code>Layout.init(rol)</code> bifurca por rol: <strong>admin</strong> recibe el sidebar lateral de escritorio; <strong>pasajero</strong> y <strong>chofer</strong> reciben <em>mobile header</em> (marca + toggles) + <em>bottom nav</em> (barra inferior con 4 íconos). Agrega clase <code>has-bottom-nav</code> al body para el layout CSS.</li>
     <li><span class="inline-code">socket.js</span> — Singleton de Socket.IO compartido entre páginas.</li>
+  </ul>
+  <p><strong>Excepción:</strong> la pantalla splash (<span class="inline-code">/splash/</span>) no carga <span class="inline-code">auth.js</span>. Tiene los meta PWA estáticamente y registra el SW inline. Se auto-redirige tras 2.5 segundos según el JWT en localStorage.</p>
+</div>
+
+<h3>Pantalla de inicio (acceso público)</h3>
+<div class="screen-card">
+  <h4>✨ Splash <span class="screen-tag">/splash</span></h4>
+  <p>Pantalla de carga animada. Primera pantalla que ve el usuario al abrir la app (la raíz <span class="inline-code">/</span> sirve este archivo directamente). No carga <span class="inline-code">auth.js</span> ni el sidebar.</p>
+  <ul>
+    <li>Logo 🚌 animado + puntos de carga (animación <code>floatUp</code>)</li>
+    <li>Meta tags PWA estáticos: <code>manifest</code>, <code>apple-touch-icon</code>, <code>theme-color</code>, <code>apple-mobile-web-app-capable</code></li>
+    <li>Registra el Service Worker directamente en el <code>&lt;script&gt;</code></li>
+    <li>Tras 2500 ms: si hay JWT válido en localStorage → redirige al home del rol. Si no → redirige a <code>/login/</code></li>
   </ul>
 </div>
 
@@ -1014,19 +1040,20 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 <div class="cols-2">
   <div class="screen-card">
     <h4>🔑 Login <span class="screen-tag">/login</span></h4>
-    <p>Formulario de inicio de sesión con email y contraseña. Detecta automáticamente el rol del usuario y redirige a su pantalla principal. Incluye enlace a registro.</p>
+    <p>Formulario de inicio de sesión. Diseño dark mobile: card centrada, orbs decorativos de fondo, inputs con ícono SVG, botón con toggle de visibilidad de contraseña.</p>
     <ul>
       <li>Validación de campos en el frontend</li>
       <li>Mensajes de error en tiempo real</li>
+      <li>Toggle ojo para mostrar/ocultar contraseña</li>
       <li>Redirección automática por rol tras autenticación</li>
       <li>Token JWT guardado en localStorage</li>
     </ul>
   </div>
   <div class="screen-card">
     <h4>📝 Registro <span class="screen-tag">/register</span></h4>
-    <p>Formulario de creación de cuenta. Solo permite crear cuentas de <strong>Pasajero</strong> o <strong>Chofer</strong>. Los administradores solo se crean via seed.sql.</p>
+    <p>Formulario de creación de cuenta. Diseño dark mobile: selector de rol en tarjetas con ícono y etiqueta. Solo permite crear cuentas de <strong>Pasajero</strong> o <strong>Chofer</strong>.</p>
     <ul>
-      <li>Selector de rol (pasajero / chofer)</li>
+      <li>Selector de rol tipo tarjeta (<code>.reg-role-btn</code>) — Pasajero / Chofer</li>
       <li>Validación de contraseña (mínimo 6 caracteres)</li>
       <li>Detección de email duplicado (409)</li>
       <li>Login automático tras registro exitoso</li>
@@ -1096,9 +1123,10 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 
 <div class="screen-card card-blue">
   <h4>📋 Historial de Viajes <span class="screen-tag">/pasajero/historial</span></h4>
-  <p>Lista completa del historial de viajes del pasajero, mostrando los viajes más recientes primero (implementado con PilaHistorial en C++).</p>
+  <p>Historial completo de viajes del pasajero. Implementado con PilaHistorial C++ (LIFO). Incluye un banner de estadísticas calculado en el frontend.</p>
   <ul>
-    <li>Tabla con: placa del micro, nombre de la ruta, paradas de origen y destino, fecha/hora, costo en Bs</li>
+    <li><strong>Banner de estadísticas:</strong> total de viajes realizados, total gastado en Bs, cantidad de rutas únicas</li>
+    <li>Lista de viajes: placa del micro, nombre de la ruta, paradas de origen y destino, fecha/hora, costo en Bs</li>
     <li>Formato de fecha localizado (es-BO)</li>
     <li>Estado de carga con spinner</li>
     <li>Estado vacío si no tiene viajes registrados</li>
@@ -1108,13 +1136,14 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 
 <div class="screen-card card-blue">
   <h4>🔔 Notificaciones <span class="screen-tag">/pasajero/notificaciones</span></h4>
-  <p>Centro de notificaciones del pasajero. Recibe alertas de desvíos, retrasos e información del sistema.</p>
+  <p>Centro de notificaciones con filtrado por tipo. Recibe alertas de desvíos, retrasos e información del sistema.</p>
   <ul>
-    <li>Lista de notificaciones con badge de tipo (desvío=rojo, retraso=amarillo, info=azul)</li>
+    <li><strong>Tabs de filtro:</strong> Todas · Desvíos · Retrasos · Sistema — filtra en el frontend sin llamada adicional a la API</li>
+    <li>Lista con badge de tipo (desvío=rojo, retraso=amarillo, info=azul)</li>
     <li>Contador de no leídas en el header</li>
     <li>Clic en notificación la marca como leída (feedback visual inmediato)</li>
     <li>Botón "Marcar todas como leídas" (aparece solo si hay no leídas)</li>
-    <li>Estado vacío si no hay notificaciones</li>
+    <li>Estado vacío si no hay notificaciones en el filtro activo</li>
   </ul>
   <p><strong>Servicios usados:</strong> getNotificaciones(userId), marcarLeida(id), marcarTodasLeidas(userId)</p>
 </div>
@@ -1122,59 +1151,53 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 <hr>
 
 <h3>🚌 Pantallas del Chofer — 3 pantallas</h3>
-<p>Acceso desde <span class="inline-code">/chofer/*</span>. Sidebar verde.</p>
+<p>Acceso desde <span class="inline-code">/chofer/*</span>. Navegación por bottom nav móvil (íconos: Ruta · Ocupación · Desvío · Perfil).</p>
 
 <div class="screen-card card-green">
   <h4>🛣️ Ruta Activa <span class="screen-tag">/chofer/ruta</span></h4>
-  <p>Panel principal del chofer. Activa/desactiva la transmisión de posición GPS en tiempo real.</p>
+  <p>Panel principal del chofer. Diseño móvil completo: barra de estado superior, mapa compacto (240px), tarjeta de progreso y acciones rápidas.</p>
   <ul>
-    <li><strong>Botón "Iniciar Ruta":</strong> activa el micro en la base de datos, inicia <span class="inline-code">navigator.geolocation.watchPosition()</span></li>
-    <li><strong>Indicador de estado</strong> (animado en verde cuando activo)</li>
-    <li><strong>Coordenadas en tiempo real:</strong> muestra lat, lng y velocidad actuales</li>
-    <li><strong>Mapa integrado:</strong> muestra la posición del chofer y las paradas de su ruta</li>
-    <li><strong>Emisión GPS:</strong> cada actualización de posición envía evento <span class="inline-code">gps_update</span> via Socket.IO</li>
-    <li><strong>Botón "Detener Ruta":</strong> limpia el watchPosition, desactiva el micro, emite <span class="inline-code">gps_stop</span></li>
-    <li>Manejo de error si el navegador no tiene geolocalización habilitada</li>
+    <li><strong>Barra de estado:</strong> nombre de ruta + badge de placa + badge de capacidad</li>
+    <li><strong>Botón "Iniciar Ruta":</strong> activa el micro, inicia <span class="inline-code">navigator.geolocation.watchPosition()</span></li>
+    <li><strong>Indicador GPS animado</strong> (pulso verde cuando activo)</li>
+    <li><strong>Mapa compacto</strong> integrado de 240px de altura</li>
+    <li><strong>Tarjeta de progreso:</strong> coordenadas lat/lng y velocidad en tiempo real</li>
+    <li><strong>Acciones rápidas:</strong> botones de ocupación (Vacío/Medio/Lleno) inline en la tarjeta</li>
+    <li><strong>Botón "Detener Ruta":</strong> limpia watchPosition, desactiva el micro, emite <span class="inline-code">gps_stop</span></li>
   </ul>
-  <p><strong>APIs:</strong> GET /micros (busca su micro asignado), PATCH /micros/{id}/estado, socket emitirGPS(), detenerGPS()</p>
+  <p><strong>APIs:</strong> GET /micros, PATCH /micros/{id}/estado, PATCH /micros/{id}/ocupacion, Socket.IO gps_update/gps_stop</p>
 </div>
 
 <div class="screen-card card-green">
   <h4>👥 Reportar Ocupación <span class="screen-tag">/chofer/ocupacion</span></h4>
-  <p>Permite al chofer reportar el nivel de ocupación actual de su micro con un solo clic.</p>
+  <p>Tarjeta móvil para reportar ocupación. Tres botones apilados verticalmente con emoji y descripción.</p>
   <ul>
-    <li><strong>3 botones grandes</strong> con emoji e instrucciones claras:
-      <ul>
-        <li>🟢 <strong>Vacío</strong> — menos del 40% de capacidad</li>
-        <li>🟡 <strong>Medio</strong> — entre 40% y 80%</li>
-        <li>🔴 <strong>Lleno</strong> — más del 80%</li>
-      </ul>
-    </li>
-    <li>Muestra el último nivel reportado</li>
-    <li>Botones deshabilitados durante el envío</li>
-    <li>Toast de confirmación</li>
+    <li>🟢 <strong>Vacío</strong> — menos del 40%</li>
+    <li>🟡 <strong>Medio</strong> — entre 40% y 80%</li>
+    <li>🔴 <strong>Lleno</strong> — más del 80%</li>
+    <li>Botón seleccionado resaltado con borde y fondo de color</li>
+    <li>Toast de confirmación tras guardar</li>
   </ul>
-  <p><strong>API:</strong> PATCH /micros/{id}/ocupacion con body {estado: "vacio"|"medio"|"lleno"}</p>
+  <p><strong>API:</strong> PATCH /micros/{id}/ocupacion — body: <span class="inline-code">{estado: "vacio"|"medio"|"lleno"}</span></p>
 </div>
 
 <div class="screen-card card-green">
   <h4>⚠️ Reportar Desvío <span class="screen-tag">/chofer/desvio</span></h4>
-  <p>Envía una alerta masiva a todos los pasajeros que viajaron recientemente en la ruta afectada.</p>
+  <p>Tarjeta móvil con formulario de alerta. Botón de envío con gradiente rojo de peligro.</p>
   <ul>
     <li><strong>Selector de ruta:</strong> precargado con la ruta del chofer</li>
-    <li><strong>Textarea:</strong> descripción del desvío o incidente</li>
-    <li>Validación de campos requeridos</li>
-    <li>Al enviar: el backend crea una notificación para cada pasajero reciente de esa ruta</li>
-    <li>Toast de éxito al confirmarse el envío</li>
-    <li>Limpia el formulario tras éxito</li>
+    <li><strong>Textarea</strong> de descripción del desvío o incidente</li>
+    <li>Botón de envío con gradiente rojo (<em>acción destructiva/urgente</em>)</li>
+    <li>Al enviar: el backend crea notificaciones para todos los pasajeros recientes de esa ruta</li>
+    <li>Toast de éxito + limpieza del formulario</li>
   </ul>
-  <p><strong>API:</strong> POST /notificaciones/desvio con body {ruta_id, descripcion}</p>
+  <p><strong>API:</strong> POST /notificaciones/desvio con body <span class="inline-code">{ruta_id, descripcion}</span></p>
 </div>
 
 <hr>
 
 <h3>🛠 Pantallas del Administrador — 3 pantallas</h3>
-<p>Acceso desde <span class="inline-code">/admin/*</span>. Sidebar violeta. Solo accesible con rol <strong>admin</strong>. Menú: Usuarios · Líneas de Micro · Reportes.</p>
+<p>Acceso desde <span class="inline-code">/admin/*</span>. Sidebar lateral de escritorio (violeta). Solo accesible con rol <strong>admin</strong>. Menú: Usuarios · Líneas de Micro · Reportes.</p>
 
 <div class="screen-card card-purple">
   <h4>👤 Gestión de Usuarios <span class="screen-tag">/admin/usuarios</span></h4>
@@ -1252,54 +1275,37 @@ El cliente decodifica el payload con <span class="inline-code">JSON.parse(atob(t
 
 <div class="screen-card card-purple">
   <h4>📊 Reportes y Estadísticas <span class="screen-tag">/admin/reportes</span></h4>
-  <p>Panel de métricas generales del sistema y log de seguridad.</p>
+  <p>Dashboard KPI con grilla de 4 tarjetas de color + log de seguridad.</p>
   <ul>
-    <li><strong>4 tarjetas de estadísticas:</strong>
+    <li><strong>Grilla KPI (4 tarjetas coloreadas):</strong>
       <ul>
-        <li>Total usuarios registrados</li>
-        <li>Rutas activas en el sistema</li>
-        <li>Micros en la flota</li>
-        <li>Micros con estado "activo" en este momento</li>
+        <li>🔵 <strong>Usuarios</strong> — total de cuentas registradas</li>
+        <li>🟢 <strong>Líneas</strong> — cantidad de líneas de micro creadas</li>
+        <li>🟡 <strong>Flota</strong> — total de micros en el sistema</li>
+        <li>🔴 <strong>Activos ahora</strong> — micros con estado "activo"</li>
       </ul>
     </li>
     <li><strong>Tabla de logs de seguridad:</strong> últimas 50 entradas con timestamp, badge de nivel (INFO/WARNING/ERROR), tipo de evento, usuario e IP</li>
     <li>Los logs se ordenan de más reciente a más antiguo</li>
     <li>Carga todos los datos en paralelo con Promise.all()</li>
   </ul>
-  <p><strong>APIs:</strong> GET /auth/usuarios, GET /rutas, GET /micros, GET /auth/logs?limite=50</p>
+  <p><strong>APIs:</strong> GET /auth/usuarios, GET /lineas (para el conteo de líneas), GET /micros, GET /auth/logs?limite=50</p>
 </div>
 
 <hr>
 
 <h3>👤 Página de Perfil — todos los roles</h3>
-<p>Acceso desde <span class="inline-code">/perfil/</span>. Disponible para <strong>todos los roles</strong> (pasajero, chofer, admin). El avatar del footer del sidebar es un enlace directo a esta página.</p>
+<p>Acceso desde <span class="inline-code">/perfil/</span>. Disponible para <strong>todos los roles</strong>. El link de perfil está en el bottom nav (pasajero/chofer) y en el footer del sidebar (admin).</p>
 
 <div class="screen-card" style="border-color:#f57f17;">
   <h4>👤 Mi Perfil <span class="screen-tag">/perfil/</span></h4>
-  <p>Página compartida entre todos los roles para gestionar la cuenta personal.</p>
+  <p>Página compartida entre todos los roles. Diseño mobile-first con hero header de gradiente.</p>
   <ul>
-    <li><strong>Cabecera de perfil:</strong> avatar (foto o inicial del nombre), badge de rol, email y nombre en grande</li>
-    <li><strong>Información personal (solo lectura):</strong> nombre completo, email, teléfono, rol y fecha de registro formateada</li>
-    <li><strong>Foto de perfil:</strong>
-      <ul>
-        <li>Vista previa de la foto actual o placeholder "Sin foto cargada"</li>
-        <li>Selector de archivo (JPG, PNG, WebP, máx. 5 MB)</li>
-        <li>Vista previa instantánea antes de subir</li>
-        <li>Botón "Subir foto" aparece solo al seleccionar imagen</li>
-        <li>La foto se refleja inmediatamente en el avatar del sidebar</li>
-        <li>Formato guardado: <span class="inline-code">avatar_{user_id}.{ext}</span></li>
-      </ul>
-    </li>
-    <li><strong>Cambiar contraseña:</strong>
-      <ul>
-        <li>3 campos: contraseña actual, nueva contraseña, confirmar nueva</li>
-        <li>Toggle 👁️/🙈 para mostrar/ocultar cada campo</li>
-        <li>Validación cliente: mínimo 6 caracteres, coincidencia</li>
-        <li>Validación servidor: verifica contraseña actual con bcrypt</li>
-        <li>Mensaje de error inline si falla</li>
-      </ul>
-    </li>
-    <li>Diseño responsivo: grid de 2 columnas en desktop, 1 columna en móvil</li>
+    <li><strong>Hero header con gradiente:</strong> avatar (foto o inicial del nombre con gradiente de rol), badge de rol, nombre e email en grande. Fondo con <code>linear-gradient</code> que ocupa el ancho completo.</li>
+    <li><strong>Tarjetas de sección</strong> (<span class="inline-code">.mobile-card</span>): Información personal · Foto de perfil · Cambiar contraseña</li>
+    <li><strong>Información personal (solo lectura):</strong> nombre, email, teléfono, rol, fecha de registro</li>
+    <li><strong>Foto de perfil:</strong> vista previa actual, selector de archivo (JPG/PNG/WebP, máx. 5 MB), preview instantáneo, botón "Subir" aparece al seleccionar. Formato: <span class="inline-code">avatar_{user_id}.{ext}</span></li>
+    <li><strong>Cambiar contraseña:</strong> 3 campos con toggle de visibilidad. Validación cliente (min 6 chars, coincidencia) + servidor (bcrypt verifica actual)</li>
   </ul>
   <p><strong>APIs:</strong> GET /auth/perfil, PATCH /auth/cambiar-password, POST /auth/foto</p>
 </div>
@@ -1792,14 +1798,18 @@ pip install -e .</code></pre>
     │       ├── controllers/notifController.py, etaController.py
     │       └── routes/notifRoutes.py, etaRoutes.py
     └── frontend/                          ← Servido por FastAPI en puerto 3000
-        ├── index.html                     ← Redirección raíz según rol
+        ├── index.html                     ← Redirige a /splash/
+        ├── splash/index.html              ← Pantalla animada de inicio (no carga auth.js)
         ├── login/index.html, script.js, styles.css
         ├── register/index.html, script.js, styles.css
         ├── perfil/index.html, script.js, styles.css   ← Perfil (todos los roles)
         ├── admin/
         │   ├── usuarios/index.html, script.js, styles.css
-        │   ├── rutas/index.html, script.js, styles.css
-        │   ├── micros/index.html, script.js, styles.css
+        │   ├── lineas/index.html, script.js, styles.css
+        │   │   ├── nueva/index.html, script.js, styles.css
+        │   │   └── detalle/index.html, script.js, styles.css
+        │   ├── rutas/index.html, script.js, styles.css   ← (eliminado del menú)
+        │   ├── micros/index.html, script.js, styles.css  ← (eliminado del menú)
         │   └── reportes/index.html, script.js, styles.css
         ├── chofer/
         │   ├── ruta/index.html, script.js, styles.css
@@ -1812,19 +1822,25 @@ pip install -e .</code></pre>
         │   ├── historial/index.html, script.js, styles.css
         │   └── notificaciones/index.html, script.js, styles.css
         └── static/
-            ├── global.css             ← Sistema de diseño (variables, layout, dark mode)
+            ├── global.css             ← Sistema de diseño (dark theme, bottom nav, safe area)
             ├── favicon.svg
+            ├── manifest.json          ← PWA Web App Manifest
+            ├── sw.js                  ← Service Worker (cache-first / network-first)
+            ├── icons/
+            │   ├── icon-192.png       ← Ícono PWA Android
+            │   ├── icon-512.png       ← Ícono PWA grande
+            │   └── apple-touch-icon.png  ← Ícono iOS "Agregar a inicio"
             ├── uploads/avatars/       ← Fotos de perfil: avatar_{id}.{ext}
             └── shared/
-                ├── auth.js            ← JWT, initPage(), escapeHtml()
+                ├── auth.js            ← PWA injection IIFE + JWT + initPage() + dark default
                 ├── api.js             ← Fetch wrapper con Authorization header
-                ├── layout.js          ← Sidebar/topbar dinámico por rol
+                ├── layout.js          ← Admin: sidebar | Pasajero/Chofer: bottom nav móvil
                 └── socket.js          ← Socket.IO singleton</code></pre>
 
 <br>
 <hr>
 <p style="text-align:center; color:#999; font-size:11px; margin-top:24px;">
-  miMicro v1.1 Prototipo — Estructuras de Datos · UPSA · Santa Cruz de la Sierra, Bolivia · Mayo 2026<br>
+  miMicro v1.4 Prototipo — Estructuras de Datos · UPSA · Santa Cruz de la Sierra, Bolivia · Mayo 2026<br>
   Hector Marquez · Bruno Parada · Cristhian Arze · Javier Caye · Roberto Gutierrez · Samuel Carrasco<br>
   <em>Para regenerar el PDF: abrir este archivo en Chrome → Ctrl+P → Guardar como PDF → Márgenes Mínimos</em>
 </p>

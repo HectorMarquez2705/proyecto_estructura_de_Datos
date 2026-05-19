@@ -89,9 +89,25 @@ _FRONTEND = _os.path.join(_os.path.dirname(__file__), "frontend")
 
 @app.get("/", include_in_schema=False)
 async def root():
-    return FileResponse(_os.path.join(_FRONTEND, "index.html"))
+    return FileResponse(_os.path.join(_FRONTEND, "splash", "index.html"))
+
+@app.get("/manifest.json", include_in_schema=False)
+async def manifest():
+    return FileResponse(
+        _os.path.join(_FRONTEND, "static", "manifest.json"),
+        media_type="application/manifest+json"
+    )
+
+@app.get("/sw.js", include_in_schema=False)
+async def service_worker():
+    return FileResponse(
+        _os.path.join(_FRONTEND, "static", "sw.js"),
+        media_type="application/javascript",
+        headers={"Service-Worker-Allowed": "/"}
+    )
 
 app.mount("/static",   StaticFiles(directory=_os.path.join(_FRONTEND, "static")),                  name="static")
+app.mount("/splash",   StaticFiles(directory=_os.path.join(_FRONTEND, "splash"),   html=True),      name="splash")
 app.mount("/login",    StaticFiles(directory=_os.path.join(_FRONTEND, "login"),    html=True),      name="login")
 app.mount("/register", StaticFiles(directory=_os.path.join(_FRONTEND, "register"), html=True),      name="register")
 app.mount("/pasajero", StaticFiles(directory=_os.path.join(_FRONTEND, "pasajero"), html=True),      name="pasajero")

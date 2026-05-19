@@ -1,40 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>
-  /* Anti-FOUC: aplicar tema antes de que el CSS cargue */
-  document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';
-</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>miMicro</title>
-  <style>
-    body { font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-    [data-theme="dark"] body { background: #0f172a; color: #f1f5f9; }
-    .splash { text-align: center; }
-    .bus { font-size: 48px; animation: bob 1.5s ease-in-out infinite; display: inline-block; }
-    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    p { font-size: 14px; color: #64748b; margin-top: 10px; }
-  </style>
 </head>
 <body>
-  <div class="splash">
-    <div class="bus">🚌</div>
-    <p>Cargando miMicro…</p>
-  </div>
-  <script>
-    (function () {
-      const token = localStorage.getItem('mimicro_token');
-      if (!token) { window.location.replace('/login/'); return; }
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const map = { pasajero: '/pasajero/mapa/', chofer: '/chofer/ruta/', admin: '/admin/usuarios/' };
-        window.location.replace(map[payload.rol] || '/login/');
-      } catch {
-        localStorage.removeItem('mimicro_token');
-        window.location.replace('/login/');
-      }
-    })();
-  </script>
+  <script>window.location.replace('/splash/');</script>
 </body>
 </html>

@@ -40,6 +40,21 @@ async def crear_micro_en_linea(linea_id: int, body: dict) -> dict:
     return {"id": micro_id, "placa": placa}
 
 
+async def eliminar_linea(linea_id: int):
+    l = await Linea.obtener_por_id(linea_id)
+    if not l:
+        raise HTTPException(status_code=404, detail="Línea no encontrada")
+    await Linea.eliminar(linea_id)
+
+
+async def actualizar_ruta_linea(linea_id: int, ruta_path: list) -> dict:
+    l = await Linea.obtener_por_id(linea_id)
+    if not l:
+        raise HTTPException(status_code=404, detail="Línea no encontrada")
+    await Linea.actualizar_ruta(linea_id, ruta_path)
+    return {"id": linea_id, "puntos": len(ruta_path)}
+
+
 # ── Paradas ────────────────────────────────────────────────────
 async def get_paradas_linea(linea_id: int) -> list:
     return await ParadaLinea.listar(linea_id)

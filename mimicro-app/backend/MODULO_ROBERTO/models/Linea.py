@@ -56,6 +56,17 @@ async def listar_para_routing() -> list:
     return result
 
 
+async def eliminar(linea_id: int):
+    await fetchval("DELETE FROM lineas WHERE id=$1 RETURNING id", linea_id)
+
+
+async def actualizar_ruta(linea_id: int, ruta_path: list):
+    await fetchval(
+        "UPDATE lineas SET ruta_path=$1::jsonb WHERE id=$2 RETURNING id",
+        json.dumps(ruta_path), linea_id,
+    )
+
+
 async def listar_micros(linea_id: int) -> list:
     rows = await fetchall(
         """

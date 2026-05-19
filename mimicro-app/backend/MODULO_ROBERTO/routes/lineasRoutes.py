@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from MODULO_HECTOR.middleware.rolesMiddleware import requiere_rol
-from MODULO_ROBERTO.schemas import CrearLineaBody, CrearMicroEnLineaBody, CrearParadaLineaBody
+from MODULO_ROBERTO.schemas import (
+    CrearLineaBody, CrearMicroEnLineaBody, CrearParadaLineaBody, ActualizarRutaBody,
+)
 from MODULO_ROBERTO.controllers.lineasController import (
     get_lineas, get_linea, crear_linea, crear_micro_en_linea,
     get_paradas_linea, crear_parada_linea, eliminar_parada_linea,
+    eliminar_linea, actualizar_ruta_linea,
 )
 
 router = APIRouter()
@@ -47,3 +50,14 @@ async def route_crear_parada(linea_id: int, body: CrearParadaLineaBody):
                dependencies=[Depends(requiere_rol("admin"))])
 async def route_eliminar_parada(linea_id: int, parada_id: int):
     await eliminar_parada_linea(linea_id, parada_id)
+
+
+@router.delete("/{linea_id}", status_code=status.HTTP_204_NO_CONTENT,
+               dependencies=[Depends(requiere_rol("admin"))])
+async def route_eliminar_linea(linea_id: int):
+    await eliminar_linea(linea_id)
+
+
+@router.patch("/{linea_id}/ruta", dependencies=[Depends(requiere_rol("admin"))])
+async def route_actualizar_ruta(linea_id: int, body: ActualizarRutaBody):
+    return await actualizar_ruta_linea(linea_id, body.ruta_path)

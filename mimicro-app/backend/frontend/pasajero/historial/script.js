@@ -1,8 +1,8 @@
 Auth.initPage('pasajero');
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const user   = Auth.getUser();
-  const list   = document.getElementById('historial-list');
+  const user = Auth.getUser();
+  const list = document.getElementById('historial-list');
 
   try {
     const viajes = await Api.get(`/gps/historial/${user.sub}`);
@@ -15,11 +15,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    /* ── Stats banner ── */
+    const totalBs    = viajes.reduce((s, v) => s + parseFloat(v.costo || v.monto_cobrado || 3.5), 0);
+    const rutasSet   = new Set(viajes.map(v => v.ruta_nombre || v.ruta_id || '?'));
+    document.getElementById('stat-viajes').textContent = viajes.length;
+    document.getElementById('stat-bs').textContent     = `${totalBs.toFixed(0)}`;
+    document.getElementById('stat-rutas').textContent  = rutasSet.size;
+    document.getElementById('hist-banner').style.display = 'flex';
+
     list.innerHTML = `<div class="hist-list">${viajes.map((v, i) => {
       const fecha = new Date(v.fecha || v.timestamp || v.fecha_inicio || Date.now())
-        .toLocaleString('es-BO', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        .toLocaleString('es-BO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
       const costo = v.costo || v.monto_cobrado || 3.50;
-      return `<div class="hist-item" style="animation-delay:${i*0.05}s">
+      return `<div class="hist-item" style="animation-delay:${i * 0.05}s">
         <div class="hist-icon">🚌</div>
         <div class="hist-main">
           <div class="hist-ruta">${v.ruta_nombre || v.rutaId || 'Ruta ' + (v.ruta_id || '—')}</div>

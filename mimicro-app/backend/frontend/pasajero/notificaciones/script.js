@@ -1,6 +1,6 @@
 Auth.initPage('pasajero');
 
-let userId, notifData = [];
+let userId, notifData = [], filtroActivo = 'todas';
 
 document.addEventListener('DOMContentLoaded', async () => {
   userId = Auth.getUser().sub;
@@ -18,11 +18,18 @@ async function cargarNotificaciones() {
   }
 }
 
+function filtrar(tipo, btn) {
+  filtroActivo = tipo;
+  document.querySelectorAll('.notif-tab').forEach(b => b.classList.toggle('active', b === btn));
+  renderNotificaciones();
+}
+
 function renderNotificaciones() {
-  const list       = document.getElementById('notif-list');
-  const badge      = document.getElementById('badge-noLeidas');
-  const btnTodas   = document.getElementById('btn-todas');
-  const noLeidas   = notifData.filter(n => !n.leida).length;
+  const list     = document.getElementById('notif-list');
+  const badge    = document.getElementById('badge-noLeidas');
+  const btnTodas = document.getElementById('btn-todas');
+  const noLeidas = notifData.filter(n => !n.leida).length;
+  const visible  = filtroActivo === 'todas' ? notifData : notifData.filter(n => (n.tipo || 'info') === filtroActivo);
 
   if (noLeidas > 0) {
     badge.textContent = noLeidas;
@@ -33,7 +40,7 @@ function renderNotificaciones() {
     btnTodas.style.display = 'none';
   }
 
-  if (!notifData || notifData.length === 0) {
+  if (!visible || visible.length === 0) {
     list.innerHTML = `<div class="empty-state">
       <div class="empty-icon">🔔</div>
       <div class="empty-title">Sin notificaciones</div>
@@ -45,7 +52,7 @@ function renderNotificaciones() {
   const tipoIcon  = { desvio: '🚨', retraso: '⚠️', info: 'ℹ️', sistema: '🔧' };
   const tipoLabel = { desvio: 'Desvío', retraso: 'Retraso', info: 'Info', sistema: 'Sistema' };
 
-  list.innerHTML = `<div class="notif-list">${notifData.map((n, i) => {
+  list.innerHTML = `<div class="notif-list">${visible.map((n, i) => {
     const tipo  = n.tipo || 'info';
     const fecha = new Date(n.created_at || Date.now()).toLocaleString('es-BO', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
     const badge = `<span class="badge ${tipo==='desvio'?'badge-red':tipo==='retraso'?'badge-amber':'badge-blue'}">${tipoLabel[tipo]||tipo}</span>`;

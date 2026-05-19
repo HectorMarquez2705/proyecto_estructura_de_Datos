@@ -6,8 +6,9 @@ const lineaId = parseInt(params.get('id'));
 if (!lineaId) window.location.href = '/admin/lineas/';
 
 let map            = null;
-let routeLayers    = [];   // polylines y markers de la ruta (para limpiarlos en cada reload)
+let routeLayers    = [];
 let modoParada     = false;
+let lineaNombre    = '';
 let paradaTempLat  = null;
 let paradaTempLng  = null;
 let paradaTempMark = null;
@@ -20,6 +21,7 @@ async function init() {
       Api.get(`/lineas/${lineaId}`),
       Api.get('/auth/usuarios'),
     ]);
+    lineaNombre = linea.nombre;
     document.title = `miMicro — Línea ${escapeHtml(linea.nombre)}`;
     document.getElementById('linea-titulo').textContent = `Línea ${linea.nombre}`;
     document.getElementById('linea-desc').textContent   = linea.descripcion || '';
@@ -31,6 +33,33 @@ async function init() {
     Toast.error(e.detail || 'Error al cargar la línea');
   }
   await cargarParadas();
+}
+
+/* ── Acciones de línea ──────────────────────────────────────── */
+function cambiarRuta() {
+  window.location.href = `/admin/lineas/editar-ruta/?id=${lineaId}`;
+}
+
+async function eliminarRuta() {
+  if (!confirm(`¿Eliminar la ruta trazada de la línea "${lineaNombre}"?\n\nLa línea, sus micros y sus paradas se conservan.`)) return;
+  try {
+    await Api.patch(`/lineas/${lineaId}/ruta`, { ruta_path: [] });
+    Toast.success('Ruta eliminada');
+    init();
+  } catch (e) {
+    Toast.error(e.detail || 'Error al eliminar la ruta');
+  }
+}
+
+async function eliminarLinea() {
+  if (!confirm(`¿Eliminar la línea "${lineaNombre}"?\n\nLos micros asignados quedarán sin línea. Las paradas serán eliminadas.`)) return;
+  try {
+    await Api.del(`/lineas/${lineaId}`);
+    Toast.success(`Línea "${lineaNombre}" eliminada`);
+    setTimeout(() => { window.location.href = '/admin/lineas/'; }, 800);
+  } catch (e) {
+    Toast.error(e.detail || 'Error al eliminar la línea');
+  }
 }
 
 /* ── Paradas ────────────────────────────────────────────────── */

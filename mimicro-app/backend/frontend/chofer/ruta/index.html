@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'light';</script>
+<script>document.documentElement.dataset.theme = localStorage.getItem('mimicro_theme') || 'dark';</script>
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>miMicro — Ruta Activa</title>
@@ -14,10 +14,10 @@
 <div id="app-shell"></div>
 <div class="main-wrap">
   <div id="topbar-mount"></div>
-  <main class="main-content">
+  <main class="main-content" style="padding:0;">
 
-    <!-- Error state -->
-    <div id="no-micro-msg" style="display:none;">
+    <!-- Sin micro asignado -->
+    <div id="no-micro-msg" style="display:none;padding:40px 20px;">
       <div class="empty-state">
         <div class="empty-icon">🚌</div>
         <div class="empty-title">Sin micro asignado</div>
@@ -26,54 +26,75 @@
     </div>
 
     <!-- Contenido principal -->
-    <div id="chofer-content" style="display:none;">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Control de ruta</h1>
-          <p class="page-sub" id="micro-info-sub">—</p>
+    <div id="chofer-content" class="chofer-mobile" style="display:none;">
+
+      <!-- Indicador de estado -->
+      <div class="chofer-status-bar">
+        <div class="gps-indicator gps-inactive" id="gps-indicator">
+          <div class="gps-dot"></div>
+          <span id="gps-label">GPS inactivo</span>
         </div>
-        <div class="page-actions">
-          <div class="gps-indicator gps-inactive" id="gps-indicator">
-            <div class="gps-dot"></div>
-            <span id="gps-label">GPS inactivo</span>
-          </div>
-          <button class="btn btn-primary btn-lg" id="btn-toggle-ruta" onclick="toggleRuta()">
-            ▶️ Iniciar Ruta
+        <div style="flex:1;"></div>
+        <span id="micro-placa-badge" class="badge badge-blue" style="font-size:13px;"></span>
+      </div>
+
+      <!-- Mapa -->
+      <div style="margin:0 -0px;position:relative;">
+        <div id="chofer-mapa" style="height:240px;border-radius:16px;overflow:hidden;border:1px solid var(--border);"></div>
+      </div>
+
+      <!-- Progreso de ruta -->
+      <div class="chofer-progress-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:14px;font-weight:700;color:var(--text);" id="info-ruta-nombre">—</span>
+          <span style="font-size:13px;color:var(--text-2);" id="info-cap-badge">— pasajeros</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="ruta-progress" style="width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="font-size:12px;color:var(--text-3);">GPS: <span id="gps-lat">—</span>, <span id="gps-lng">—</span></span>
+          <span style="font-size:12px;color:var(--text-3);" id="gps-vel">— km/h</span>
+        </div>
+      </div>
+
+      <!-- Ocupación rápida -->
+      <div class="mobile-card">
+        <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:10px;">Estado de ocupación</div>
+        <div class="ocup-selector">
+          <button class="ocup-btn" data-ocup="vacio"  onclick="setOcupacion('vacio',  this)">😊<br>Vacío</button>
+          <button class="ocup-btn" data-ocup="medio"  onclick="setOcupacion('medio',  this)">😐<br>Medio</button>
+          <button class="ocup-btn active-lleno" data-ocup="lleno" onclick="setOcupacion('lleno', this)">😤<br>Lleno</button>
+        </div>
+      </div>
+
+      <!-- Acciones rápidas -->
+      <div class="mobile-card">
+        <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:10px;">Acciones rápidas</div>
+        <div class="quick-actions">
+          <button class="quick-btn" id="btn-toggle-ruta" onclick="toggleRuta()"
+            style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;">
+            ▶️ Iniciar ruta
           </button>
+          <a href="/chofer/desvio/" class="quick-btn" style="background:rgba(245,158,11,.15);color:#f59e0b;text-decoration:none;display:flex;align-items:center;justify-content:center;">
+            ⚠️ Desvío
+          </a>
+          <a href="/chofer/ocupacion/" class="quick-btn" style="background:rgba(37,99,235,.15);color:#60a5fa;text-decoration:none;display:flex;align-items:center;justify-content:center;">
+            👥 Ocupación
+          </a>
         </div>
       </div>
 
-      <div class="chofer-layout">
-        <!-- Panel izquierdo -->
-        <div class="gps-panel">
-          <div class="gps-coords">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-              <span style="font-size:14px;font-weight:700;color:var(--text)">Posición GPS</span>
-              <div class="gps-indicator gps-inactive" id="gps-indicator-2">
-                <div class="gps-dot"></div><span id="gps-label-2">Inactivo</span>
-              </div>
-            </div>
-            <div class="gps-row"><span class="gps-row-label">Latitud</span><span class="gps-row-val" id="gps-lat">—</span></div>
-            <div class="gps-row"><span class="gps-row-label">Longitud</span><span class="gps-row-val" id="gps-lng">—</span></div>
-            <div class="gps-row"><span class="gps-row-label">Velocidad</span><span class="gps-row-val" id="gps-vel">— km/h</span></div>
-            <div class="gps-row"><span class="gps-row-label">Última actualización</span><span class="gps-row-val" id="gps-ts">—</span></div>
-          </div>
-
-          <div class="card">
-            <div class="card-header"><span class="card-title">Info del micro</span></div>
-            <div class="gps-row"><span class="gps-row-label">Placa</span><span class="gps-row-val" id="info-placa">—</span></div>
-            <div class="gps-row"><span class="gps-row-label">Ruta</span><span class="gps-row-val" id="info-ruta">—</span></div>
-            <div class="gps-row"><span class="gps-row-label">Capacidad</span><span class="gps-row-val" id="info-cap">—</span></div>
-            <div class="gps-row"><span class="gps-row-label">Estado</span><span class="gps-row-val" id="info-estado">—</span></div>
-          </div>
-        </div>
-
-        <!-- Mapa -->
-        <div class="map-box" style="height:500px;">
-          <div id="chofer-mapa" style="height:100%;"></div>
-        </div>
+      <!-- Info del micro -->
+      <div class="mobile-card">
+        <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:10px;">Info del micro</div>
+        <div class="gps-row"><span class="gps-row-label">Placa</span>    <span class="gps-row-val" id="info-placa">—</span></div>
+        <div class="gps-row"><span class="gps-row-label">Modelo</span>   <span class="gps-row-val" id="info-ruta">—</span></div>
+        <div class="gps-row"><span class="gps-row-label">Capacidad</span><span class="gps-row-val" id="info-cap">—</span></div>
+        <div class="gps-row" style="border:none;"><span class="gps-row-label">Estado</span><span class="gps-row-val" id="info-estado">—</span></div>
       </div>
-    </div>
+
+    </div><!-- /chofer-mobile -->
 
   </main>
 </div>
